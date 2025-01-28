@@ -3,7 +3,7 @@ name: Feature request
 about: Suggest an idea for Essentials
 title: ''
 labels: enhancement
-assignees: ''
+assignees: Craftefix
 
 ---
 
