@@ -1,24 +1,33 @@
 plugins {
     id 'java'
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+
+}
+shadowJar {
+    relocate "revxrsal.lamp", "meinprojekt.libs.lamp"
 }
 
 group = 'dev.craftefix.essentials'
 version = '0.0.1'
 
 repositories {
+
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
     mavenCentral()
     maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
-    maven {
-        name = "sonatype"
-        url = "https://oss.sonatype.org/content/groups/public/"
-    }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    implementation("io.github.revxrsal:lamp.common:4.0.0-rc.8")
+    implementation("io.github.revxrsal:lamp.bukkit:4.0.0-rc.8")
+    implementation("io.github.revxrsal:lamp.brigadier:4.0.0-rc.8")
 }
 
 def targetJavaVersion = 21
