@@ -1,0 +1,4 @@
+name: essentials
+version: '0.0.1'
+main: dev.craftefix.essentials.main
+api-version: '1.21'
