@@ -1,6 +1,6 @@
 # Configuration for player messages
 msg:
-  # Valid content placeholders are %actor%, %reciepient% and %message%.
+  # Valid content placeholders are %actor%, %recipient% and %message%.
   #  Valid formatting placeholders are found in net.kyori.adventure.text.format.NamedTextColor, but use Lowercase
   messages:
     send-message: "%yellow%%actor% %gray%to %aqua%%recipient%: %italic%%gray%%message%"
