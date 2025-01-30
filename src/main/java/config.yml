@@ -1,11 +1,12 @@
-# Configuration for player messaging
-message:
-  # Colors used in /msg, /tell and /message
-  # Use the colors from net.kyori.adventure.text.format.NamedTextColor
-  colors:
-    actor: "YELLOW" # Color for the player name who is sending the message
-    message: "GRAY" # Color for the message content
-    error: "RED"    # Color for error messages
+# Configuration for player messages
+msg:
+  # Valid content placeholders are %actor%, %reciepient% and %message%.
+  #  Valid formatting placeholders are found in net.kyori.adventure.text.format.NamedTextColor, but use Lowercase
+  messages:
+    send-message: "%yellow%%actor% %gray%to %aqua%%recipient%: %italic%%gray%%message%"
+    receive-message: "%yellow%%actor% sent you: %italic%%gray%%message%"
+    no-target: "%red%You don't have anyone to reply to."
+    offline-target: "%red%The player you are replying to is offline."
 
 # Developer settings for debugging and advanced plugin configuration
 developer-settings:
