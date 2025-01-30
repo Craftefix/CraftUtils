@@ -22,13 +22,6 @@ public class messageCommands extends JavaPlugin {
     private String noTargetMessageTemplate;
     private String offlineTargetMessageTemplate;
 
-    @Override
-    public void onEnable() {
-        // Save default config.yml if it doesn't exist
-        saveDefaultConfig();
-        // Load the configuration
-        loadConfig();
-    }
 
     public void loadConfig() {
         FileConfiguration config = getConfig();
