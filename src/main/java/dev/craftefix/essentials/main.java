@@ -7,10 +7,12 @@ public final class main extends JavaPlugin {
 
 
     @Override
-        public void onEnable () {
-            var lamp = BukkitLamp.builder(this).build();
-            lamp.register(new tpCommands());
-            lamp.register(new messageCommands());
-        }
+    public void onEnable () {
+        var lamp = BukkitLamp.builder(this).build();
+        lamp.register(new tpCommands());
+        lamp.register(new messageCommands());
+
+    }
+
 
 }
