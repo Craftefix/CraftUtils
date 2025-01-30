@@ -1,10 +1,11 @@
 package dev.craftefix.essentials;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.configuration.file.FileConfiguration;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
@@ -14,102 +15,104 @@ import java.util.UUID;
 public class messageCommands extends JavaPlugin {
 
     private final HashMap<UUID, UUID> messagers = new HashMap<>();
-    private NamedTextColor actorColor;
-    private NamedTextColor messageColor;
-    private NamedTextColor errorColor;
-    private boolean enableLogging;
+
+    // Message templates
+    private String sendMessageTemplate;
+    private String receiveMessageTemplate;
+    private String noTargetMessageTemplate;
+    private String offlineTargetMessageTemplate;
 
     @Override
     public void onEnable() {
         // Save default config.yml if it doesn't exist
         saveDefaultConfig();
-        // Load and process the config
+        // Load the configuration
         loadConfig();
     }
 
     public void loadConfig() {
-        // Load colors from the "msg.colors" category
-        try {
-            actorColor = NamedTextColor.NAMES.value(getConfig().getString("msg.colors.actor", "YELLOW"));
-            messageColor = NamedTextColor.NAMES.value(getConfig().getString("msg.colors.message", "GRAY"));
-            errorColor = NamedTextColor.NAMES.value(getConfig().getString("msg.colors.error", "RED"));
-        } catch (IllegalArgumentException e) {
-            getLogger().warning("Invalid color found in config.yml under 'msg.colors'. Falling back to default colors.");
-            actorColor = NamedTextColor.YELLOW;
-            messageColor = NamedTextColor.GRAY;
-            errorColor = NamedTextColor.RED;
-        }
+        FileConfiguration config = getConfig();
 
-        // Load developer settings
-        enableLogging = getConfig().getBoolean("developer-settings.enable-logging", false);
+        // Load message templates
+        sendMessageTemplate = config.getString("msg.messages.send-message", "%yellow%%actor% %gray%to %aqua%%recipient%: %italic%%gray%%message%");
+        receiveMessageTemplate = config.getString("msg.messages.receive-message", "%yellow%%actor% sent you: %italic%%gray%%message%");
+        noTargetMessageTemplate = config.getString("msg.messages.no-target", "%red%You don't have anyone to reply to.");
+        offlineTargetMessageTemplate = config.getString("msg.messages.offline-target", "%red%The player you are replying to is offline.");
     }
 
     /**
-     * Logs debug messages if developer logging is enabled in the config.
+     * Formats a message by replacing color and formatting placeholders.
      *
-     * @param message The debug message to log.
+     * @param template The template with placeholders.
+     * @param actor    The player who sends the message.
+     * @param recipient The player who receives the message (can be null for errors).
+     * @param message  The actual message content.
+     * @return A formatted Component with the final message.
      */
-    private void logDebug(String message) {
-        if (enableLogging) {
-            getLogger().info("[DEBUG] " + message);
-        }
+    private Component formatMessage(String template, Player actor, Player recipient, String message) {
+        // Replace placeholders with values dynamically
+        String processedMessage = template
+                .replace("%actor%", actor.getName())
+                .replace("%recipient%", recipient != null ? recipient.getName() : "")
+                .replace("%message%", message != null ? message : "")
+                // Replace color placeholders
+                .replace("%red%", NamedTextColor.RED.toString())
+                .replace("%yellow%", NamedTextColor.YELLOW.toString())
+                .replace("%aqua%", NamedTextColor.AQUA.toString())
+                .replace("%gray%", NamedTextColor.GRAY.toString())
+                .replace("%green%", NamedTextColor.GREEN.toString())
+                .replace("%blue%", NamedTextColor.BLUE.toString())
+                // Replace formatting placeholders
+                .replace("%italic%", TextDecoration.ITALIC.toString())
+                .replace("%bold%", TextDecoration.BOLD.toString())
+                .replace("%underlined%", TextDecoration.UNDERLINED.toString());
+
+        // Return as an Adventure Component
+        return Component.text()
+                .content(processedMessage)
+                .build();
     }
 
     @Command({"msg", "message", "tell"})
     @CommandPermission("CraftNet.essentials.message")
-    public void msg(Player actor, Player target, String message) {
-        // Log debug information
-        logDebug("Command /msg executed by: " + actor.getName());
-        logDebug("Message target: " + target.getName());
-        logDebug("Message content: " + message);
+    public void msg(Player actor, Player recipient, String message) {
+        // Format the components
+        Component sendMessage = formatMessage(sendMessageTemplate, actor, recipient, message);
+        Component receiveMessage = formatMessage(receiveMessageTemplate, actor, recipient, message);
 
-        // Send messages using the defined colors
-        actor.sendMessage("You to " + actorColor + target.getName() + ": " + messageColor + message);
-        target.sendMessage(actorColor + actor.getName() + " to you: " + messageColor + message);
+        // Send messages
+        actor.sendMessage(sendMessage);
+        recipient.sendMessage(receiveMessage);
 
-        if (actor.isOnline() && target.isOnline()) {
-            messagers.put(actor.getUniqueId(), target.getUniqueId());
+        // Store the latest messaging pair
+        if (actor.isOnline() && recipient.isOnline()) {
+            messagers.put(actor.getUniqueId(), recipient.getUniqueId());
         }
-    }
-
-    @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
-        // Log the player's quit event if debugging is enabled
-        logDebug("Player quit: " + e.getPlayer().getName());
-
-        // Remove the player from the messagers map on quit
-        messagers.remove(e.getPlayer().getUniqueId());
     }
 
     @Command({"r", "reply"})
     @CommandPermission("CraftNet.essentials.reply")
     public void reply(Player actor, String message) {
-        // Log debug information
-        logDebug("Command /reply executed by: " + actor.getName());
-        logDebug("Reply message content: " + message);
+        UUID targetUUID = messagers.get(actor.getUniqueId()); // Get the last messaged player
 
-        UUID targetUUID = messagers.get(actor.getUniqueId()); // Check if the actor has messaged someone last
-        if (targetUUID != null) { // If a target exists
-            Player target = getServer().getPlayer(targetUUID); // Retrieve the player from the server
-            if (target != null && target.isOnline()) {
-                // Send the message to the target
-                target.sendMessage(actorColor + actor.getName() + " to you: " + messageColor + message);
-                // Also send the message to the actor (as confirmation)
-                actor.sendMessage("You to " + actorColor + target.getName() + ": " + messageColor + message);
+        if (targetUUID != null) {
+            Player recipient = getServer().getPlayer(targetUUID);
+            if (recipient != null && recipient.isOnline()) {
+                // Format the messages
+                Component sendMessage = formatMessage(sendMessageTemplate, actor, recipient, message);
+                Component receiveMessage = formatMessage(receiveMessageTemplate, actor, recipient, message);
+
+                // Send the message
+                actor.sendMessage(sendMessage);
+                recipient.sendMessage(receiveMessage);
+
             } else {
-                // Log debug if the player to reply to is offline
-                logDebug("The player being replied to is offline: UUID=" + targetUUID);
-
-                // Notify the actor if the target is offline
-                actor.sendMessage(errorColor + "The player you are replying to is no longer online.");
+                // Recipient is offline
+                actor.sendMessage(formatMessage(offlineTargetMessageTemplate, actor, null, null));
             }
         } else {
-            // Log debug if no previous message target exists
-            logDebug("Player attempted to reply but has no recent message target.");
-
-            // Notify the actor if there is no previous message target
-            actor.sendMessage(errorColor + "You don't have anyone to reply to.");
+            // No recent recipient
+            actor.sendMessage(formatMessage(noTargetMessageTemplate, actor, null, null));
         }
     }
-
 }
