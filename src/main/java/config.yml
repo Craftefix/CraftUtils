@@ -1,0 +1,13 @@
+# Configuration for player messaging
+message:
+  # Colors used in /msg, /tell and /message
+  # Use the colors from net.kyori.adventure.text.format.NamedTextColor
+  colors:
+    actor: "YELLOW" # Color for the player name who is sending the message
+    message: "GRAY" # Color for the message content
+    error: "RED"    # Color for error messages
+
+# Developer settings for debugging and advanced plugin configuration
+developer-settings:
+  # Enables debug logging for the plugin
+  enable-logging: false
