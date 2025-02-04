@@ -1,44 +1,44 @@
 package dev.craftefix.essentials;
 
-import org.bukkit.plugin.java.JavaPlugin;
-import revxrsal.commands.bukkit.BukkitLamp;
+                        import org.bukkit.plugin.java.JavaPlugin;
+                        import revxrsal.commands.bukkit.BukkitLamp;
 
-public final class main extends JavaPlugin {
+                        public final class main extends JavaPlugin {
 
-    @Override
-    public void onEnable() {
-        try {
-            System.out.println("try to save conf");
-            // Erstellt oder lädt die Standardkonfiguration
-            saveDefaultConfig();
+                            @Override
+                            public void onEnable() {
+                                try {
+                                    System.out.println("trying to save conf");
+                                    saveDefaultConfig();
 
-            // Setze das Lamp-Framework auf
-            System.out.println("loaded config.yml, trying to register commands" );
-            var lamp = BukkitLamp.builder(this).build();
-            lamp.register(new tpCommands());
-            lamp.register(new messageCommands());
-            System.out.println("Loaded commands, trying to check for debug state");
-            // Debugging-Info (falls aktiviert in der Konfiguration)
-            if (getConfig().getBoolean("developer-settings.enable-logging")) {
-                getLogger().info("Debugging aktiviert!");
-            }
-        } catch (Exception e) {
-            System.out.println("cahted exception");
-            // Fehler im OnEnable-Block protokollieren
-            getLogger().severe("Ein Fehler ist im OnEnable-Prozess aufgetreten: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+                                    System.out.println("loaded config.yml, trying to register commands");
+                                    var lamp = BukkitLamp.builder(this).build();
+                                    messageCommands msgCommands = new messageCommands();
+                                    msgCommands.loadConfig(this);
+                                    lamp.register(new tpCommands());
+                                    lamp.register(msgCommands);
+                                    System.out.println("Loaded commands, trying to check for debug state");
 
-    @Override
-    public void onDisable() {
-        try {
-            // Alles sauber deaktivieren
-            getLogger().info("Plugin wird deaktiviert...");
-        } catch (Exception e) {
-            // Fehler im OnDisable-Block protokollieren
-            getLogger().severe("Ein Fehler ist im OnDisable-Prozess aufgetreten: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-}
+                                    if (getConfig().getBoolean("developer-settings.enable-logging")) {
+                                        getLogger().info("Debugging is enabled!");
+                                    }
+                                } catch (Exception e) {
+                                    getLogger().severe("Error at onEnable: " + e.getMessage());
+                                    for (StackTraceElement element : e.getStackTrace()) {
+                                        getLogger().severe(element.toString());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onDisable() {
+                                try {
+                                    getLogger().info("Plugin is deactivating");
+                                } catch (Exception e) {
+                                    getLogger().severe("Error at onDisable: " + e.getMessage());
+                                    for (StackTraceElement element : e.getStackTrace()) {
+                                        getLogger().severe(element.toString());
+                                    }
+                                }
+                            }
+                        }
