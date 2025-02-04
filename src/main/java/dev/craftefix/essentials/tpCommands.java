@@ -5,6 +5,6 @@ import revxrsal.commands.annotation.Command;
 public class tpCommands {
     @Command({"tp"})
     public void tp(){
-
+        // Teleportation logic here soon
     }
 }
