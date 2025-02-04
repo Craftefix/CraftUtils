@@ -4,7 +4,7 @@ plugins {
 
 }
 shadowJar {
-    relocate "revxrsal.lamp", "meinprojekt.libs.lamp"
+    relocate "revxrsal.lamp", "essentials.libs.lamp"
 }
 
 group = 'dev.craftefix.essentials'
