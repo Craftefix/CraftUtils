@@ -1,17 +1,12 @@
 plugins {
     id 'java'
     id "com.github.johnrengelman.shadow" version "8.1.1"
-
-}
-shadowJar {
-    relocate "revxrsal.lamp", "essentials.libs.lamp"
 }
 
 group = 'dev.craftefix.essentials'
 version = '0.0.1'
 
 repositories {
-
     maven {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
@@ -28,6 +23,15 @@ dependencies {
     implementation("io.github.revxrsal:lamp.common:4.0.0-rc.8")
     implementation("io.github.revxrsal:lamp.bukkit:4.0.0-rc.8")
     implementation("io.github.revxrsal:lamp.brigadier:4.0.0-rc.8")
+}
+
+shadowJar {
+    relocate "revxrsal.lamp", "essentials.libs.lamp"
+    dependencies {
+        include(dependency("io.github.revxrsal:lamp.common"))
+        include(dependency("io.github.revxrsal:lamp.bukkit"))
+        include(dependency("io.github.revxrsal:lamp.brigadier"))
+    }
 }
 
 def targetJavaVersion = 21
