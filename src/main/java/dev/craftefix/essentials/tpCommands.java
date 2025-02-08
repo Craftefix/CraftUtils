@@ -7,9 +7,11 @@ package dev.craftefix.essentials;
     import org.bukkit.entity.Player;
     import revxrsal.commands.annotation.Command;
     import revxrsal.commands.annotation.Named;
+    import revxrsal.commands.annotation.Subcommand;
     import revxrsal.commands.bukkit.annotation.CommandPermission;
     import revxrsal.commands.bukkit.parameters.EntitySelector;
 
+    @Command("etp")
     public class tpCommands {
 
         private boolean isWithinWorldBorder(Location location) {
@@ -26,9 +28,9 @@ package dev.craftefix.essentials;
             return y <= 1000;
         }
 
-        @Command({"teleport", "tp"})
+        @Subcommand("location")
         @CommandPermission("CraftNet.essentials.teleport.location")
-        public void teleport(Player sender, @Named("x") double x, @Named("y") double y, @Named("z") double z) {
+        public void teleportLocation(Player sender, @Named("x") double x, @Named("y") double y, @Named("z") double z) {
             Location location = new Location(sender.getWorld(), x, y, z);
             if (isWithinWorldBorder(location) && isValidHeight(y)) {
                 sender.teleport(location);
@@ -37,9 +39,9 @@ package dev.craftefix.essentials;
             }
         }
 
-        @Command({"teleport", "tp"})
+        @Subcommand("others")
         @CommandPermission("CraftNet.essentials.teleport.others")
-        public void teleport(Player sender, @Named("target") EntitySelector<LivingEntity> target, @Named("x") double x, @Named("y") double y, @Named("z") double z) {
+        public void teleportOthers(Player sender, @Named("target") EntitySelector<LivingEntity> target, @Named("x") double x, @Named("y") double y, @Named("z") double z) {
             Location location = new Location(sender.getWorld(), x, y, z);
             if (isWithinWorldBorder(location) && isValidHeight(y)) {
                 for (LivingEntity entity : target) {
@@ -50,7 +52,7 @@ package dev.craftefix.essentials;
             }
         }
 
-        @Command("teleport <target> here")
+        @Subcommand("here")
         @CommandPermission("CraftNet.essentials.teleport.here")
         public void teleportHere(Player sender, @Named("target") EntitySelector<LivingEntity> target) {
             Location location = sender.getLocation();
@@ -63,9 +65,9 @@ package dev.craftefix.essentials;
             }
         }
 
-        @Command({"teleport", "tp"})
+        @Subcommand("self")
         @CommandPermission("CraftNet.essentials.teleport.self")
-        public void teleport(Player sender, @Named("target") Entity target) {
+        public void teleportSelf(Player sender, @Named("target") Entity target) {
             Location location = target.getLocation();
             if (isWithinWorldBorder(location) && isValidHeight(location.getY())) {
                 sender.teleport(target);
