@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - alpha-release  # Runs on every push to beta-release
+    workflow_dispatch: # This allows manual runs
 
 jobs:
   build:
