@@ -1,0 +1,40 @@
+name: Build & Release
+
+on:
+  push:
+    branches:
+      - alpha-release  # Runs on every push to beta-release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Java (Amazon Corretto)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '23' # Match your target Java version
+
+      - name: Grant Execute Permissions for Gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle ShadowJar
+        run: ./gradlew shadowJar
+
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-jar
+          path: build/libs/*.jar
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/libs/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
