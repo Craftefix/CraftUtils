@@ -1,5 +1,6 @@
 # DONT USE ANY BUILDS HERE, THIS IS JUST TESTING!
 # 99% *WONT* WORK
+only the workflow does
 # TRUST ME
 # Essentials Plugin
 
