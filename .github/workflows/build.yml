@@ -35,8 +35,8 @@ jobs:
       - name: Set Up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'corretto'
-          java-version: '21'
+            distribution: 'temurin'
+            java-version: '23'
 
       - name: Install GitHub CLI
         run: |
@@ -53,10 +53,13 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          echo "🔨 Building project..."
-          ./gradlew --build-cache --parallel --no-daemon -q shadowJar
-          echo "✅ Build complete"
-          ls -lh build/libs/
+            ./gradlew --build-cache --parallel shadowJar \
+              -Dorg.gradle.java.home="$JAVA_HOME_23_X64" \
+              -Djava.home="$JAVA_HOME_23_X64"
+            ls -lh build/libs/
+            echo $JAVA_HOME_23_X64
+            echo $JAVA_HOME
+        
 
       - name: Version Bump and Release
         id: versioning
