@@ -42,7 +42,9 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add $VERSION_FILE $PLUGIN_FILE
           git commit -m "Bump version to ${NEW_VERSION}"
-          git push
+
+          # Use PAT to push changes
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:alpha-releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
