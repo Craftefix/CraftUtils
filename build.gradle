@@ -11,11 +11,11 @@ plugins {
     version = '0.0.2'
 
     repositories {
+        mavenCentral()
         maven {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/groups/public/"
         }
-        mavenCentral()
         maven {
             name = "papermc-repo"
             url = "https://repo.papermc.io/repository/maven-public/"
@@ -34,8 +34,10 @@ plugins {
         def javaVersion = JavaVersion.toVersion(targetJavaVersion)
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
-        if (JavaVersion.current() < javaVersion) {
-            toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+        java {
+            toolchain {
+                languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
+            }
         }
     }
 
@@ -47,11 +49,11 @@ plugins {
         }
     }
 
-    processResources {
-        def props = [version: version]
-        inputs.properties props
-        filteringCharset 'UTF-8'
-        filesMatching('paper-plugin.yml') {
-            expand props
-        }
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset = 'UTF-8'
+    filesMatching('paper-plugin.yml') {
+        expand props
     }
+}
