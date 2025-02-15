@@ -31,7 +31,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '23.0.2' # Explicit version to match IntelliJ
+          java-version: '23' # Explicit version to match IntelliJ
 
       - name: Bump Version
         run: |
