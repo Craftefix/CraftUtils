@@ -133,8 +133,51 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Artifact
-        if: always()
+      - name: Extract JAR from ZIP
+        run: |
+          # Find the ZIP file
+          ZIP_FILE=$(ls build/libs/*.zip)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "Error: No ZIP file found in build/libs/"
+            exit 1
+          fi
+
+          # Extract the JAR file
+          echo "Extracting JAR from $ZIP_FILE"
+          unzip "$ZIP_FILE" -d build/libs/extracted
+
+          # Find the extracted JAR file
+          EXTRACTED_JAR=$(ls build/libs/extracted/*.jar)
+          if [ -z "$EXTRACTED_JAR" ]; then
+            echo "Error: No JAR file found in the extracted ZIP"
+            exit 1
+          fi
+
+          # Move the JAR to the build/libs/ directory
+          mv "$EXTRACTED_JAR" build/libs/
+          echo "JAR file ready: $(ls build/libs/*.jar)"
+
+      - name: Create GitHub Release
+        run: |
+          # Find the JAR file
+          JAR_FILE=$(ls build/libs/*.jar)
+          if [ -z "$JAR_FILE" ]; then
+            echo "Error: No JAR file found in build/libs/"
+            exit 1
+          fi
+
+          # Create a release
+          gh release create "$TAG_NAME" "$JAR_FILE" \
+            --title "Alpha Build $TAG_NAME" \
+            --notes "Automated alpha release from commit $COMMIT_HASH" \
+            --prerelease \
+            --repo "$GITHUB_REPOSITORY"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ github.ref_name }}-$(date +%Y%m%d%H%M%S)
+          COMMIT_HASH: $(git rev-parse --short HEAD)
+
+      - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: essentials
