@@ -90,7 +90,7 @@ jobs:
           echo "TAG_NAME: $TAG_NAME"
 
           # Create the alpha release
-          gh release create "$TAG_NAME" build/libs/*.zip \
+          gh release create "$TAG_NAME" build/libs/*.jar \
             --title "Alpha Build $TAG_NAME" \
             --notes "Automated alpha release from commit $COMMIT_HASH" \
             --prerelease --draft --repo ${{ github.repository }}
@@ -100,12 +100,12 @@ jobs:
           mv build/libs/*.jar build/libs/$JAR_NAME
           echo "Uploading JAR: $JAR_NAME"
         env:
-          JAVA_HOME: /opt/hostedtoolcache/Java_Corretto_jdk/23/x64
-          JAVA_HOME_23_X64: /opt/hostedtoolcache/Java_Corretto_jdk/23/x64
+          JAVA_HOME: /opt/hostedtoolcache/Java_Corretto_jdk/23.*/x64
+          JAVA_HOME_23_X64: /opt/hostedtoolcache/Java_Corretto_jdk/23.*/x64
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: essentials-beta
-          path: build/libs/*.zip
+          name: essentials
+          path: build/libs/*.jar
