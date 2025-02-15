@@ -33,6 +33,9 @@ jobs:
           distribution: 'corretto'
           java-version: '23'
 
+      - name: Build with Gradle ShadowJar
+        run: ./gradlew --build-cache --parallel shadowJar
+
       - name: Bump Version
         run: |
           VERSION_FILE="gradle.properties"
@@ -98,27 +101,8 @@ jobs:
           JAVA_HOME_23_X64: /opt/hostedtoolcache/Java_Corretto_jdk/23/x64
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
-
-      - name: Build with Gradle ShadowJar
-        run: ./gradlew --build-cache --parallel shadowJar
-
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: essentials-beta
           path: build/libs/*.jar
-
-      - name: Get Commit Hash
-        id: vars
-        run: echo "COMMIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-      - name: Create Alpha Pre-Release
-        run: |
-          TAG_NAME="0.0.2-${{ env.COMMIT_SHA }}"
-          gh release create "$TAG_NAME" build/libs/*.jar \
-            --title "Alpha Build $TAG_NAME" \
-            --notes "Automated alpha release from commit ${{ env.COMMIT_SHA }}" \
-            --prerelease --draft --repo ${{ github.repository }} &
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
