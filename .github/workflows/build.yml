@@ -6,6 +6,11 @@ on:
       - alpha-releases  # Runs on every push to alpha-releases
   workflow_dispatch: # Allows manual runs
 
+permissions:
+  contents: write
+  packages: write
+  actions: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,7 +49,7 @@ jobs:
           git commit -m "Bump version to ${NEW_VERSION}"
 
           # Use PAT to push changes
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:alpha-releases
+          git push https://${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.git HEAD:alpha-releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
