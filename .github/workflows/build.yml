@@ -71,8 +71,9 @@ jobs:
 
       - name: Create Alpha Pre-Release
         run: |
-          gh release create "0.0.2:${{ env.COMMIT_SHA }}" build/libs/*.jar \
-            --title "Alpha Build 0.0.2:${{ env.COMMIT_SHA }}" \
+          TAG_NAME="0.0.2-${{ env.COMMIT_SHA }}"
+          gh release create "$TAG_NAME" build/libs/*.jar \
+            --title "Alpha Build $TAG_NAME" \
             --notes "Automated alpha release from commit ${{ env.COMMIT_SHA }}" \
             --prerelease \
             --repo ${{ github.repository }}
