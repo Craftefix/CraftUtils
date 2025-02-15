@@ -39,13 +39,11 @@ jobs:
           PLUGIN_FILE="src/main/resources/paper-plugin.yml"
 
           CURRENT_VERSION=$(awk -F= '/^version=/ {print $2}' $VERSION_FILE)
-          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print $1"."$2"."$3+1}')
+          IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
+          NEW_PATCH=$((patch + 1))
+          NEW_VERSION="${major}.${minor}.${NEW_PATCH}"
 
-          if [ "$CURRENT_VERSION" = "$NEW_VERSION" ]; then
-            echo "No version change detected, forcing increment..."
-            NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print $1"."$2"."$3+1}')
-          fi
-
+          # Ensure the version is updated in the files
           sed -i "s/^version=.*/version=${NEW_VERSION}/" $VERSION_FILE
           sed -i "s/^version:.*/version: ${NEW_VERSION}/" $PLUGIN_FILE
 
