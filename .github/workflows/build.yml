@@ -66,28 +66,46 @@ jobs:
           sed -i "s/^version=.*/version=${NEW_VERSION}/" $VERSION_FILE
           sed -i "s/^version:.*/version: ${NEW_VERSION}/" $PLUGIN_FILE
 
-      - name: Rename JAR and Create ZIP
-        run: |
+          # Configure git user for commit
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+          # Add changes to git
+          git add $VERSION_FILE $PLUGIN_FILE
+
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Bump version to ${NEW_VERSION}"
+            git push https://@github.com/Craftefix/essentials.git HEAD:alpha-releases
+          fi
+
+          # Get the short commit hash
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo "Commit hash: $COMMIT_HASH"  # Debugging
+
+          # Create the tag name
+          TAG_NAME="${NEW_VERSION}-${COMMIT_HASH}"
+          echo "TAG_NAME: $TAG_NAME"
+
+          # Create the alpha release
+          gh release create "$TAG_NAME" build/libs/*.zip \
+            --title "Alpha Build $TAG_NAME" \
+            --notes "Automated alpha release from commit $COMMIT_HASH" \
+            --prerelease --draft --repo ${{ github.repository }}
+
+          # Upload the artifact with the new version naming
           JAR_NAME="essentials_${NEW_VERSION}.jar"
           mv build/libs/*.jar build/libs/$JAR_NAME
-          echo "Renamed JAR: $JAR_NAME"
+          echo "Uploading JAR: $JAR_NAME"
+        env:
+          JAVA_HOME: /opt/hostedtoolcache/Java_Corretto_jdk/23/x64
+          JAVA_HOME_23_X64: /opt/hostedtoolcache/Java_Corretto_jdk/23/x64
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          ZIP_NAME="essentials_${NEW_VERSION}.zip"
-          zip -r build/libs/$ZIP_NAME build/libs/$JAR_NAME src/main/resources/paper-plugin.yml
-          echo "Created ZIP: $ZIP_NAME"
-
-      - name: Upload ZIP Artifact
+      - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: essentials-beta
           path: build/libs/*.zip
-
-      - name: Create Alpha Pre-Release
-        run: |
-          TAG_NAME="${NEW_VERSION}-${{ github.sha }}"
-          gh release create "$TAG_NAME" build/libs/*.zip \
-            --title "Alpha Build $TAG_NAME" \
-            --notes "Automated alpha release from commit ${{ github.sha }}" \
-            --prerelease --draft --repo ${{ github.repository }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
