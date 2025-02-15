@@ -153,6 +153,7 @@ jobs:
           TAG_NAME: ${{ github.ref_name }}-$(date +%Y%m%d%H%M%S)
           COMMIT_HASH: $(git rev-parse --short HEAD)
 
+
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
