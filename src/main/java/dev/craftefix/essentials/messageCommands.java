@@ -22,7 +22,7 @@ public class messageCommands extends JavaPlugin implements Listener {
         // Debug logging is disabled since config support is removed
     }
 
-    @Command({"msg", "message", "tell"})
+    @Command({"msg", "message", "tell", "cc msg"})
     @CommandPermission("CraftNet.essentials.message")
     public void msg(Player actor, @Named("player") Player target, @Named("message") String message) {
         logDebug("Command /msg executed by: " + actor.getName());
@@ -52,7 +52,7 @@ public class messageCommands extends JavaPlugin implements Listener {
         messagers.remove(e.getPlayer().getUniqueId());
     }
 
-    @Command({"r", "reply"})
+    @Command({"r", "reply", "cc reply"})
     @CommandPermission("CraftNet.essentials.reply")
     public void reply(Player actor, @Named("message") String message) {
         logDebug("Command /reply executed by: " + actor.getName());
