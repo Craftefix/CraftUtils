@@ -11,7 +11,7 @@ package dev.craftefix.essentials;
     import revxrsal.commands.bukkit.annotation.CommandPermission;
     import revxrsal.commands.bukkit.parameters.EntitySelector;
 
-    @Command("etp")
+    @Command("cc tp")
     public class tpCommands {
 
         private boolean isWithinWorldBorder(Location location) {
