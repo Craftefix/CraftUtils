@@ -30,9 +30,10 @@ jobs:
 
       - name: Build with Gradle
         run: |
-            ./gradlew --parallel shadowJar \
+            ./gradlew --parallel --configure-on-demand \
               -Dorg.gradle.java.home="$JAVA_HOME" \
-              -Djava.home="$JAVA_HOME"
+              -Dorg.gradle.jvmargs="-Xmx6g -XX:MaxMetaspaceSize=1g" \
+                shadowJar
             echo $JAVA_HOME
         
 
@@ -62,7 +63,6 @@ jobs:
           git add "$VERSION_FILE" "$PLUGIN_FILE"
           git commit -m "Bump version to ${NEW_VERSION}" --quiet
           git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:alpha-releases --quiet
-          fi
 
           COMMIT_HASH=$(git rev-parse --short HEAD)
           TAG_NAME="${NEW_VERSION}-${COMMIT_HASH}"
