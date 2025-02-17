@@ -33,8 +33,9 @@ jobs:
             ./gradlew --parallel --configure-on-demand \
               -Dorg.gradle.java.home="$JAVA_HOME" \
               -Dorg.gradle.jvmargs="-Xmx6g -XX:MaxMetaspaceSize=1g" \
+              -Dorg.gradle.caching=false \
+              -x test -x lint \
                 shadowJar
-            echo $JAVA_HOME
         
 
       - name: Version Bump and Release
