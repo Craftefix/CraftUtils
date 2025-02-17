@@ -22,16 +22,6 @@ jobs:
           persist-credentials: true
           fetch-depth: 0  # Required for proper commit history
 
-      - name: Cache Gradle Dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
-
       - name: Set Up Java
         uses: actions/setup-java@v3
         with:
@@ -44,7 +34,7 @@ jobs:
 
       - name: Build with Gradle
         run: |
-            ./gradlew --build-cache --parallel shadowJar \
+            ./gradlew --parallel shadowJar \
               -Dorg.gradle.java.home="$JAVA_HOME_23_X64" \
               -Djava.home="$JAVA_HOME_23_X64"
             ls -lh build/libs/
