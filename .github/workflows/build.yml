@@ -86,6 +86,46 @@ jobs:
           rm -f "${PLUGIN_FILE}.bak"
 
           
+              # Git operations
+                    
+          echo "🔧 Configuring Git"
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          
+          echo "💾 Committing version bump"
+          git add "$VERSION_FILE" "$PLUGIN_FILE"
+          if ! git diff --staged --quiet; then
+            git commit -m "⬆️ Bump version to ${NEW_VERSION}" --quiet
+            echo "📤 Pushing changes"
+            git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:alpha-releases --quiet
+          else
+            echo "ℹ️ No changes to commit"
+          fi
+
+          # Prepare release
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          TAG_NAME="${NEW_VERSION}-${COMMIT_HASH}"
+          echo "🏷️ Release tag: $TAG_NAME"
+          
+          # Find and rename JAR
+          JAR_PATH=$(ls build/libs/*-all.jar)
+          JAR_NAME="essentials-${NEW_VERSION}.jar"
+          echo "📦 Renaming JAR: $JAR_PATH → $JAR_NAME"
+          mv -v "$JAR_PATH" "build/libs/${JAR_NAME}"
+
+          # Create release
+          echo "🚀 Creating GitHub release"
+          gh release create "$TAG_NAME" "build/libs/${JAR_NAME}" \
+            --title "Alpha Build ${TAG_NAME}" \
+            --notes "Automated alpha release from commit ${COMMIT_HASH}" \
+            --prerelease \
+            --repo "${GITHUB_REPOSITORY}"
+          
+          echo "✅ Release process completed"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
