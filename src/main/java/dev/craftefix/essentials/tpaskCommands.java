@@ -3,12 +3,9 @@ package dev.craftefix.essentials;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Named;
-import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.util.HashMap;
@@ -23,7 +20,7 @@ public class tpaskCommands {
 
     @Command({"tpask", "tpa", "cc tpask"})
     @CommandPermission("CraftNet.essentials.tpask")
-    public void tpask(Player actor, @Named("<Player>") @Suggest(Bukkit.getOnlinePlayers().stream().map(Player::getName).toArray(String[]::new)) Player target) {
+    public void tpask(Player actor, @Named("<Player>")  Player target) {
         if (actor.isOnline() && target.isOnline()) {
             if (actor.equals(target)) {
                 actor.sendMessage(Component.text("You can't teleport to yourself!", NamedTextColor.RED));
