@@ -1,31 +1,49 @@
 package dev.craftefix.essentials;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.Command;
+import revxrsal.commands.annotation.Named;
+import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
+import java.util.HashMap;
+import java.util.UUID;
+
+
 public class tpaskCommands {
+
+    // HashMap to store the requests
+    // Target UUID, Actor UUID
+    HashMap<UUID, UUID> tpRequests = new HashMap<>();
+
     @Command({"tpask", "tpa", "cc tpask"})
     @CommandPermission("CraftNet.essentials.tpask")
-    public void tpask(Player actor, Player target) {
-        target.sendMessage(Component.text(actor.getName(), NamedTextColor.GOLD)
-                .append(Component.text(" wants to teleport to you. Do you accept? ", NamedTextColor.GRAY))
-                .append(Component.text("/tpaccept ", NamedTextColor.GOLD))
-                .append(Component.text("or ", NamedTextColor.GRAY))
-                .append(Component.text("/tpdeny", NamedTextColor.GOLD)));
-
-        if (actor.equals(target)) {
-            actor.sendMessage(Component.text("You can't teleport to yourself!", NamedTextColor.RED));
-            return;
-        }
+    public void tpask(Player actor, @Named("<Player>") @Suggest(Bukkit.getOnlinePlayers().stream().map(Player::getName).toArray(String[]::new)) Player target) {
         if (actor.isOnline() && target.isOnline()) {
-            actor.sendMessage(Component.text("You have sent a teleport request to ", NamedTextColor.GRAY)
-                    .append(Component.text(target.getName(), NamedTextColor.GOLD)));
-        } else {
-            actor.sendMessage(Component.text("The player you are trying to teleport to is not online!", NamedTextColor.RED));
-            return;
+            if (actor.equals(target)) {
+                actor.sendMessage(Component.text("You can't teleport to yourself!", NamedTextColor.RED));
+                return;
+            }
+            if (tpRequests.get(target.getUniqueId()) == null) {
+                tpRequests.put(target.getUniqueId(), actor.getUniqueId());
+                target.sendMessage(Component.text(actor.getName(), NamedTextColor.GOLD)
+                        .append(Component.text(" wants to teleport to you. \n", NamedTextColor.GRAY))
+                        .append(Component.text("[Accept] ", NamedTextColor.GREEN)
+                                .clickEvent(ClickEvent.runCommand("/tpaccept")))
+                        .append(Component.text("[Deny]", NamedTextColor.RED)
+                                .clickEvent(ClickEvent.runCommand("/tpdeny"))));
+                actor.sendMessage(Component.text("You have sent a teleport request to ", NamedTextColor.GRAY)
+                        .append(Component.text(target.getName(), NamedTextColor.GOLD))
+                        .append(Component.text("[Cancel]", NamedTextColor.RED)
+                                .clickEvent(ClickEvent.runCommand("/tpdeny"))));
+            } else {
+                actor.sendMessage(Component.text("You already have a pending request to this player!", NamedTextColor.RED));
+            }
         }
     }
 }
