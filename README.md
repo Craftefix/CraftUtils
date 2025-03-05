@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/Craftefix/essentials/actions/workflows/build.yml/badge.svg)](https://github.com/Craftefix/essentials/actions/workflows/build.yml)
+[![Alpha Builder](https://github.com/Craftefix/essentials/actions/workflows/build.yml/badge.svg?branch=alpha-releases)](https://github.com/Craftefix/essentials/actions/workflows/build.yml)
 
 # DONT USE ANY BUILDS HERE, THIS IS JUST TESTING!
 # 99% *WONT* WORK
