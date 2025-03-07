@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 
-public class tpaskCommands {
+public class TpAskCommands {
 
     // HashMap to store the requests
     // Target UUID, Actor UUID
