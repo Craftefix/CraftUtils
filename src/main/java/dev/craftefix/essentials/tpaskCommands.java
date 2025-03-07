@@ -37,10 +37,55 @@ public class tpaskCommands {
                 actor.sendMessage(Component.text("You have sent a teleport request to ", NamedTextColor.GRAY)
                         .append(Component.text(target.getName(), NamedTextColor.GOLD))
                         .append(Component.text("[Cancel]", NamedTextColor.RED)
-                                .clickEvent(ClickEvent.runCommand("/tpdeny"))));
+                                .clickEvent(ClickEvent.runCommand("/tpacancel"))));
             } else {
                 actor.sendMessage(Component.text("You already have a pending request to this player!", NamedTextColor.RED));
             }
+        }
+    }
+
+    @Command({"tpaccept", "cc tpaccept"})
+    @CommandPermission("CraftNet.essentials.tpaccept")
+    public void tpaccept(Player target) {
+        if (tpRequests.get(target.getUniqueId()) != null) {
+            Player actor = target.getServer().getPlayer(tpRequests.get(target.getUniqueId()));
+            if (actor != null) {
+                actor.teleport(target);
+                actor.sendMessage(Component.text("Teleport request accepted!", NamedTextColor.GREEN));
+                target.sendMessage(Component.text("Teleport request accepted!", NamedTextColor.GREEN));
+                tpRequests.remove(target.getUniqueId());
+            }
+        }
+    }
+
+    @Command({"tpdeny", "cc tpdeny"})
+    @CommandPermission("CraftNet.essentials.tpdeny")
+    public void tpdeny(Player target) {
+        if (tpRequests.get(target.getUniqueId()) != null) {
+            Player actor = target.getServer().getPlayer(tpRequests.get(target.getUniqueId()));
+            if (actor != null) {
+                actor.sendMessage(Component.text("Teleport request denied!", NamedTextColor.RED));
+                target.sendMessage(Component.text("Teleport request denied!", NamedTextColor.RED));
+                tpRequests.remove(target.getUniqueId());
+            }
+        }
+    }
+
+    @Command({"tpacancel", "cc tpacancel"})
+    @CommandPermission("CraftNet.essentials.tpacancel")
+    public void tpcancel(Player actor) {
+        if (tpRequests.containsValue(actor.getUniqueId())) {
+            tpRequests.entrySet().removeIf(entry -> {
+                if (entry.getValue().equals(actor.getUniqueId())) {
+                    Player target = actor.getServer().getPlayer(entry.getKey());
+                    if (target != null) {
+                        target.sendMessage(Component.text("Teleport request canceled!", NamedTextColor.RED));
+                    }
+                    actor.sendMessage(Component.text("Teleport request canceled!", NamedTextColor.RED));
+                    return true;
+                }
+                return false;
+            });
         }
     }
 }
