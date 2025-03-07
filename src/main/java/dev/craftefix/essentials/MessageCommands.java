@@ -14,7 +14,7 @@ import revxrsal.commands.bukkit.annotation.CommandPermission;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class messageCommands extends JavaPlugin implements Listener {
+public class MessageCommands extends JavaPlugin implements Listener {
 
     private final HashMap<UUID, UUID> messagers = new HashMap<>();
 
