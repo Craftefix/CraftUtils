@@ -12,7 +12,7 @@ package dev.craftefix.essentials;
     import revxrsal.commands.bukkit.parameters.EntitySelector;
 
     @Command("cc tp")
-    public class tpCommands {
+    public class TpCommands {
 
         private boolean isWithinWorldBorder(Location location) {
             WorldBorder border = location.getWorld().getWorldBorder();
