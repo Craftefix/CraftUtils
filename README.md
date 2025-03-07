@@ -14,3 +14,5 @@ A simple EssentialsX-like paper! plugin for the newest version(1.21.4). This plu
 - `/r` - Reply to the last message received.
 - `/msg` - Send a private message to another player.
 - `/tpa` - Sends a teleport request to another player.
+- `/tpaccept` - Accepts a teleport request.
+- `/tpdeny` - Denies a teleport request.
