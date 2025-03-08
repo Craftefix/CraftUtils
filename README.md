@@ -1,9 +1,9 @@
-[![Alpha Builder](https://github.com/Craftefix/essentials/actions/workflows/build.yml/badge.svg?branch=alpha-releases)](https://github.com/Craftefix/essentials/actions/workflows/build.yml)
+[![Alpha Builder](https://github.com/Craftefix/CraftUtils/actions/workflows/build.yml/badge.svg?branch=alpha-releases)](https://github.com/Craftefix/CraftUtils/actions/workflows/build.yml)
 
-# Essentials Plugin
+# CraftUtils Plugin
 
-A simple EssentialsX-like Paper plugin for the latest Paper version (1.21.4). This plugin is specifically made for my own network CraftNet.
-The Benefits are that it doesn't any important vanilla mechanics and is very lightweight.
+A simple Utils Paper plugin for the latest Paper version (1.21.4).  
+The Benefits are that it doesn't change any important vanilla mechanics and is very lightweight.
 
 ## Commands
 - `/cc`
