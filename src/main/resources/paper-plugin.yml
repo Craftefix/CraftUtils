@@ -1,7 +1,4 @@
-name: CraftUtils
-version: 0.0.b24
-main: dev.craftefix.craftUtils.Main
-description: A lightweight Utils plugin
-author: Craftefix
-website: craftefix.dev
+name: essentials
+version: 0.0.b25
+main: dev.craftefix.essentials.Main
 api-version: 1.21.4
