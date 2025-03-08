@@ -3,6 +3,7 @@ package dev.craftefix.essentials;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Named;
@@ -11,16 +12,14 @@ import revxrsal.commands.bukkit.annotation.CommandPermission;
 import java.util.HashMap;
 import java.util.UUID;
 
-
 public class TpAskCommands {
-
     // HashMap to store the requests
     // Target UUID, Actor UUID
     HashMap<UUID, UUID> tpRequests = new HashMap<>();
 
     @Command({"tpask", "tpa", "cc tpask"})
     @CommandPermission("CraftNet.essentials.tpask")
-    public void tpask(Player actor, @Named("<Player>")  Player target) {
+    public void tpask(Player actor, @Named("Player") Player target) {
         if (actor.isOnline() && target.isOnline()) {
             if (actor.equals(target)) {
                 actor.sendMessage(Component.text("You can't teleport to yourself!", NamedTextColor.RED));
@@ -28,24 +27,39 @@ public class TpAskCommands {
             }
             if (tpRequests.get(target.getUniqueId()) == null) {
                 tpRequests.put(target.getUniqueId(), actor.getUniqueId());
-                target.sendMessage(Component.text(actor.getName(), NamedTextColor.GOLD)
-                        .append(Component.text(" wants to teleport to you. \n", NamedTextColor.GRAY))
-                        .append(Component.text("[Accept] ", NamedTextColor.GREEN)
-                                .clickEvent(ClickEvent.runCommand("/tpaccept")))
-                        .append(Component.text("[Deny]", NamedTextColor.RED)
-                                .clickEvent(ClickEvent.runCommand("/tpdeny"))));
-                actor.sendMessage(Component.text("You have sent a teleport request to ", NamedTextColor.GRAY)
-                        .append(Component.text(target.getName(), NamedTextColor.GOLD))
-                        .append(Component.text("[Cancel]", NamedTextColor.RED)
-                                .clickEvent(ClickEvent.runCommand("/tpacancel"))));
+                actor.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text("Sent teleport request to ", NamedTextColor.GRAY))
+                        .append(Component.text(target.getName(), NamedTextColor.BLUE))
+                        .append(Component.text(". \n", NamedTextColor.DARK_GRAY))
+                        .append(Component.text(" [Cancel] ", NamedTextColor.DARK_RED))
+                        .clickEvent(ClickEvent.runCommand("/cc tpacancel")));
+
+                target.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text(target.getName(), NamedTextColor.GREEN))
+                        .append(Component.text(" wants to teleport to ", NamedTextColor.GRAY))
+                        .append(Component.text("you.", NamedTextColor.BLUE)));
+                target.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text("Accept]", NamedTextColor.GREEN))
+                                .clickEvent(ClickEvent.runCommand("/cc tpaaccept")));
+                target.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text("[Deny]", NamedTextColor.RED))
+                                .clickEvent(ClickEvent.runCommand("/cc tpadeny")));
             } else {
                 actor.sendMessage(Component.text("You already have a pending request to this player!", NamedTextColor.RED));
             }
         }
     }
 
-    @Command({"tpaccept", "cc tpaccept"})
-    @CommandPermission("CraftNet.essentials.tpaccept")
+    @Command({"tpaaccept", "cc tpaaccept"})
+    @CommandPermission("CraftNet.essentials.tpaaccept")
     public void tpaccept(Player target) {
         if (tpRequests.get(target.getUniqueId()) != null) {
             Player actor = target.getServer().getPlayer(tpRequests.get(target.getUniqueId()));
@@ -58,8 +72,8 @@ public class TpAskCommands {
         }
     }
 
-    @Command({"tpdeny", "cc tpdeny"})
-    @CommandPermission("CraftNet.essentials.tpdeny")
+    @Command({"tpadeny", "cc tpadeny"})
+    @CommandPermission("CraftNet.essentials.tpadeny")
     public void tpdeny(Player target) {
         if (tpRequests.get(target.getUniqueId()) != null) {
             Player actor = target.getServer().getPlayer(tpRequests.get(target.getUniqueId()));
