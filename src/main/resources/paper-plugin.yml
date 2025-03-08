@@ -1,4 +1,4 @@
 name: essentials
-version: 0.0.b23
+version: 0.0.b24
 main: dev.craftefix.essentials.Main
 api-version: 1.21.4
