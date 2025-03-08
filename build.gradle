@@ -9,7 +9,7 @@ plugins {
     }
 
     group = 'dev.craftefix.craftUtils'
-    version = '0.0.b27'
+    version = '0.0.b28'
 
     repositories {
         maven {
