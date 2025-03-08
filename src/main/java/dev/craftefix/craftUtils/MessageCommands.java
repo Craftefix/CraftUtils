@@ -1,4 +1,4 @@
-package dev.craftefix.essentials;
+package dev.craftefix.craftUtils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -21,7 +21,7 @@ public class MessageCommands extends JavaPlugin implements Listener {
 
 
     @Command({"msg", "message", "tell", "cc msg"})
-    @CommandPermission("CraftNet.essentials.message")
+    @CommandPermission("CraftNet.craftUtils.message")
     public void msg(Player actor, @Named("player") Player target, @Named("message") String message) {
         if (actor.equals(target)) {
             actor.sendMessage(Component.text("You can't message yourself", NamedTextColor.RED));
@@ -62,7 +62,7 @@ public class MessageCommands extends JavaPlugin implements Listener {
     }
 
     @Command({"r", "reply", "cc reply"})
-    @CommandPermission("CraftNet.essentials.reply")
+    @CommandPermission("CraftNet.craftUtils.reply")
     public void reply(Player actor, @Named("message") String message) {
         UUID targetUUID = messagers.get(actor.getUniqueId());
         if (targetUUID != null) {
