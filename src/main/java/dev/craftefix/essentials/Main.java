@@ -11,7 +11,8 @@ public final class Main extends JavaPlugin {
         lamp.register(new TpCommands());
         lamp.register(new MessageCommands());
         lamp.register(new TpAskCommands());
-        // lamp.register(new HomeCommands());
-        lamp.register(new EnderChestCommands()); // Register commands
+        lamp.register(new EnderChestCommands());
+        lamp.register(new TrashCommands());
+
     }
 }

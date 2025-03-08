@@ -1,18 +1,18 @@
 [![Alpha Builder](https://github.com/Craftefix/essentials/actions/workflows/build.yml/badge.svg?branch=alpha-releases)](https://github.com/Craftefix/essentials/actions/workflows/build.yml)
 
-# DONT USE ANY BUILDS HERE, THIS IS JUST TESTING!
-# 99% *WONT* WORK
-only the workflow does
-# TRUST ME
 # Essentials Plugin
 
-A simple EssentialsX-like paper! plugin for the newest version(1.21.4). This plugin is specifically made for my own network CraftNet.
+A simple EssentialsX-like Paper plugin for the latest Paper version (1.21.4). This plugin is specifically made for my own network CraftNet.
+The Benefits are that it doesn't any important vanilla mechanics and is very lightweight.
 
 ## Commands
+- `/cc`
+  - `reply` - Reply to the last message received.
+  - `msg` - Send a private message to another player.
+  - `tpask` - Sends a teleport request to another player.
+  - `tpaccept` - Accepts a teleport request.
+  - `tpadeny` - Denies a teleport request.
+  - `tpacancel` - Cancels a teleport request.
+  - `trash` - Opens a trash bin inventory.
 
-- `/tp` - Teleport to a specified location or player.
-- `/r` - Reply to the last message received.
-- `/msg` - Send a private message to another player.
-- `/tpa` - Sends a teleport request to another player.
-- `/tpaccept` - Accepts a teleport request.
-- `/tpdeny` - Denies a teleport request.
+All Commands can be accessed by the `/cc` command but might have an alias.
