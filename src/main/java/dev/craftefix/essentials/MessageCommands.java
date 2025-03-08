@@ -2,6 +2,7 @@ package dev.craftefix.essentials;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,63 +19,60 @@ public class MessageCommands extends JavaPlugin implements Listener {
 
     private final HashMap<UUID, UUID> messagers = new HashMap<>();
 
-    private void logDebug(String message) {
-        // Debug logging is disabled since config support is removed
-    }
 
     @Command({"msg", "message", "tell", "cc msg"})
     @CommandPermission("CraftNet.essentials.message")
     public void msg(Player actor, @Named("player") Player target, @Named("message") String message) {
-        logDebug("Command /msg executed by: " + actor.getName());
-        logDebug("Message target: " + target.getName());
-        logDebug("Message content: " + message);
+        if (actor.equals(target)) {
+            actor.sendMessage(Component.text("You can't message yourself", NamedTextColor.RED));
+        } else {
+            sendMessages(actor, target, message);
 
-    if (actor.equals(target)) {
-        actor.sendMessage(Component.text("You whispered to yourself: ", NamedTextColor.GRAY)
-                .append(Component.text(message, NamedTextColor.GRAY)));
-    } else {
-        actor.sendMessage(Component.text("You to ")
-                .append(Component.text(target.getName(), NamedTextColor.YELLOW))
-                .append(Component.text(": ", NamedTextColor.GRAY))
-                .append(Component.text(message, NamedTextColor.GRAY)));
-        target.sendMessage(Component.text(actor.getName(), NamedTextColor.YELLOW)
-                .append(Component.text(" to you: ", NamedTextColor.GRAY))
-                .append(Component.text(message, NamedTextColor.GRAY)));
-
-                if (actor.isOnline() && target.isOnline()) {
+            if (actor.isOnline() && target.isOnline()) {
                 messagers.put(actor.getUniqueId(), target.getUniqueId());
-                }
+            }
         }
     }
+
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        logDebug("Player quit: " + e.getPlayer().getName());
-        messagers.remove(e.getPlayer().getUniqueId());
+         messagers.remove(e.getPlayer().getUniqueId());
+    }
+
+    public void sendMessages(Player actor, Player target, String message) {
+        actor.sendMessage(Component.text()
+                .append(Component.text("MSG ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD)) // Bold only for "MSG"
+                .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE)) // Explicitly disable bold
+                .append(Component.text("You", NamedTextColor.BLUE))
+                .append(Component.text(" ➠ ", NamedTextColor.DARK_GRAY))
+                .append(Component.text(target.getName(), NamedTextColor.GREEN))
+                .append(Component.text(": ", NamedTextColor.DARK_GRAY))
+                .append(Component.text(message, NamedTextColor.GRAY))
+                .build());
+
+        target.sendMessage(Component.text()
+                .append(Component.text("MSG ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD)) // Bold only for "MSG"
+                .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE)) // Explicitly disable bold
+                .append(Component.text(target.getName(), NamedTextColor.BLUE))
+                .append(Component.text(" ➠ ", NamedTextColor.DARK_GRAY))
+                .append(Component.text("You", NamedTextColor.GREEN))
+                .append(Component.text(": ", NamedTextColor.DARK_GRAY))
+                .append(Component.text(message, NamedTextColor.GRAY))
+                .build());
     }
 
     @Command({"r", "reply", "cc reply"})
     @CommandPermission("CraftNet.essentials.reply")
     public void reply(Player actor, @Named("message") String message) {
-        logDebug("Command /reply executed by: " + actor.getName());
-        logDebug("Reply message content: " + message);
-
         UUID targetUUID = messagers.get(actor.getUniqueId());
         if (targetUUID != null) {
             Player target = getServer().getPlayer(targetUUID);
             if (target != null && target.isOnline()) {
-                target.sendMessage(Component.text(actor.getName(), NamedTextColor.YELLOW)
-                        .append(Component.text(" to you: ", NamedTextColor.GRAY))
-                        .append(Component.text(message, NamedTextColor.GRAY)));
-                actor.sendMessage(Component.text("You to ")
-                        .append(Component.text(target.getName(), NamedTextColor.YELLOW))
-                        .append(Component.text(": ", NamedTextColor.GRAY))
-                        .append(Component.text(message, NamedTextColor.GRAY)));
+                sendMessages(actor, target, message);
             } else {
-                logDebug("The player being replied to is offline: UUID=" + targetUUID);
                 actor.sendMessage(Component.text("The player you are replying to is no longer online.", NamedTextColor.RED));
             }
         } else {
-            logDebug("Player attempted to reply but has no recent message target.");
             actor.sendMessage(Component.text("You don't have anyone to reply to.", NamedTextColor.RED));
         }
     }
