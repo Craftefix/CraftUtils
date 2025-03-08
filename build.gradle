@@ -9,7 +9,7 @@ plugins {
     }
 
     group = 'dev.craftefix.essentials'
-    version = '0.0.b22'
+    version = '0.0.b23'
 
     repositories {
         maven {
