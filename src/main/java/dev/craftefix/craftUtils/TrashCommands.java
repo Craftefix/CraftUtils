@@ -1,5 +1,4 @@
-package dev.craftefix.essentials;
-
+package dev.craftefix.craftUtils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,7 +10,7 @@ import revxrsal.commands.bukkit.annotation.CommandPermission;
     public class TrashCommands {
 
         @Command({"trash", "cc trash"})
-        @CommandPermission("CraftNet.essentials.trash")
+        @CommandPermission("CraftNet.craftUtils.trash")
         public void trash(Player player) {
             Inventory trashInventory = Bukkit.createInventory(null, InventoryType.CHEST, NamedTextColor.RED + "Trash");
             player.openInventory(trashInventory);

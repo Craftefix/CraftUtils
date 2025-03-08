@@ -1,4 +1,4 @@
-package dev.craftefix.essentials;
+package dev.craftefix.craftUtils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -18,7 +18,7 @@ public class TpAskCommands {
     HashMap<UUID, UUID> tpRequests = new HashMap<>();
 
     @Command({"tpask", "tpa", "cc tpask"})
-    @CommandPermission("CraftNet.essentials.tpask")
+    @CommandPermission("CraftNet.craftUtils.tpask")
     public void tpask(Player actor, @Named("Player") Player target) {
         if (actor.isOnline() && target.isOnline()) {
             if (actor.equals(target)) {
@@ -59,7 +59,7 @@ public class TpAskCommands {
     }
 
     @Command({"tpaaccept", "cc tpaaccept"})
-    @CommandPermission("CraftNet.essentials.tpaaccept")
+    @CommandPermission("CraftNet.craftUtils.tpaaccept")
     public void tpaccept(Player target) {
         if (tpRequests.get(target.getUniqueId()) != null) {
             Player actor = target.getServer().getPlayer(tpRequests.get(target.getUniqueId()));
@@ -73,7 +73,7 @@ public class TpAskCommands {
     }
 
     @Command({"tpadeny", "cc tpadeny"})
-    @CommandPermission("CraftNet.essentials.tpadeny")
+    @CommandPermission("CraftNet.craftUtils.tpadeny")
     public void tpdeny(Player target) {
         if (tpRequests.get(target.getUniqueId()) != null) {
             Player actor = target.getServer().getPlayer(tpRequests.get(target.getUniqueId()));
@@ -86,7 +86,7 @@ public class TpAskCommands {
     }
 
     @Command({"tpacancel", "cc tpacancel"})
-    @CommandPermission("CraftNet.essentials.tpacancel")
+    @CommandPermission("CraftNet.craftUtils.tpacancel")
     public void tpcancel(Player actor) {
         if (tpRequests.containsValue(actor.getUniqueId())) {
             tpRequests.entrySet().removeIf(entry -> {

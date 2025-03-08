@@ -1,4 +1,4 @@
-package dev.craftefix.essentials;
+package dev.craftefix.craftUtils;
 
     import org.bukkit.Location;
     import org.bukkit.WorldBorder;
@@ -29,7 +29,7 @@ package dev.craftefix.essentials;
         }
 
         @Subcommand("location")
-        @CommandPermission("CraftNet.essentials.teleport.location")
+        @CommandPermission("CraftNet.craftUtils.teleport.location")
         public void teleportLocation(Player sender, @Named("x") double x, @Named("y") double y, @Named("z") double z) {
             Location location = new Location(sender.getWorld(), x, y, z);
             if (isWithinWorldBorder(location) && isValidHeight(y)) {
@@ -40,7 +40,7 @@ package dev.craftefix.essentials;
         }
 
         @Subcommand("others")
-        @CommandPermission("CraftNet.essentials.teleport.others")
+        @CommandPermission("CraftNet.craftUtils.teleport.others")
         public void teleportOthers(Player sender, @Named("target") EntitySelector<LivingEntity> target, @Named("x") double x, @Named("y") double y, @Named("z") double z) {
             Location location = new Location(sender.getWorld(), x, y, z);
             if (isWithinWorldBorder(location) && isValidHeight(y)) {
@@ -53,7 +53,7 @@ package dev.craftefix.essentials;
         }
 
         @Subcommand("here")
-        @CommandPermission("CraftNet.essentials.teleport.here")
+        @CommandPermission("CraftNet.craftUtils.teleport.here")
         public void teleportHere(Player sender, @Named("target") EntitySelector<LivingEntity> target) {
             Location location = sender.getLocation();
             if (isWithinWorldBorder(location) && isValidHeight(location.getY())) {
@@ -66,7 +66,7 @@ package dev.craftefix.essentials;
         }
 
         @Subcommand("self")
-        @CommandPermission("CraftNet.essentials.teleport.self")
+        @CommandPermission("CraftNet.craftUtils.teleport.self")
         public void teleportSelf(Player sender, @Named("target") Entity target) {
             Location location = target.getLocation();
             if (isWithinWorldBorder(location) && isValidHeight(location.getY())) {
