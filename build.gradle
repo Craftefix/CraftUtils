@@ -5,12 +5,13 @@ plugins {
 
 shadowJar {
     relocate "revxrsal.lamp", "craftUtils.libs.lamp"
-    relocate "org.bstats", "craftUtils.libs.bstats" // Relocate bStats to avoid conflicts
+    relocate "org.bstats", "craftUtils.libs.bstats"
+    relocate "dev.triumphteam.triumph.gui", "craftUtils.libs.gui"
     minimize()
 }
 
 group = 'dev.craftefix.craftUtils'
-version = '0.0.b28'
+version = '0.0.b30'
 
 repositories {
     maven {
