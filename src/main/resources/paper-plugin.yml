@@ -2,4 +2,8 @@ name: craftUtils
 version: 0.0.b30
 main: dev.craftefix.craftUtils.Main
 api-version: 1.21.4
+description: A simple Utils plugin for Paper
+website: craftefix.dev
+authors:
+  - Craftefix
 depend: [TriumphGUI]
