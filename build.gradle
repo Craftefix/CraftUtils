@@ -10,7 +10,7 @@ shadowJar {
 }
 
 group = 'dev.craftefix.craftUtils'
-version = '0.0.b28'
+version = '0.0.b29'
 
 repositories {
     maven {
