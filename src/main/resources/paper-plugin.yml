@@ -1,5 +1,5 @@
 name: craftUtils
-version: 0.0.b30
+version: 0.0.b31
 main: dev.craftefix.craftUtils.Main
 api-version: 1.21.4
 depend: [TriumphGUI]
