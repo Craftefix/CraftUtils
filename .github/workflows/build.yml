@@ -74,7 +74,7 @@ jobs:
           gh release create "$TAG_NAME" "build/libs/${JAR_NAME}" \
             --title "Alpha Build ${TAG_NAME}" \
             --notes "Automated pre/alpha release from commit ${COMMIT_HASH}" \
-            --repo "${GITHUB_REPOSITORY}"
+            --repo "${GITHUB_REPOSITORY}" \
             --prerelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
