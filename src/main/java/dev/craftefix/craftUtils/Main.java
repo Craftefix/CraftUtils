@@ -11,7 +11,7 @@ public final class Main extends JavaPlugin {
 
         getLogger().info("Plugin is enabling...");
         var lamp = BukkitLamp.builder(this).build();
-        AdminGUI adminGUI = new AdminGUI(this);
+        AdminGUI adminGUI = new AdminGUI();
         lamp.register(new TpCommands());
         lamp.register(new MessageCommands());
         lamp.register(new TpAskCommands());
