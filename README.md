@@ -14,5 +14,6 @@ The Benefits are that it doesn't change any important vanilla mechanics and is v
   - `tpadeny` - Denies a teleport request.
   - `tpacancel` - Cancels a teleport request.
   - `trash` - Opens a trash bin inventory.
+  - `admingui` - Opens a powerful Interface for Admins
 
 All Commands can be accessed by the `/cc` command but might have an alias.
