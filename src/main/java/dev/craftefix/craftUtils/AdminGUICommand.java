@@ -12,8 +12,8 @@ public class AdminGUICommand {
         this.adminGUI = adminGUI;
     }
 
-    @Command("adminGUI")
-    @CommandPermission("CraftNet.craftUtils.adminGUI")
+    @Command({"admingui", "cc admingui"})
+    @CommandPermission("CraftNet.craftUtils.admingui")
     public void openAdminGUI(Player player) {
         adminGUI.openAdminGUI(player);
     }
