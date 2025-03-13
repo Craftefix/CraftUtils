@@ -1,45 +1,111 @@
 package dev.craftefix.craftUtils;
 
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import io.papermc.paper.ban.BanListType;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import revxrsal.commands.annotation.Command;
-import revxrsal.commands.bukkit.annotation.CommandPermission;
 
-public class AdminGUI implements Listener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class AdminGUI {
 
     private final JavaPlugin plugin;
-    private final Inventory adminInventory;
-    private final PlayersGUI playersGUI;
-    private final GamemodeGUI gamemodeGUI;
-    private final BroadcastGUI broadcastGUI;
+    private final ChestGui adminGui;
+    private final ChestGui gamemodeGui;
+    private final ChestGui broadcastGui;
+    private final ChestGui playerListGui;
+    private final ChestGui moderatePlayerGui;
+    private final PaginatedPane playerPane;
+    private final StaticPane moderatePlayerPane;
+
 
     public AdminGUI(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.adminInventory = Bukkit.createInventory(null, 9, "Admin GUI");
-        this.playersGUI = new PlayersGUI(plugin);
-        this.gamemodeGUI = new GamemodeGUI(plugin);
-        this.broadcastGUI = new BroadcastGUI(plugin);
 
-        // Create buttons
-        ItemStack gamemodeButton = createButton(Material.DIAMOND_SWORD, "Gamemode");
-        ItemStack broadcastButton = createButton(Material.PAPER, "Broadcast");
-        ItemStack playersButton = createButton(Material.PLAYER_HEAD, "Players");
+        // Player GUI
+        moderatePlayerGui = new ChestGui(1, "Moderate Player");
+        moderatePlayerPane = new StaticPane(0, 0, 9, 1);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.DIAMOND_SWORD, "Ban"), inventoryClickEvent -> {
+            Player target = (Player) inventoryClickEvent.getWhoClicked();
+            Bukkit.getBanList(BanListType.PROFILE).addBan(target.getName(), "You have been banned" , null, null);
+            target.kick(Component.text("You have been banned"));
 
-        // Add buttons to inventory
-        adminInventory.setItem(0, gamemodeButton);
-        adminInventory.setItem(1, broadcastButton);
-        adminInventory.setItem(2, playersButton);
+        }), 0, 0);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.PAPER, "Kick"), inventoryClickEvent -> {
+            Player target = (Player) inventoryClickEvent.getWhoClicked();
+            target.kick(Component.text("You have been kicked"));
+        }), 1, 0);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.MACE, "Kill"), inventoryClickEvent -> {
+            Player target = (Player) inventoryClickEvent.getWhoClicked();
+            target.setHealth(0);
+        }), 2, 0);
+        moderatePlayerGui.addPane(moderatePlayerPane);
 
-        // Register events
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+
+        // Admin GUI
+        adminGui = new ChestGui(1, "Admin GUI");
+        StaticPane adminPane = new StaticPane(0, 0, 9, 1);
+        adminPane.addItem(new GuiItem(createButton(Material.DIAMOND_SWORD, "Gamemode"), this::openGamemodeGui), 0, 0);
+        adminPane.addItem(new GuiItem(createButton(Material.PAPER, "Broadcast"), this::openBroadcastGui), 1, 0);
+        adminPane.addItem(new GuiItem(createButton(Material.PLAYER_HEAD, "Players"), this::openSelectorGui), 2, 0);
+        adminGui.addPane(adminPane);
+
+        // Gamemode GUI
+        gamemodeGui = new ChestGui(1, "Gamemode GUI");
+        StaticPane gamemodePane = new StaticPane(0, 0, 9, 1);
+        gamemodePane.addItem(new GuiItem(createButton(Material.GRASS_BLOCK, "Survival"), event -> event.getWhoClicked().setGameMode(GameMode.SURVIVAL)), 0, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.DIAMOND_BLOCK, "Creative"), event -> event.getWhoClicked().setGameMode(GameMode.CREATIVE)), 1, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.MAP, "Adventure"), event -> event.getWhoClicked().setGameMode(GameMode.ADVENTURE)), 2, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.ENDER_EYE, "Spectator"), event -> event.getWhoClicked().setGameMode(GameMode.SPECTATOR)), 3, 0);
+        gamemodeGui.addPane(gamemodePane);
+
+        // Broadcast GUI
+        broadcastGui = new ChestGui(1, "Broadcast GUI");
+
+        // Player List GUI with Pagination
+        playerListGui = new ChestGui(6, "Player List");
+        playerPane = new PaginatedPane(0, 0, 9, 5);
+        playerListGui.addPane(playerPane);
+
+        // Navigation Pane
+        StaticPane navigationPane = new StaticPane(0, 5, 9, 1);
+        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, "Previous Page"), event -> {
+            if (playerPane.getPage() > 0) {
+                playerPane.setPage(playerPane.getPage() - 1);
+                playerListGui.update();
+            }
+        }), 2, 0);
+
+        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, "Next Page"), event -> {
+            if (playerPane.getPage() < Math.max(playerPane.getPages() - 1, 0)) {
+                playerPane.setPage(playerPane.getPage() + 1);
+                playerListGui.update();
+            }
+        }), 6, 0);
+
+        playerListGui.addPane(navigationPane);
+
+        // Make items non-removable
+        adminGui.setOnGlobalClick(this::cancelEvent);
+        gamemodeGui.setOnGlobalClick(this::cancelEvent);
+        broadcastGui.setOnGlobalClick(this::cancelEvent);
+        playerListGui.setOnGlobalClick(this::cancelEvent);
+    }
+
+    private void cancelEvent(InventoryClickEvent event) {
+        event.setCancelled(true);
     }
 
     private ItemStack createButton(Material material, String name) {
@@ -51,59 +117,72 @@ public class AdminGUI implements Listener {
         }
         return item;
     }
-    @Command("adminGUI")
-    @CommandPermission("CraftNet.craftUtils.adminGUI")
+
     public void openAdminGUI(Player player) {
-        player.openInventory(adminInventory);
+        adminGui.show(player);
     }
 
-    private void openNewGUI(Player player, String title) {
-        switch (title) {
-            case "Players GUI":
-                playersGUI.openPlayersGUI(player);
-                break;
-            case "Gamemode GUI":
-                gamemodeGUI.openGamemodeGUI(player);
-                break;
-            case "Broadcast GUI":
-                broadcastGUI.openBroadcastGUI(player);
-                break;
-            default:
-                Inventory newInventory = Bukkit.createInventory(null, 9, title);
-                player.openInventory(newInventory);
-                break;
-        }
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() == null || !event.getView().getTitle().equals("Admin GUI")) {
-            return;
-        }
-
-        event.setCancelled(true); // Prevent item pickup
-
+    private void openGamemodeGui(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        ItemStack clickedItem = event.getCurrentItem();
+        gamemodeGui.show(player);
+    }
 
-        if (clickedItem == null || !clickedItem.hasItemMeta()) {
+    private void openBroadcastGui(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        broadcastGui.show(player);
+    }
+
+    private void openSelectorGui(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        populatePlayerList();
+        playerListGui.show(player);
+    }
+
+    private void populatePlayerList() {
+        playerPane.clear();
+        List<GuiItem> playerItems = new ArrayList<>();
+
+        for (Player target : Bukkit.getOnlinePlayers()) {
+            ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
+            SkullMeta meta = (SkullMeta) skull.getItemMeta();
+            meta.setOwningPlayer(target);
+            meta.setDisplayName(target.getName());
+            skull.setItemMeta(meta);
+
+            GuiItem guiItem = new GuiItem(skull, event -> {
+                event.setCancelled(true);
+                openPlayerGUI(Bukkit.getPlayerExact(event.getCurrentItem().toString()));
+            });
+
+            playerItems.add(guiItem);
+        }
+
+        if (playerItems.isEmpty()) {
+            ItemStack noPlayers = createButton(Material.BARRIER, "§cNo players online");
+            StaticPane noPlayersPane = new StaticPane(0, 0, 9, 5);
+            noPlayersPane.addItem(new GuiItem(noPlayers), 4, 2);
+            playerPane.addPane(0, noPlayersPane);
             return;
         }
 
-        String itemName = clickedItem.getItemMeta().getDisplayName();
+        int itemsPerPage = 45;
+        int pageCount = (int) Math.ceil(playerItems.size() / (double) itemsPerPage);
 
-        switch (itemName) {
-            case "Gamemode":
-                openNewGUI(player, "Gamemode GUI");
-                break;
-            case "Broadcast":
-                openNewGUI(player, "Broadcast GUI");
-                break;
-            case "Players":
-                openNewGUI(player, "Players GUI");
-                break;
-            default:
-                break;
+        for (int i = 0; i < pageCount; i++) {
+            StaticPane pagePane = new StaticPane(0, 0, 9, 5);
+            for (int j = 0; j < itemsPerPage; j++) {
+                int index = i * itemsPerPage + j;
+                if (index >= playerItems.size()) break;
+                int x = j % 9;
+                int y = j / 9;
+                pagePane.addItem(playerItems.get(index), x, y);
+            }
+            playerPane.addPane(i, pagePane);
         }
+
     }
+    private void openPlayerGUI(Player player) {
+        moderatePlayerGui.show(player);
+    }
+
 }
