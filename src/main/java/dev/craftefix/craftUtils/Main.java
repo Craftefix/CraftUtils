@@ -11,12 +11,13 @@ public final class Main extends JavaPlugin {
 
         getLogger().info("Plugin is enabling...");
         var lamp = BukkitLamp.builder(this).build();
+        AdminGUI adminGUI = new AdminGUI(this);
         lamp.register(new TpCommands());
         lamp.register(new MessageCommands());
         lamp.register(new TpAskCommands());
         lamp.register(new EnderChestCommands());
         lamp.register(new TrashCommands());
-        lamp.register(new AdminGUI(this));
+        lamp.register(new AdminGUICommand(adminGUI));
         getLogger().info("Commands registered.");
 
         int pluginId = 25026;

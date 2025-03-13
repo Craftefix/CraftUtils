@@ -6,4 +6,4 @@ description: A simple Utils plugin for Paper
 website: craftefix.dev
 authors:
   - Craftefix
-depend: [TriumphGUI]
+folia-supported: true
