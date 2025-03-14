@@ -10,7 +10,7 @@ import revxrsal.commands.bukkit.annotation.CommandPermission;
     public class TrashCommands {
 
         @Command({"trash", "cc trash"})
-        @CommandPermission("CraftNet.craftUtils.trash")
+        @CommandPermission("CraftUtils.trash")
         public void trash(Player player) {
             Inventory trashInventory = Bukkit.createInventory(null, InventoryType.CHEST, NamedTextColor.RED + "Trash");
             player.openInventory(trashInventory);
