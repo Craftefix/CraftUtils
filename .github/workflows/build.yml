@@ -47,20 +47,28 @@ jobs:
               -x test \
                 shadowJar
 
+      - name: Extract Version
+        id: extract_version
+        run: |
+          VERSION_FILE="build.gradle"
+          CURRENT_VERSION=$(grep -E "version\s*=\s*['\"]" "$VERSION_FILE" | awk -F"['\"]" '{print $2}')
+          echo "VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+
       - name: Create Release
         id: release
         run: |
           COMMIT_HASH=$(git rev-parse --short HEAD)
           JAR_PATH=$(ls build/libs/*-all.jar)
-          JAR_NAME="CraftUtils-${COMMIT_HASH}.jar"
+          JAR_NAME="CraftUtils-${CURRENT_VERSION}-${COMMIT_HASH}.jar"
           mv -v "$JAR_PATH" "build/libs/${JAR_NAME}"
-          gh release create "${COMMIT_HASH}" "build/libs/${JAR_NAME}" \
-            --title "Alpha Build ${COMMIT_HASH}" \
+          gh release create "${CURRENT_VERSION}-${COMMIT_HASH}" "build/libs/${JAR_NAME}" \
+            --title "Alpha Build ${CURRENT_VERSION}-${COMMIT_HASH}" \
             --notes "Automated pre/alpha release from commit ${COMMIT_HASH}" \
             --repo "${GITHUB_REPOSITORY}" \
             --prerelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CURRENT_VERSION: ${{ env.VERSION }}
 
       - name: Version Bump
         id: versioning
