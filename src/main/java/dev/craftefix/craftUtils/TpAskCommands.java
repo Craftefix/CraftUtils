@@ -18,7 +18,7 @@ public class TpAskCommands {
     HashMap<UUID, UUID> tpRequests = new HashMap<>();
 
     @Command({"tpask", "tpa", "cc tpask"})
-    @CommandPermission("CraftNet.craftUtils.tpask")
+    @CommandPermission("CraftUtils.tpask")
     public void tpask(Player actor, @Named("Player") Player target) {
         if (actor.isOnline() && target.isOnline()) {
             if (actor.equals(target)) {
@@ -59,7 +59,7 @@ public class TpAskCommands {
     }
 
     @Command({"tpaaccept", "cc tpaaccept"})
-    @CommandPermission("CraftNet.craftUtils.tpaaccept")
+    @CommandPermission("CraftUtils.tpaaccept")
     public void tpaccept(Player target) {
         if (tpRequests.get(target.getUniqueId()) != null) {
             Player actor = target.getServer().getPlayer(tpRequests.get(target.getUniqueId()));
@@ -73,7 +73,7 @@ public class TpAskCommands {
     }
 
     @Command({"tpadeny", "cc tpadeny"})
-    @CommandPermission("CraftNet.craftUtils.tpadeny")
+    @CommandPermission("CraftUtils.tpadeny")
     public void tpdeny(Player target) {
         if (tpRequests.get(target.getUniqueId()) != null) {
             Player actor = target.getServer().getPlayer(tpRequests.get(target.getUniqueId()));
@@ -86,7 +86,7 @@ public class TpAskCommands {
     }
 
     @Command({"tpacancel", "cc tpacancel"})
-    @CommandPermission("CraftNet.craftUtils.tpacancel")
+    @CommandPermission("CraftUtils.tpacancel")
     public void tpcancel(Player actor) {
         if (tpRequests.containsValue(actor.getUniqueId())) {
             tpRequests.entrySet().removeIf(entry -> {

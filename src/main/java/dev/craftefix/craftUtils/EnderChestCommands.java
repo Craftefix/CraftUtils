@@ -21,12 +21,12 @@ public class EnderChestCommands implements Listener {
 
 
     @Command({"enderchest", "ec", "cc enderchest"})
-    @CommandPermission("Craftnet.craftUtils.enderchest")
+    @CommandPermission("CraftUtils.enderchest")
     public void enderchest(Player player, @Optional @Named("target") Player target) {
         if (target == null) {
             // Open the player's own ender chest
             target = player;
-        } else if (!player.hasPermission("Craftnet.craftUtils.enderchest.others")) {
+        } else if (!player.hasPermission("CraftUtils.enderchest.others")) {
             player.sendMessage("You do not have permission to view others' ender chests.");
             return;
         }

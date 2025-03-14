@@ -29,7 +29,7 @@ package dev.craftefix.craftUtils;
         }
 
         @Subcommand("location")
-        @CommandPermission("CraftNet.craftUtils.teleport.location")
+        @CommandPermission("CraftUtils.teleport.location")
         public void teleportLocation(Player sender, @Named("x") double x, @Named("y") double y, @Named("z") double z) {
             Location location = new Location(sender.getWorld(), x, y, z);
             if (isWithinWorldBorder(location) && isValidHeight(y)) {
@@ -40,7 +40,7 @@ package dev.craftefix.craftUtils;
         }
 
         @Subcommand("others")
-        @CommandPermission("CraftNet.craftUtils.teleport.others")
+        @CommandPermission("CraftUtils.teleport.others")
         public void teleportOthers(Player sender, @Named("target") EntitySelector<LivingEntity> target, @Named("x") double x, @Named("y") double y, @Named("z") double z) {
             Location location = new Location(sender.getWorld(), x, y, z);
             if (isWithinWorldBorder(location) && isValidHeight(y)) {
@@ -53,7 +53,7 @@ package dev.craftefix.craftUtils;
         }
 
         @Subcommand("here")
-        @CommandPermission("CraftNet.craftUtils.teleport.here")
+        @CommandPermission("CraftUtils.teleport.here")
         public void teleportHere(Player sender, @Named("target") EntitySelector<LivingEntity> target) {
             Location location = sender.getLocation();
             if (isWithinWorldBorder(location) && isValidHeight(location.getY())) {
@@ -66,7 +66,7 @@ package dev.craftefix.craftUtils;
         }
 
         @Subcommand("self")
-        @CommandPermission("CraftNet.craftUtils.teleport.self")
+        @CommandPermission("CraftUtils.teleport.self")
         public void teleportSelf(Player sender, @Named("target") Entity target) {
             Location location = target.getLocation();
             if (isWithinWorldBorder(location) && isValidHeight(location.getY())) {
