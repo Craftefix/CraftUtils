@@ -4,9 +4,9 @@
 
 A simple Utils Paper plugin for the latest Paper version (1.21.4).  
 The Benefits are that it doesn't change any important vanilla mechanics and is very lightweight.
-
+Should work with Folia, but it's not fully tested or will be supported.
 ## Commands
-- `/cc`
+- `/cu`
   - `reply` - Reply to the last message received.
   - `msg` - Send a private message to another player.
   - `tpask` - Sends a teleport request to another player.
@@ -16,4 +16,4 @@ The Benefits are that it doesn't change any important vanilla mechanics and is v
   - `trash` - Opens a trash bin inventory.
   - `admingui` - Opens a powerful Interface for Admins
 
-All Commands can be accessed by the `/cc` command but might have an alias.
+All Commands can be accessed by the `/cu` command but might have an alias.

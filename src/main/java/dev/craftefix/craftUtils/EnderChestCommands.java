@@ -20,7 +20,7 @@ public class EnderChestCommands implements Listener {
     private final Map<UUID, Player> openInventories = new HashMap<>();
 
 
-    @Command({"enderchest", "ec", "cc enderchest"})
+    @Command({"enderchest", "ec", "cu enderchest"})
     @CommandPermission("CraftUtils.enderchest")
     public void enderchest(Player player, @Optional @Named("target") Player target) {
         if (target == null) {

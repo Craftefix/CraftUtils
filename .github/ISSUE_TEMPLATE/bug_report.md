@@ -24,7 +24,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Server Info (please complete the following information):**
 - Minecraft Version: [e.g., 1.21.4]
-- CraftUtils Version: [e.g., 1.0.0]
+- CraftUtils Version: [e.g., 0.0.b47]
 - Other Plugins Installed: [list other plugins]
 
 **Additional context**

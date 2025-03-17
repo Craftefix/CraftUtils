@@ -16,8 +16,9 @@ public final class Main extends JavaPlugin {
         lamp.register(new MessageCommands());
         lamp.register(new TpAskCommands());
         lamp.register(new EnderChestCommands());
-        lamp.register(new TrashCommands());
         lamp.register(new AdminGUICommand(adminGUI));
+        lamp.register(new AliasCommands());
+        lamp.register(new AbilityCommands());
         getLogger().info("Commands registered.");
 
         int pluginId = 25026;

@@ -97,11 +97,11 @@ public class AdminGUI {
         // Broadcast GUI
         broadcastGui = new ChestGui(1, "Broadcast GUI");
         StaticPane broadcastPane = new StaticPane(0, 0, 9, 1);
-        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Shutdown Message"), _ -> Bukkit.broadcast(Component.text()
+        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Shutdown Message"), nouse -> Bukkit.broadcast(Component.text()
                 .append(Component.text("Server is shutting down", NamedTextColor.RED).decorate(TextDecoration.BOLD)).build())), 0, 0);
-        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Restart Message"), _ -> Bukkit.broadcast(Component.text()
+        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Restart Message"), nouse -> Bukkit.broadcast(Component.text()
                 .append(Component.text("Server is restarting", NamedTextColor.RED).decorate(TextDecoration.BOLD)).build())), 1, 0);
-        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Maintenance (Soon™) Message"), _ -> Bukkit.broadcast(Component.text()
+        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Maintenance (Soon™) Message"), nouse -> Bukkit.broadcast(Component.text()
                 .append(Component.text("Server is going in Maintenance (Soon™)", NamedTextColor.RED).decorate(TextDecoration.BOLD)).build())), 2, 0);
 
         broadcastPane.addItem(new GuiItem(createButton(Material.ARROW, "Back"), event -> adminGui.show(event.getWhoClicked())), 8, 0);
@@ -116,14 +116,14 @@ public class AdminGUI {
 
         // Navigation Pane
         StaticPane navigationPane = new StaticPane(0, 5, 9, 1);
-        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, "Previous Page"), _ -> {
+        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, "Previous Page"), nouse -> {
             if (playerPane.getPage() > 0) {
                 playerPane.setPage(playerPane.getPage() - 1);
                 playerListGui.update();
             }
         }), 2, 0);
 
-        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, "Next Page"), _ -> {
+        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, "Next Page"), nouse -> {
             if (playerPane.getPage() < Math.max(playerPane.getPages() - 1, 0)) {
                 playerPane.setPage(playerPane.getPage() + 1);
                 playerListGui.update();
@@ -158,6 +158,9 @@ public class AdminGUI {
         List<GuiItem> playerItems = new ArrayList<>();
 
         for (Player target : Bukkit.getOnlinePlayers()) {
+            if (target.hasPermission("CraftUtils.hide")) {
+                continue;
+            }
             ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta meta = (SkullMeta) skull.getItemMeta();
             meta.setOwningPlayer(target);
@@ -204,17 +207,17 @@ public class AdminGUI {
 
     private void openPlayerGUI(Player executor, Player target) {
         moderatePlayerPane.clear();
-        moderatePlayerPane.addItem(new GuiItem(createButton(Material.BARRIER, "Ban"), _ -> {
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.BARRIER, "Ban"), nouse -> {
             Bukkit.getBanList(BanListType.PROFILE).addBan(target.getName(), "You have been banned", null, null);
             target.kick(Component.text("You have been banned"));
         }), 0, 0);
-        moderatePlayerPane.addItem(new GuiItem(createButton(Material.MACE, "Kick"), _ -> target.kick(Component.text("You have been kicked"))), 1, 0);
-        moderatePlayerPane.addItem(new GuiItem(createButton(Material.TNT, "Kill"), _ -> target.setHealth(0)), 2, 0);
-        moderatePlayerPane.addItem(new GuiItem(createButton(Material.STRUCTURE_VOID, "IP-Ban"), _ -> {
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.MACE, "Kick"), nouse -> target.kick(Component.text("You have been kicked"))), 1, 0);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.TNT, "Kill"), nouse -> target.setHealth(0)), 2, 0);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.STRUCTURE_VOID, "IP-Ban"), nouse -> {
             Bukkit.getBanList(BanListType.IP).addBan(target.getAddress().getHostString(), "You have been IP-banned", null, null);
             target.kick(Component.text("You have been IP-banned")); }), 3, 0);
-        moderatePlayerPane.addItem(new GuiItem(createButton(Material.PAPER, "Clear Inventory"), _ -> target.getInventory().clear()), 4, 0);
-        moderatePlayerPane.addItem(new GuiItem(createButton(Material.ENDER_EYE, "Clear Ender Chest"), _ -> target.getEnderChest().clear()), 5, 0);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.PAPER, "Clear Inventory"), nouse -> target.getInventory().clear()), 4, 0);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.ENDER_EYE, "Clear Ender Chest"), nouse -> target.getEnderChest().clear()), 5, 0);
         moderatePlayerPane.addItem(new GuiItem(createButton(Material.ENDER_PEARL, "Teleport to"), event -> event.getWhoClicked().teleport(target)), 6, 0);
         moderatePlayerPane.addItem(new GuiItem(createButton(Material.ARROW, "Back"), event -> playerListGui.show(event.getWhoClicked())), 8, 0);
 

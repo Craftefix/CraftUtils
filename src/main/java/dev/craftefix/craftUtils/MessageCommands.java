@@ -20,7 +20,7 @@ public class MessageCommands extends JavaPlugin implements Listener {
     private final HashMap<UUID, UUID> messagers = new HashMap<>();
 
 
-    @Command({"msg", "message", "tell", "cc msg"})
+    @Command({"msg", "message", "tell", "cu msg", "w", "whisper"})
     @CommandPermission("CraftUtils.message")
     public void msg(Player actor, @Named("player") Player target, @Named("message") String message) {
         if (actor.equals(target)) {
@@ -61,7 +61,7 @@ public class MessageCommands extends JavaPlugin implements Listener {
                 .build());
     }
 
-    @Command({"r", "reply", "cc reply"})
+    @Command({"r", "reply", "cu reply"})
     @CommandPermission("CraftUtils.reply")
     public void reply(Player actor, @Named("message") String message) {
         UUID targetUUID = messagers.get(actor.getUniqueId());
