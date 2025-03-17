@@ -12,7 +12,7 @@ public class AdminGUICommand {
         this.adminGUI = adminGUI;
     }
 
-    @Command({"admingui", "cc admingui"})
+    @Command({"admingui", "cu admingui"})
     @CommandPermission("CraftUtils.admingui")
     public void openAdminGUI(Player player) {
         adminGUI.openAdminGUI(player);
