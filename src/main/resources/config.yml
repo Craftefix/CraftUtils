@@ -5,6 +5,7 @@ database: # MariaDB only
 commands:
   tp: true
   message: true
+  tpAsk: true
   enderChest: true
   adminGUI: true
   alias: true
