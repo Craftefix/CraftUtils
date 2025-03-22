@@ -1,4 +1,4 @@
-package dev.craftefix.craftUtils;
+package dev.craftefix.craftUtils.commands;
 
 
 import org.bukkit.entity.Player;
