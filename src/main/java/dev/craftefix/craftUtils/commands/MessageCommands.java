@@ -1,4 +1,4 @@
-package dev.craftefix.craftUtils;
+package dev.craftefix.craftUtils.commands;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

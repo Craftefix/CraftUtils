@@ -1,4 +1,4 @@
-package dev.craftefix.craftUtils;
+package dev.craftefix.craftUtils.commands;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -26,6 +26,8 @@ public class AliasCommands {
             actor.setGameMode(GameMode.SURVIVAL);
         }
     }
+
+
     @Command("gma")
     @CommandPermission("CraftUtils.Gamemode.Adventure")
     public void gma(Player actor, @Optional Player target) {
