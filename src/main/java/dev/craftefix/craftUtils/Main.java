@@ -15,7 +15,6 @@ public final class Main extends JavaPlugin {
         enableLamp.enable();
 
         // Create the config file
-        getConfig().options().copyDefaults();
         saveDefaultConfig();
 
         // Initialize bStats
