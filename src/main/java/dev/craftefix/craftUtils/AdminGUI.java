@@ -23,6 +23,15 @@ import java.util.List;
 
 public class AdminGUI {
 
+    // Admin GUI for managing players
+    // Responsible for creating and managing the Admin GUI with sub-GUIs for players, gamemodes, and broadcasting messages
+
+    // Main Admin GUI
+    // - Gamemode GUI: Survival, Creative, Adventure, Spectator
+    // - Broadcast GUI: Shutdown, Restart, Maintenance messages
+    // - Player List GUI: Moderate Player GUI (Ban, Kick, Kill, IP-Ban, Clear Inventory, Clear Ender Chest, Teleport)
+
+
     private final ChestGui adminGui;
     private final ChestGui gamemodeGui;
     private final ChestGui broadcastGui;
@@ -35,6 +44,7 @@ public class AdminGUI {
         event.setCancelled(true);
     }
 
+    // Create a button with both a (Material,  Name)
     private ItemStack createButton(Material material, String name) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
@@ -49,11 +59,8 @@ public class AdminGUI {
         adminGui.show(player);
     }
 
-    private void openGamemodeGui(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        gamemodeGui.show(player);
-    }
-
+    // Creates the Admin GUI with sub-GUIs for managing players, gamemodes, and broadcasting messages
+    // Opening is handled by the open*Gui methods below
     public AdminGUI(){
 
         // Create grey filler item
@@ -86,13 +93,14 @@ public class AdminGUI {
         // Gamemode GUI
         gamemodeGui = new ChestGui(1, "Gamemode GUI");
         StaticPane gamemodePane = new StaticPane(0, 0, 9, 1);
-        gamemodePane.addItem(new GuiItem(createButton(Material.GRASS_BLOCK, "Survival"), event -> event.getWhoClicked().setGameMode(GameMode.SURVIVAL)), 0, 0);
-        gamemodePane.addItem(new GuiItem(createButton(Material.DIAMOND_BLOCK, "Creative"), event -> event.getWhoClicked().setGameMode(GameMode.CREATIVE)), 2, 0);
-        gamemodePane.addItem(new GuiItem(createButton(Material.MAP, "Adventure"), event -> event.getWhoClicked().setGameMode(GameMode.ADVENTURE)), 4, 0);
-        gamemodePane.addItem(new GuiItem(createButton(Material.ENDER_EYE, "Spectator"), event -> event.getWhoClicked().setGameMode(GameMode.SPECTATOR)), 6, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.GRASS_BLOCK, "Survival"), event -> changeGamemode(event, GameMode.SURVIVAL)), 0, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.DIAMOND_BLOCK, "Creative"), event -> changeGamemode(event, GameMode.CREATIVE)), 2, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.MAP, "Adventure"), event -> changeGamemode(event, GameMode.ADVENTURE)), 4, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.ENDER_EYE, "Spectator"), event -> changeGamemode(event, GameMode.SPECTATOR)), 6, 0);
         gamemodePane.fillWith(fillerItem.getItem());
         gamemodePane.addItem(new GuiItem(createButton(Material.ARROW, "Back"), event -> adminGui.show(event.getWhoClicked())), 8, 0);
         gamemodeGui.addPane(gamemodePane);
+
 
         // Broadcast GUI
         broadcastGui = new ChestGui(1, "Broadcast GUI");
@@ -116,19 +124,20 @@ public class AdminGUI {
 
         // Navigation Pane
         StaticPane navigationPane = new StaticPane(0, 5, 9, 1);
-        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, "Previous Page"), nouse -> {
+        navigationPane.addItem(new GuiItem(createButton(Material.SPECTRAL_ARROW, "Previous Page"), nouse -> {
             if (playerPane.getPage() > 0) {
                 playerPane.setPage(playerPane.getPage() - 1);
                 playerListGui.update();
             }
         }), 2, 0);
 
-        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, "Next Page"), nouse -> {
+        navigationPane.addItem(new GuiItem(createButton(Material.SPECTRAL_ARROW, "Next Page"), nouse -> {
             if (playerPane.getPage() < Math.max(playerPane.getPages() - 1, 0)) {
                 playerPane.setPage(playerPane.getPage() + 1);
                 playerListGui.update();
             }
-        }), 7, 0);
+        }), 6, 0);
+        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, "Back"), event -> adminGui.show(event.getWhoClicked())), 8, 0);
 
         navigationPane.fillWith(fillerItem.getItem());
         playerListGui.addPane(navigationPane);
@@ -141,6 +150,19 @@ public class AdminGUI {
         playerListGui.setOnGlobalClick(this::cancelEvent);
         moderatePlayerGui.setOnGlobalClick(this::cancelEvent);
     }
+    public void changeGamemode(InventoryClickEvent event, GameMode gameMode) {
+        if (event.getWhoClicked().getGameMode() == gameMode) {
+            event.getWhoClicked().sendMessage(Component.text("You are already in " + gameMode.toString().toLowerCase(), NamedTextColor.GRAY));
+        } else {
+            event.getWhoClicked().setGameMode(gameMode);
+            event.getWhoClicked().sendMessage(Component.text("Your gamemode has been changed to " + gameMode.toString().toLowerCase(), NamedTextColor.GRAY));
+        }
+    }
+
+    private void openGamemodeGui(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        gamemodeGui.show(player);
+    }
 
     private void openBroadcastGui(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
@@ -150,9 +172,11 @@ public class AdminGUI {
     private void openSelectorGui(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         populatePlayerList();
+        playerPane.setPage(0);
         playerListGui.show(player);
     }
 
+    // Populates the player list with online players
     private void populatePlayerList() {
         playerPane.clear();
         List<GuiItem> playerItems = new ArrayList<>();

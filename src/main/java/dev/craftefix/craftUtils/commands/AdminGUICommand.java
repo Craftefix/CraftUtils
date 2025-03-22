@@ -1,5 +1,6 @@
-package dev.craftefix.craftUtils;
+package dev.craftefix.craftUtils.commands;
 
+import dev.craftefix.craftUtils.AdminGUI;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.bukkit.annotation.CommandPermission;

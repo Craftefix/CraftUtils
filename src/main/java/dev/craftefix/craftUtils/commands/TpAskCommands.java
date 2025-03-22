@@ -1,4 +1,4 @@
-package dev.craftefix.craftUtils;
+package dev.craftefix.craftUtils.commands;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -104,8 +104,8 @@ public class TpAskCommands implements Listener {
             tpRequests.entrySet().removeIf(entry -> {
                 if (entry.getValue().getActorUUID().equals(actor.getUniqueId())) {
                     Player target = actor.getServer().getPlayer(entry.getKey());
-                    if (target != null ) {
-                        target.sendMessage(Component.text("Teleport request from " + actor +" canceled!", NamedTextColor.RED));
+                    if (target != null ){
+                        target.sendMessage(Component.text("Teleport request from " + actor + " canceled!", NamedTextColor.RED));
                     }
 
                     return true;
