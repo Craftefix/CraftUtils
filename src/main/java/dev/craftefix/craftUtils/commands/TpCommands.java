@@ -1,4 +1,4 @@
-package dev.craftefix.craftUtils;
+package dev.craftefix.craftUtils.commands;
 
     import org.bukkit.Location;
     import org.bukkit.WorldBorder;
@@ -20,8 +20,8 @@ package dev.craftefix.craftUtils;
             double z = location.getZ();
             double size = border.getSize() / 2;
             Location center = border.getCenter();
-            return x >= center.getX() - size && x <= center.getX() + size &&
-                    z >= center.getZ() - size && z <= center.getZ() + size;
+            return x >= center.getX() - size && x <= center.getX() + size
+                    && z >= center.getZ() - size && z <= center.getZ() + size;
         }
 
         private boolean isValidHeight(double y) {

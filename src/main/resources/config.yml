@@ -1,0 +1,11 @@
+database: # MariaDB only
+  host: localhost
+  port: 3306
+  password: password
+commands:
+  tp: true
+  message: true
+  enderChest: true
+  adminGUI: true
+  alias: true
+  ability: true
