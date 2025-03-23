@@ -1,6 +1,7 @@
 package dev.craftefix.craftUtils;
 
 import dev.craftefix.craftUtils.commands.*;
+import dev.craftefix.craftUtils.database.HomeManager;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import revxrsal.commands.bukkit.BukkitLamp;
@@ -9,9 +10,11 @@ import java.util.Map;
 
 public final class EnableLamp {
     private final Main plugin;
+    private HomeManager homeManager;
 
     public EnableLamp(Main plugin) {
         this.plugin = plugin;
+        this.homeManager = new HomeManager(); // Initialize homeManager here
     }
 
     public void enable() {
@@ -19,13 +22,14 @@ public final class EnableLamp {
         AdminGUI adminGUI = new AdminGUI();
 
         var commandMap = Map.of(
-            "tp", new TpCommands(),
-            "message", new MessageCommands(),
-            "tpAsk", new TpAskCommands(),
-            "enderChest", new EnderChestCommands(),
-            "adminGUI", new AdminGUICommand(adminGUI),
-            "alias", new AliasCommands(),
-            "ability", new AbilityCommands()
+                "tp", new TpCommands(),
+                "message", new MessageCommands(),
+                "tpAsk", new TpAskCommands(),
+                "enderChest", new EnderChestCommands(),
+                "adminGUI", new AdminGUICommand(adminGUI),
+                "alias", new AliasCommands(),
+                "ability", new AbilityCommands(),
+                "homes", new HomeCommand(homeManager) // Pass the HomeManager instance here
         );
 
         var commands = plugin.getConfig().getConfigurationSection("commands").getKeys(false);

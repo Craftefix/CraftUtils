@@ -1,7 +1,9 @@
 database: # MariaDB only
+  username: user
   host: localhost
   port: 3306
   password: password
+  database: CraftUtils
 commands:
   tp: true
   message: true
@@ -10,3 +12,4 @@ commands:
   adminGUI: true
   alias: true
   ability: true
+  homes: true
