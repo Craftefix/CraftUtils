@@ -15,5 +15,9 @@ Should work with Folia, but it's not fully tested or will be supported.
   - `tpacancel` - Cancels a teleport request.
   - `trash` - Opens a trash bin inventory.
   - `admingui` - Opens a powerful Interface for Admins
+  - `home` - Teleports to the specified home
+  - `delhome` - Deletes the specified home
+  - `sethome` - Creates a home
+  - `homes` - Shows the users homes
 
 All Commands can be accessed by the `/cu` command but might have an alias.
