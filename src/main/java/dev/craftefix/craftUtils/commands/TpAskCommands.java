@@ -26,7 +26,10 @@ public class TpAskCommands implements Listener {
         cleanUpOldRequests();
         if (actor.isOnline() && target.isOnline()) {
             if (actor.equals(target)) {
-                actor.sendMessage(Component.text("You can't teleport to yourself!", NamedTextColor.RED));
+                actor.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text("You can't teleport to yourself!", NamedTextColor.RED)));
                 return;
             }
             if (tpRequests.get(target.getUniqueId()) == null) {
@@ -37,7 +40,7 @@ public class TpAskCommands implements Listener {
                         .append(Component.text("Sent teleport request to ", NamedTextColor.GRAY))
                         .append(Component.text(target.getName(), NamedTextColor.BLUE))
                         .append(Component.text(". \n", NamedTextColor.DARK_GRAY))
-                        .append(Component.text(" [Cancel] ", NamedTextColor.DARK_RED))
+                        .append(Component.text(" [Cancel] ", NamedTextColor.RED))
                         .clickEvent(ClickEvent.runCommand("/cu tpacancel")));
 
                 target.sendMessage(Component.text()
@@ -71,8 +74,14 @@ public class TpAskCommands implements Listener {
             Player actor = target.getServer().getPlayer(request.getActorUUID());
             if (actor != null) {
                 actor.teleport(target);
-                actor.sendMessage(Component.text("Teleport request accepted!", NamedTextColor.GREEN));
-                target.sendMessage(Component.text("Teleport request accepted!", NamedTextColor.GREEN));
+                actor.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append( Component.text("Teleport request accepted!", NamedTextColor.GREEN)));
+                target.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append( Component.text("Teleport request accepted!", NamedTextColor.GREEN)));
                 tpRequests.remove(target.getUniqueId());
             }
         }
@@ -86,8 +95,14 @@ public class TpAskCommands implements Listener {
         if (request != null) {
             Player actor = target.getServer().getPlayer(request.getActorUUID());
             if (actor != null) {
-                actor.sendMessage(Component.text("Teleport request denied!", NamedTextColor.RED));
-                target.sendMessage(Component.text("Teleport request denied!", NamedTextColor.RED));
+                actor.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append( Component.text("Teleport request denied!", NamedTextColor.GREEN)));
+                target.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append( Component.text("Teleport request denied!", NamedTextColor.GREEN)));
                 tpRequests.remove(target.getUniqueId());
             }
         }
