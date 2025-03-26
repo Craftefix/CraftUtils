@@ -1,9 +1,6 @@
 name: Alpha Builder
 
 on:
-  push:
-    branches:
-      - alpha-releases
   workflow_dispatch:
 
 permissions:

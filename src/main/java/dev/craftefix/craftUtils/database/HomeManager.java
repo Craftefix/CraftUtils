@@ -1,5 +1,8 @@
 package dev.craftefix.craftUtils.database;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,26 +12,27 @@ import java.util.List;
 import java.util.Optional;
 
 public class HomeManager {
-    // Create a home record
-    public void createHome(String playerUUID, String homeName, double x, double y, double z) {
-        String query = "INSERT INTO homes (owner_uuid, home_name, x, y, z) VALUES (?, ?, ?, ?, ?)";
-        try (Connection connection = DatabaseManager.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+    public void createHome(String playerUUID, String homeName, double x, double y, double z, World world) {
+        String query = "INSERT INTO homes (owner_uuid, home_name, x, y, z, world) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             stmt.setString(2, homeName);
             stmt.setDouble(3, x);
             stmt.setDouble(4, y);
             stmt.setDouble(5, z);
+            stmt.setString(6, world.getName());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // Get all homes of a player
-    public List<Home> getAllHomes(String playerUUID) {
+    public static List<Home> getAllHomes(String playerUUID) {
         List<Home> homes = new ArrayList<>();
         String query = "SELECT * FROM homes WHERE owner_uuid = ?";
-        try (Connection connection = DatabaseManager.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             try (ResultSet resultSet = stmt.executeQuery()) {
                 while (resultSet.next()) {
@@ -37,7 +41,8 @@ public class HomeManager {
                             resultSet.getString("home_name"),
                             resultSet.getDouble("x"),
                             resultSet.getDouble("y"),
-                            resultSet.getDouble("z")
+                            resultSet.getDouble("z"),
+                            resultSet.getString("world")
                     ));
                 }
             }
@@ -47,10 +52,10 @@ public class HomeManager {
         return homes;
     }
 
-    // Get a player's home
     public Optional<Home> getHome(String playerUUID, String homeName) {
         String query = "SELECT * FROM homes WHERE owner_uuid = ? AND home_name = ?";
-        try (Connection connection = DatabaseManager.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             stmt.setString(2, homeName);
             try (ResultSet resultSet = stmt.executeQuery()) {
@@ -60,8 +65,8 @@ public class HomeManager {
                             resultSet.getString("home_name"),
                             resultSet.getDouble("x"),
                             resultSet.getDouble("y"),
-                            resultSet.getDouble("z")
-                    ));
+                            resultSet.getDouble("z"),
+                            resultSet.getString("world")));
                 }
             }
         } catch (SQLException e) {
@@ -70,25 +75,26 @@ public class HomeManager {
         return Optional.empty();
     }
 
-    // Update a home
-    public void updateHome(String playerUUID, String homeName, double x, double y, double z) {
-        String query = "UPDATE homes SET x = ?, y = ?, z = ? WHERE owner_uuid = ? AND home_name = ?";
-        try (Connection connection = DatabaseManager.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+    public void updateHome(String playerUUID, String homeName, double x, double y, double z, World world) {
+        String query = "UPDATE homes SET x = ?, y = ?, z = ?, world = ? WHERE owner_uuid = ? AND home_name = ?";
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setDouble(1, x);
             stmt.setDouble(2, y);
             stmt.setDouble(3, z);
-            stmt.setString(4, playerUUID);
-            stmt.setString(5, homeName);
+            stmt.setString(4, world.getName());
+            stmt.setString(5, playerUUID);
+            stmt.setString(6, homeName);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // Delete a home
     public void deleteHome(String playerUUID, String homeName) {
         String query = "DELETE FROM homes WHERE owner_uuid = ? AND home_name = ?";
-        try (Connection connection = DatabaseManager.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             stmt.setString(2, homeName);
             stmt.executeUpdate();
@@ -96,26 +102,27 @@ public class HomeManager {
             e.printStackTrace();
         }
     }
-
-    // Inner class for Home representation
     public static class Home {
         private String playerUUID;
         private String homeName;
         private double x, y, z;
+        private String worldName;
 
-        public Home(String playerUUID, String homeName, double x, double y, double z) {
+        public Home(String playerUUID, String homeName, double x, double y, double z, String worldName) {
             this.playerUUID = playerUUID;
             this.homeName = homeName;
             this.x = x;
             this.y = y;
             this.z = z;
+            this.worldName = worldName;
         }
 
-        // Getters and setters
         public String getPlayerUUID() { return playerUUID; }
         public String getHomeName() { return homeName; }
         public double getX() { return x; }
         public double getY() { return y; }
         public double getZ() { return z; }
+        public String getWorldName() { return worldName; }
+        public World getWorld() { return Bukkit.getWorld(worldName); }
     }
 }
