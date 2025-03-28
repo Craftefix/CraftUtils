@@ -13,3 +13,4 @@ commands:
   alias: true
   ability: true
   homes: true
+  warps: true
