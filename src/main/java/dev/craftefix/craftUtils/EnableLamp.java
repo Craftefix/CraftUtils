@@ -2,6 +2,7 @@ package dev.craftefix.craftUtils;
 
 import dev.craftefix.craftUtils.commands.*;
 import dev.craftefix.craftUtils.database.HomeManager;
+import dev.craftefix.craftUtils.database.WarpManager;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import revxrsal.commands.bukkit.BukkitLamp;
@@ -20,16 +21,18 @@ public final class EnableLamp {
     public void enable() {
         var lamp = BukkitLamp.builder(this.plugin).build();
         AdminGUI adminGUI = new AdminGUI();
-
+        WarpManager warpManager = new WarpManager();
+        
         var commandMap = Map.of(
-                "tp", new TpCommands(),
+                "tp", new TpCommand(),
                 "message", new MessageCommands(),
                 "tpAsk", new TpAskCommands(),
                 "enderChest", new EnderChestCommands(),
                 "adminGUI", new AdminGUICommand(adminGUI),
                 "alias", new AliasCommands(),
                 "ability", new AbilityCommands(),
-                "homes", new HomeCommand(homeManager) // Pass the HomeManager instance here
+                "homes", new HomeCommand(homeManager),
+                "warps", new WarpCommand(warpManager)
         );
 
         var commands = plugin.getConfig().getConfigurationSection("commands").getKeys(false);
