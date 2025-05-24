@@ -14,3 +14,4 @@ commands:
   ability: true
   homes: true
   warps: true
+  crash: true

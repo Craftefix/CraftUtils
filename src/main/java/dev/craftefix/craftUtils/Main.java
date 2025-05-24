@@ -4,19 +4,18 @@ package dev.craftefix.craftUtils;
 import dev.craftefix.craftUtils.database.DatabaseManager;
 import dev.craftefix.craftUtils.database.HomeManager;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
     private static Main instance;
 
+
     @Override
     public void onEnable() {
         instance = this;
-        // Plugin startup logic
-        // Register the suggestion provider
+
         HomeManager homeManager = new HomeManager();
-        Player player = getServer().getPlayer("playerName"); // Replace "playerName" with the actual player name
+
 
 
         // Register the commands
