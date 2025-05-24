@@ -5,9 +5,9 @@ plugins {
 
 shadowJar {
     relocate "com.github.stefvanschie.inventoryframework", "dev.craftefix.craftUtils.inventoryframework"
-    relocate "revxrsal.lamp", "craftUtils.libs.lamp"
-    relocate "org.bstats", "craftUtils.libs.bstats"
-    relocate "com.zaxxer.HikariCP", "craftUtils.libs.HikariCP"
+    relocate "revxrsal.lamp", "dev.craftefix.craftUtils.libs.lamp"
+    relocate "org.bstats", "dev.craftefix.craftUtils.libs.bstats"
+    relocate "com.zaxxer.HikariCP", "dev.craftefix.craftUtils.libs.HikariCP"
     minimize()
 }
 
@@ -28,6 +28,10 @@ repositories {
         name = "jitpack"
         url = "https://jitpack.io"
     }
+    maven {
+        name = "protocolLib"
+        url = "https://repo.dmulloy2.net/repository/public/"
+    }
 }
 
 dependencies {
@@ -38,6 +42,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.10.19")
     implementation("com.zaxxer:HikariCP:6.2.1")
+    implementation("com.comphenix.protocol:ProtocolLib:5.1.0")
 }
 
 def targetJavaVersion = 21

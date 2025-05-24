@@ -6,4 +6,5 @@ description: A simple Utils plugin for Paper
 website: craftefix.dev
 authors:
   - Craftefix
-folia-supported: true
+depend: [ProtocolLib]
+
