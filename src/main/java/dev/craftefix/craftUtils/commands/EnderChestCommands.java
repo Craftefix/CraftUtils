@@ -1,6 +1,9 @@
 package dev.craftefix.craftUtils.commands;
 
-
+import dev.craftefix.craftUtils.Main;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,29 +19,39 @@ import java.util.Map;
 import java.util.UUID;
 
 public class EnderChestCommands implements Listener {
-
     private final Map<UUID, Player> openInventories = new HashMap<>();
+    private final YamlConfiguration lang;
 
+    public EnderChestCommands() {
+        this.lang = Main.getInstance().getLang();
+    }
 
     @Command({"enderchest", "ec", "cu enderchest"})
     @CommandPermission("CraftUtils.enderchest")
     public void enderchest(Player player, @Optional @Named("target") Player target) {
         if (target == null) {
-            // Open the player's own ender chest
             target = player;
         } else if (!player.hasPermission("CraftUtils.enderchest.others")) {
-            player.sendMessage("You do not have permission to view others' ender chests.");
+            String message = lang.getString("enderchest.error.no-permission", "You do not have permission to view others' ender chests.");
+            player.sendMessage(Component.text(message, NamedTextColor.RED));
             return;
         }
 
         if (!target.isOnline()) {
-            player.sendMessage("Player not found or not online.");
+            String message = lang.getString("enderchest.error.player-offline", "Player not found or not online.");
+            player.sendMessage(Component.text(message, NamedTextColor.RED));
             return;
         }
 
         Inventory enderChest = target.getEnderChest();
         player.openInventory(enderChest);
         openInventories.put(target.getUniqueId(), player);
+
+        if (target != player) {
+            String message = lang.getString("enderchest.success.opened", "Opened {player}'s ender chest.")
+                    .replace("{player}", target.getName());
+            player.sendMessage(Component.text(message, NamedTextColor.GREEN));
+        }
     }
 
     @EventHandler

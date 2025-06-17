@@ -1,0 +1,129 @@
+plugin:
+  name: "~~~ CraftUtils ~~~"
+  description: "The utils plugin that has everything you need."
+  version-prefix: "Version: "
+
+admin-gui:
+  titles:
+    broadcasts: "Broadcast Messages"
+    player-management: "Player Management"
+    gamemode: "Gamemode Selection"
+  messages:
+    shutdown: "Server is shutting down"
+    restart: "Server is restarting"
+    maintenance: "Server is going in Maintenance (Soon™)"
+    gamemode-already: "You are already in {gamemode}"
+    gamemode-changed: "Your gamemode has been changed to {gamemode}"
+  buttons:
+    shutdown: "Shutdown Message"
+    restart: "Restart Message"
+    maintenance: "Maintenance (Soon™) Message"
+
+moderation:
+  ban:
+    message: "You have been banned"
+  kick:
+    message: "You have been kicked"
+  ipban:
+    message: "You have been IP-banned"
+
+messaging:
+  error:
+    self-message: "You can't message yourself"
+    player-offline: "The player you are replying to is no longer online."
+    no-reply-target: "You don't have anyone to reply to."
+  format:
+    to: "To {player}: {message}"
+    from: "From {player}: {message}"
+
+warps:
+  success:
+    created: "Warp {name} created successfully"
+    deleted: "Warp {name} deleted successfully"
+    teleported: "Teleported to warp {name}"
+  error:
+    not-found: "Warp {name} does not exist"
+    already-exists: "A warp with that name already exists"
+    no-permission: "You don't have permission to use this warp"
+  list:
+    header: "Available warps:"
+    entry: "- {name}"
+    empty: "No warps available"
+
+homes:
+  success:
+    set: "Home {name} set successfully"
+    deleted: "Home {name} deleted successfully"
+    teleported: "Teleported to home {name}"
+  error:
+    not-found: "Home {name} does not exist"
+    already-exists: "A home with that name already exists"
+    limit-reached: "You have reached your homes limit"
+  list:
+    header: "Your homes:"
+    entry: "- {name}"
+    empty: "You have no homes set"
+
+general:
+  error:
+    no-permission: "You don't have permission to do this"
+    player-offline: "Player is not online"
+    invalid-arguments: "Invalid arguments"
+
+teleport:
+  tpa:
+    error:
+      self: "You can't teleport to yourself!"
+      pending: "You already have a pending request to this player!"
+    request:
+      sent: "Sent teleport request to {player}"
+      received: "{player} wants to teleport to you."
+      cancel: "[Cancel]"
+      accept: "[Accept]"
+      deny: "[Deny]"
+    result:
+      accepted: "Teleport request accepted!"
+      denied: "Teleport request denied!"
+      cancelled: "Teleport request cancelled!"
+      expired: "Teleport request expired!"
+  command:
+    error:
+      invalid-location: "Invalid location: outside world border or height exceeds 1000."
+    success:
+      teleported: "Teleported successfully."
+      teleported-others: "Teleported {count} entities."
+
+enderchest:
+  error:
+    no-permission: "You do not have permission to view others' ender chests."
+    player-offline: "Player not found or not online."
+  success:
+    opened: "Opened {player}'s ender chest."
+
+abilities:
+  prefix: "Perk"
+  fly:
+    enabled: "Flight mode enabled for {player}."
+    disabled: "Flight mode disabled for {player}."
+    no-permission-others: "You do not have permission to set other players to fly mode."
+  heal:
+    success: "You have been healed."
+    success-other: "Healed {player}."
+  feed:
+    success: "Your hunger has been satisfied."
+    success-other: "Fed {player}."
+  trash:
+    opened: "Opened trash inventory."
+
+alias:
+  gamemode:
+    changed-self: "Changed gamemode to {gamemode}."
+    changed-other: "Changed {player}'s gamemode to {gamemode}."
+
+language:
+  changed: "Language changed to {language}"
+  not-available: "Language {language} is not available"
+  available: "Available languages:"
+  current: "Your current language is: {language}"
+  error:
+    missing-strings: "Warning: Selected language file is missing some translations"

@@ -11,6 +11,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
@@ -22,122 +23,81 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminGUI {
+    private final YamlConfiguration lang;
 
-    // Admin GUI for managing players
-    // Responsible for creating and managing the Admin GUI with sub-GUIs for players, gamemodes, and broadcasting messages
-
-    // Main Admin GUI
-    // - Gamemode GUI: Survival, Creative, Adventure, Spectator
-    // - Broadcast GUI: Shutdown, Restart, Maintenance messages
-    // - Player List GUI: Moderate Player GUI (Ban, Kick, Kill, IP-Ban, Clear Inventory, Clear Ender Chest, Teleport)
-
-
-    private final ChestGui adminGui;
-    private final ChestGui gamemodeGui;
-    private final ChestGui broadcastGui;
-    private final ChestGui playerListGui;
-    private final ChestGui moderatePlayerGui;
-    private final PaginatedPane playerPane;
-    private final StaticPane moderatePlayerPane;
-    private final GuiItem fillerItem;
-    private void cancelEvent(InventoryClickEvent event) {
-        event.setCancelled(true);
+    public AdminGUI() {
+        this.lang = Main.getInstance().getLang();
     }
 
-    // Create a button with both a (Material,  Name)
-    private ItemStack createButton(Material material, String name) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            item.setItemMeta(meta);
-        }
-        return item;
-    }
 
     public void openAdminGUI(Player player) {
-        adminGui.show(player);
-    }
-
-    // Creates the Admin GUI with sub-GUIs for managing players, gamemodes, and broadcasting messages
-    // Opening is handled by the open*Gui methods below
-    public AdminGUI(){
-
-        // Create grey filler item
-        ItemStack greyFiller = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
-        ItemMeta fillerMeta = greyFiller.getItemMeta();
-        if (fillerMeta != null) {
-            fillerMeta.setDisplayName(" ");
-            fillerMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-
-            greyFiller.setItemMeta(fillerMeta);
-        }
-        this.fillerItem = new GuiItem(greyFiller);
-
-        // Admin GUI
-        adminGui = new ChestGui(1, "Admin GUI");
+        ChestGui adminGui = new ChestGui(3, lang.getString("admin-gui.titles.main", "Admin GUI"));
         StaticPane adminPane = new StaticPane(0, 0, 9, 1);
-        adminPane.addItem(new GuiItem(createButton(Material.DIAMOND_SWORD, "Gamemode"), this::openGamemodeGui), 1, 0);
-        adminPane.addItem(new GuiItem(createButton(Material.PAPER, "Broadcast"), this::openBroadcastGui), 4, 0);
-        adminPane.addItem(new GuiItem(createButton(Material.PLAYER_HEAD, "Players"), this::openSelectorGui), 7, 0);
+
+        adminPane.addItem(new GuiItem(createButton(Material.DIAMOND_SWORD, lang.getString("admin-gui.buttons.gamemode", "Gamemode")), this::openGamemodeGui), 1, 0);
+        adminPane.addItem(new GuiItem(createButton(Material.PAPER, lang.getString("admin-gui.buttons.broadcast", "Broadcast")), this::openBroadcastGui), 4, 0);
+        adminPane.addItem(new GuiItem(createButton(Material.PLAYER_HEAD, lang.getString("admin-gui.buttons.players", "Players")), this::openSelectorGui), 7, 0);
         adminPane.fillWith(fillerItem.getItem());
         adminGui.addPane(adminPane);
 
         // Player GUI
-        moderatePlayerGui = new ChestGui(1, "Moderate Player");
-        moderatePlayerPane = new StaticPane(0, 0, 9, 1);
+        ChestGui moderatePlayerGui = new ChestGui(1, lang.getString("admin-gui.titles.moderate-player", "Moderate Player"));
+        StaticPane moderatePlayerPane = new StaticPane(0, 0, 9, 1);
         moderatePlayerPane.fillWith(fillerItem.getItem());
-        moderatePlayerPane.addItem(new GuiItem(createButton(Material.ARROW, "Back"), event -> adminGui.show(event.getWhoClicked())), 8, 0);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.ARROW, lang.getString("admin-gui.buttons.back", "Back")), event -> adminGui.show(event.getWhoClicked())), 8, 0);
         moderatePlayerGui.addPane(moderatePlayerPane);
 
         // Gamemode GUI
-        gamemodeGui = new ChestGui(1, "Gamemode GUI");
+        ChestGui gamemodeGui = new ChestGui(1, lang.getString("admin-gui.titles.gamemode", "Gamemode GUI"));
         StaticPane gamemodePane = new StaticPane(0, 0, 9, 1);
-        gamemodePane.addItem(new GuiItem(createButton(Material.GRASS_BLOCK, "Survival"), event -> changeGamemode(event, GameMode.SURVIVAL)), 0, 0);
-        gamemodePane.addItem(new GuiItem(createButton(Material.DIAMOND_BLOCK, "Creative"), event -> changeGamemode(event, GameMode.CREATIVE)), 2, 0);
-        gamemodePane.addItem(new GuiItem(createButton(Material.MAP, "Adventure"), event -> changeGamemode(event, GameMode.ADVENTURE)), 4, 0);
-        gamemodePane.addItem(new GuiItem(createButton(Material.ENDER_EYE, "Spectator"), event -> changeGamemode(event, GameMode.SPECTATOR)), 6, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.GRASS_BLOCK, lang.getString("admin-gui.buttons.survival", "Survival")), event -> changeGamemode(event, GameMode.SURVIVAL)), 0, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.DIAMOND_BLOCK, lang.getString("admin-gui.buttons.creative", "Creative")), event -> changeGamemode(event, GameMode.CREATIVE)), 2, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.MAP, lang.getString("admin-gui.buttons.adventure", "Adventure")), event -> changeGamemode(event, GameMode.ADVENTURE)), 4, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.ENDER_EYE, lang.getString("admin-gui.buttons.spectator", "Spectator")), event -> changeGamemode(event, GameMode.SPECTATOR)), 6, 0);
         gamemodePane.fillWith(fillerItem.getItem());
-        gamemodePane.addItem(new GuiItem(createButton(Material.ARROW, "Back"), event -> adminGui.show(event.getWhoClicked())), 8, 0);
+        gamemodePane.addItem(new GuiItem(createButton(Material.ARROW, lang.getString("admin-gui.buttons.back", "Back")), event -> adminGui.show(event.getWhoClicked())), 8, 0);
         gamemodeGui.addPane(gamemodePane);
 
 
         // Broadcast GUI
-        broadcastGui = new ChestGui(1, "Broadcast GUI");
+        ChestGui broadcastGui = new ChestGui(1, lang.getString("admin-gui.titles.broadcasts", "Broadcast Messages"));
         StaticPane broadcastPane = new StaticPane(0, 0, 9, 1);
         broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Shutdown Message"), nouse -> Bukkit.broadcast(Component.text()
-                .append(Component.text("Server is shutting down", NamedTextColor.RED).decorate(TextDecoration.BOLD)).build())), 0, 0);
+                .append(Component.text(lang.getString("admin-gui.messages.shutdown", "Server is shutting down"), NamedTextColor.RED)
+                        .decorate(TextDecoration.BOLD)).build())), 0, 0);
         broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Restart Message"), nouse -> Bukkit.broadcast(Component.text()
-                .append(Component.text("Server is restarting", NamedTextColor.RED).decorate(TextDecoration.BOLD)).build())), 1, 0);
-        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Maintenance (Soon™) Message"), nouse -> Bukkit.broadcast(Component.text()
-                .append(Component.text("Server is going in Maintenance (Soon™)", NamedTextColor.RED).decorate(TextDecoration.BOLD)).build())), 2, 0);
+                .append(Component.text(lang.getString("admin-gui.messages.restart", "Server is restarting"), NamedTextColor.RED)
+                        .decorate(TextDecoration.BOLD)).build())), 1, 0);
+        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Maintenance Message"), nouse -> Bukkit.broadcast(Component.text()
+                .append(Component.text(lang.getString("admin-gui.messages.maintenance", "Server is going in Maintenance"), NamedTextColor.RED)
+                        .decorate(TextDecoration.BOLD)).build())), 2, 0);
 
-        broadcastPane.addItem(new GuiItem(createButton(Material.ARROW, "Back"), event -> adminGui.show(event.getWhoClicked())), 8, 0);
+        broadcastPane.addItem(new GuiItem(createButton(Material.ARROW, lang.getString("admin-gui.buttons.back", "Back")), event -> adminGui.show(event.getWhoClicked())), 8, 0);
         broadcastGui.addPane(broadcastPane);
 
         broadcastPane.fillWith(fillerItem.getItem());
 
         // Player List GUI with Pagination
-        playerListGui = new ChestGui(6, "Player List");
-        playerPane = new PaginatedPane(0, 0, 9, 5);
+        ChestGui playerListGui = new ChestGui(6, lang.getString("admin-gui.titles.player-list", "Player List"));
+        PaginatedPane playerPane = new PaginatedPane(0, 0, 9, 5);
         playerListGui.addPane(playerPane);
 
         // Navigation Pane
         StaticPane navigationPane = new StaticPane(0, 5, 9, 1);
-        navigationPane.addItem(new GuiItem(createButton(Material.SPECTRAL_ARROW, "Previous Page"), nouse -> {
+        navigationPane.addItem(new GuiItem(createButton(Material.SPECTRAL_ARROW, lang.getString("admin-gui.buttons.previous-page", "Previous Page")), nouse -> {
             if (playerPane.getPage() > 0) {
                 playerPane.setPage(playerPane.getPage() - 1);
                 playerListGui.update();
             }
         }), 2, 0);
 
-        navigationPane.addItem(new GuiItem(createButton(Material.SPECTRAL_ARROW, "Next Page"), nouse -> {
+        navigationPane.addItem(new GuiItem(createButton(Material.SPECTRAL_ARROW, lang.getString("admin-gui.buttons.next-page", "Next Page")), nouse -> {
             if (playerPane.getPage() < Math.max(playerPane.getPages() - 1, 0)) {
                 playerPane.setPage(playerPane.getPage() + 1);
                 playerListGui.update();
             }
         }), 6, 0);
-        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, "Back"), event -> adminGui.show(event.getWhoClicked())), 8, 0);
+        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, lang.getString("admin-gui.buttons.back", "Back")), event -> adminGui.show(event.getWhoClicked())), 8, 0);
 
         navigationPane.fillWith(fillerItem.getItem());
         playerListGui.addPane(navigationPane);
@@ -152,32 +112,77 @@ public class AdminGUI {
     }
     public void changeGamemode(InventoryClickEvent event, GameMode gameMode) {
         if (event.getWhoClicked().getGameMode() == gameMode) {
-            event.getWhoClicked().sendMessage(Component.text("You are already in " + gameMode.toString().toLowerCase(), NamedTextColor.GRAY));
+            event.getWhoClicked().sendMessage(Component.text(lang.getString("admin-gui.messages.gamemode-already", "You are already in {gamemode}")
+                    .replace("{gamemode}", gameMode.toString().toLowerCase()), NamedTextColor.GRAY));
         } else {
             event.getWhoClicked().setGameMode(gameMode);
-            event.getWhoClicked().sendMessage(Component.text("Your gamemode has been changed to " + gameMode.toString().toLowerCase(), NamedTextColor.GRAY));
+            event.getWhoClicked().sendMessage(Component.text(lang.getString("admin-gui.messages.gamemode-changed", "Your gamemode has been changed to {gamemode}")
+                    .replace("{gamemode}", gameMode.toString().toLowerCase()), NamedTextColor.GRAY));
         }
     }
 
     private void openGamemodeGui(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        gamemodeGui.show(player);
+        ChestGui gui = new ChestGui(3, lang.getString("admin-gui.titles.gamemode", "Gamemode Selection"));
+        StaticPane gamemodePane = new StaticPane(0, 0, 9, 3);
+
+        addGamemodeButton(gamemodePane, player, GameMode.CREATIVE, Material.GRASS_BLOCK, 0, 0);
+        addGamemodeButton(gamemodePane, player, GameMode.SURVIVAL, Material.WOODEN_SWORD, 1, 0);
+        addGamemodeButton(gamemodePane, player, GameMode.ADVENTURE, Material.MAP, 2, 0);
+        addGamemodeButton(gamemodePane, player, GameMode.SPECTATOR, Material.ENDER_EYE, 3, 0);
+
+        gui.addPane(gamemodePane);
+        gui.show(player);
     }
 
     private void openBroadcastGui(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        broadcastGui.show(player);
+        ChestGui gui = new ChestGui(3, lang.getString("admin-gui.titles.broadcasts", "Broadcast Messages"));
+        StaticPane broadcastPane = new StaticPane(0, 0, 9, 3);
+
+        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Shutdown Message"), nouse -> Bukkit.broadcast(Component.text()
+                .append(Component.text(lang.getString("admin-gui.messages.shutdown", "Server is shutting down"), NamedTextColor.RED)
+                        .decorate(TextDecoration.BOLD)).build())), 0, 0);
+
+        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Restart Message"), nouse -> Bukkit.broadcast(Component.text()
+                .append(Component.text(lang.getString("admin-gui.messages.restart", "Server is restarting"), NamedTextColor.RED)
+                        .decorate(TextDecoration.BOLD)).build())), 1, 0);
+
+        broadcastPane.addItem(new GuiItem(createButton(Material.POWERED_RAIL, "Maintenance Message"), nouse -> Bukkit.broadcast(Component.text()
+                .append(Component.text(lang.getString("admin-gui.messages.maintenance", "Server is going in Maintenance"), NamedTextColor.RED)
+                        .decorate(TextDecoration.BOLD)).build())), 2, 0);
+
+        gui.addPane(broadcastPane);
+        gui.show(player);
     }
 
     private void openSelectorGui(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        populatePlayerList();
-        playerPane.setPage(0);
-        playerListGui.show(player);
-    }
+        ChestGui playerListGui = new ChestGui(6, lang.getString("admin-gui.titles.player-list", "Player List"));
+        PaginatedPane playerPane = new PaginatedPane(0, 0, 9, 5);
+        playerListGui.addPane(playerPane);
 
-    // Populates the player list with online players
-    private void populatePlayerList() {
+        // Navigation Pane
+        StaticPane navigationPane = new StaticPane(0, 5, 9, 1);
+        navigationPane.addItem(new GuiItem(createButton(Material.SPECTRAL_ARROW, lang.getString("admin-gui.buttons.previous-page", "Previous Page")), nouse -> {
+            if (playerPane.getPage() > 0) {
+                playerPane.setPage(playerPane.getPage() - 1);
+                playerListGui.update();
+            }
+        }), 2, 0);
+
+        navigationPane.addItem(new GuiItem(createButton(Material.SPECTRAL_ARROW, lang.getString("admin-gui.buttons.next-page", "Next Page")), nouse -> {
+            if (playerPane.getPage() < Math.max(playerPane.getPages() - 1, 0)) {
+                playerPane.setPage(playerPane.getPage() + 1);
+                playerListGui.update();
+            }
+        }), 6, 0);
+        navigationPane.addItem(new GuiItem(createButton(Material.ARROW, lang.getString("admin-gui.buttons.back", "Back")), event -> adminGui.show(event.getWhoClicked())), 8, 0);
+
+        navigationPane.fillWith(fillerItem.getItem());
+        playerListGui.addPane(navigationPane);
+
+        // Populates the player list with online players
         playerPane.clear();
         List<GuiItem> playerItems = new ArrayList<>();
 
@@ -227,27 +232,79 @@ public class AdminGUI {
             pagePane.fillWith(fillerItem.getItem());
             playerPane.addPane(i, pagePane);
         }
+
+        playerListGui.show(player);
     }
 
     private void openPlayerGUI(Player executor, Player target) {
+        ChestGui moderatePlayerGui = new ChestGui(1, lang.getString("admin-gui.titles.moderate-player", "Moderate Player"));
+        StaticPane moderatePlayerPane = new StaticPane(0, 0, 9, 1);
         moderatePlayerPane.clear();
         moderatePlayerPane.addItem(new GuiItem(createButton(Material.BARRIER, "Ban"), nouse -> {
-            Bukkit.getBanList(BanListType.PROFILE).addBan(target.getName(), "You have been banned", null, null);
-            target.kick(Component.text("You have been banned"));
+            Bukkit.getBanList(BanListType.PROFILE).addBan(target.getName(), null, null, null);
+            target.kick(Component.text(lang.getString("moderation.ban.message", "You have been banned")));
         }), 0, 0);
-        moderatePlayerPane.addItem(new GuiItem(createButton(Material.MACE, "Kick"), nouse -> target.kick(Component.text("You have been kicked"))), 1, 0);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.MACE, "Kick"), nouse -> target.kick(Component.text(lang.getString("moderation.kick.message", "You have been kicked")))), 1, 0);
         moderatePlayerPane.addItem(new GuiItem(createButton(Material.TNT, "Kill"), nouse -> target.setHealth(0)), 2, 0);
-        moderatePlayerPane.addItem(new GuiItem(createButton(Material.STRUCTURE_VOID, "IP-Ban"), nouse -> {
-            Bukkit.getBanList(BanListType.IP).addBan(target.getAddress().getHostString(), "You have been IP-banned", null, null);
-            target.kick(Component.text("You have been IP-banned")); }), 3, 0);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.BARRIER, "IP Ban"), nouse -> {
+            Bukkit.getBanList(BanListType.IP).addBan(target.getAddress().getAddress().getHostAddress(), null, null, null);
+            target.kick(Component.text(lang.getString("moderation.ipban.message", "You have been IP-banned")));
+        }), 3, 0);
         moderatePlayerPane.addItem(new GuiItem(createButton(Material.PAPER, "Clear Inventory"), nouse -> target.getInventory().clear()), 4, 0);
         moderatePlayerPane.addItem(new GuiItem(createButton(Material.ENDER_EYE, "Clear Ender Chest"), nouse -> target.getEnderChest().clear()), 5, 0);
         moderatePlayerPane.addItem(new GuiItem(createButton(Material.ENDER_PEARL, "Teleport to"), event -> event.getWhoClicked().teleport(target)), 6, 0);
-        moderatePlayerPane.addItem(new GuiItem(createButton(Material.ARROW, "Back"), event -> playerListGui.show(event.getWhoClicked())), 8, 0);
+        moderatePlayerPane.addItem(new GuiItem(createButton(Material.ARROW, lang.getString("admin-gui.buttons.back", "Back")), event -> playerListGui.show(event.getWhoClicked())), 8, 0);
 
         moderatePlayerPane.fillWith(fillerItem.getItem());
         moderatePlayerGui.addPane(moderatePlayerPane);
-        moderatePlayerGui.addPane(moderatePlayerPane);
         moderatePlayerGui.show(executor);
     }
+
+    private final GuiItem fillerItem;
+
+    // Create a button with both a (Material,  Name)
+    private ItemStack createButton(Material material, String name) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(name);
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    private void cancelEvent(InventoryClickEvent event) {
+        event.setCancelled(true);
+    }
+
+    // Make items non-removable
+    public AdminGUI(){
+        // Create grey filler item
+        ItemStack greyFiller = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
+        ItemMeta fillerMeta = greyFiller.getItemMeta();
+        if (fillerMeta != null) {
+            fillerMeta.setDisplayName(" ");
+            fillerMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+
+            greyFiller.setItemMeta(fillerMeta);
+        }
+        this.fillerItem = new GuiItem(greyFiller);
+    }
+
+    private void addGamemodeButton(StaticPane pane, Player player, GameMode gameMode, Material icon, int x, int y) {
+        pane.addItem(new GuiItem(createButton(icon, gameMode.toString()), event -> {
+            if (player.getGameMode() == gameMode) {
+                String message = lang.getString("admin-gui.messages.gamemode-already", "You are already in {gamemode}")
+                        .replace("{gamemode}", gameMode.toString().toLowerCase());
+                event.getWhoClicked().sendMessage(Component.text(message, NamedTextColor.GRAY));
+            } else {
+                player.setGameMode(gameMode);
+                String message = lang.getString("admin-gui.messages.gamemode-changed", "Your gamemode has been changed to {gamemode}")
+                        .replace("{gamemode}", gameMode.toString().toLowerCase());
+                event.getWhoClicked().sendMessage(Component.text(message, NamedTextColor.GRAY));
+            }
+            event.getWhoClicked().closeInventory();
+        }), x, y);
+    }
 }
+

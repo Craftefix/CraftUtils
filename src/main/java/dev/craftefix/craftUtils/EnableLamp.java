@@ -19,10 +19,13 @@ public final class EnableLamp {
     }
 
     public void enable() {
-        var lamp = BukkitLamp.builder(this.plugin).build();
+        var lamp = BukkitLamp.builder(plugin).build();
+        int registeredCount = 0;
+        int disabledCount = 0;
+        int failedCount = 0;
         AdminGUI adminGUI = new AdminGUI();
         WarpManager warpManager = new WarpManager();
-        
+
         var commandMap = Map.of(
                 "tp", new TpCommand(),
                 "message", new MessageCommands(),
@@ -32,23 +35,39 @@ public final class EnableLamp {
                 "alias", new AliasCommands(),
                 "ability", new AbilityCommands(),
                 "homes", new HomeCommand(homeManager),
-                "warps", new WarpCommand(warpManager)
+                "warps", new WarpCommand(warpManager),
+                "language", new LanguageCommand(plugin)
         );
 
-        var commands = plugin.getConfig().getConfigurationSection("commands").getKeys(false);
-        for (String command : commands) {
-            if (plugin.getConfig().getBoolean("commands." + command)) {
-                var commandInstance = commandMap.get(command);
-                if (commandInstance != null) {
-                    lamp.register(commandInstance);
-                    plugin.getLogger().info(command + " command registered.");
-                } else {
-                    plugin.getLogger().warning("Unknown command in config: " + command);
-                }
+        var commandsSection = plugin.getConfig().getConfigurationSection("commands");
+        if (commandsSection == null) {
+            plugin.getLogger().severe("Commands section not found in config.yml!");
+            return;
+        }
+        for (String key : commandsSection.getKeys(false)) {
+            if (commandMap.containsKey(key)) {
+                plugin.getLogger().warning("Command '" + key + "' disabled.");
+                disabledCount++;
             }
         }
+        for (String commandName : commandsSection.getKeys(true)) {
+            if (commandMap.containsKey(commandName)) {
+                var command = commandMap.get(commandName);
+                lamp.register(command);
+                registeredCount++;
+                plugin.getLogger().info("Registered command: " + commandName);
+            } else {
+                plugin.getLogger().warning("Command '" + commandName + "' not found in command map.");
+                failedCount++;
+            }
+        }
+
+        // Always register the core command
         lamp.register(new CraftUtilsCommand());
-        plugin.getLogger().info("Commands registered.");
+        plugin.getLogger().info("Registered " + registeredCount + " commands from config.");
+        plugin.getLogger().info("Disabled " + disabledCount + " commands from config.");
+        plugin.getLogger().info("Couldn't find " + failedCount + " commands in config.");
+        registerListeners();
     }
 
     public void registerListeners(Listener... listeners) {

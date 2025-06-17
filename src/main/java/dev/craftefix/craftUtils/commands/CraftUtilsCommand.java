@@ -1,26 +1,37 @@
- package dev.craftefix.craftUtils.commands;
+package dev.craftefix.craftUtils.commands;
 
+import dev.craftefix.craftUtils.Main;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.Command;
-import revxrsal.commands.bukkit.annotation.CommandPermission;
-import org.bukkit.plugin.java.JavaPlugin;
+
 
 public class CraftUtilsCommand {
+    private final Main plugin;
+    private final YamlConfiguration lang;
 
-    @Command({"cu"})
-    @CommandPermission("craftutils.main")
-    public void craftUtils(Player actor) {
+    public CraftUtilsCommand(Main plugin) {
+        this.plugin = plugin;
+        this.lang = plugin.getLang();
+    }
+
+    @Command({"craftutils", "cu"})
+    public void craftutils(Player actor) {
+        String pluginName = lang.getString("plugin.name", "~~~ CraftUtils ~~~");
+        String description = lang.getString("plugin.description", "The utils plugin that has everything you need.");
+        String versionPrefix = lang.getString("plugin.version-prefix", "Version: ");
+
         actor.sendMessage(Component.text()
-                .append(Component.text(" ~~~ CraftUtils ~~~ ", NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD))
+                .append(Component.text(pluginName, NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD))
                 .append(Component.text("\n» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                .append(Component.text("\"The utils plugin that has everything you need.\"", NamedTextColor.BLUE).decorate(TextDecoration.ITALIC))
+                .append(Component.text(description, NamedTextColor.BLUE).decorate(TextDecoration.ITALIC))
                 .append(Component.text("\n» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                .append(Component.text("Version: ", NamedTextColor.BLUE))
-                .append(Component.text(getPlugin().getDescription().getVersion(), NamedTextColor.YELLOW)));
+                .append(Component.text(versionPrefix, NamedTextColor.BLUE))
+                .append(Component.text(plugin.getDescription().getVersion(), NamedTextColor.YELLOW)));
         actor.sendMessage(Component.text()
                 .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
                 .append(Component.text("CraftUtils on Github", NamedTextColor.DARK_BLUE))
@@ -34,9 +45,5 @@ public class CraftUtilsCommand {
                 .append(Component.text("Our Discord", NamedTextColor.BLUE))
                         .clickEvent(ClickEvent.openUrl("https://discord.gg/GbKQUqp6yG")));
 
-    }
-
-    private JavaPlugin getPlugin() {
-        return JavaPlugin.getProvidingPlugin(CraftUtilsCommand.class);
     }
 }
