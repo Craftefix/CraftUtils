@@ -1,5 +1,5 @@
 [![Alpha Builder](https://github.com/Craftefix/CraftUtils/actions/workflows/build.yml/badge.svg?branch=alpha-releases)](https://github.com/Craftefix/CraftUtils/actions/workflows/build.yml)
-
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Craftefix/CraftUtils?utm_source=oss&utm_medium=github&utm_campaign=Craftefix%2FCraftUtils&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 # CraftUtils Plugin
 
 A simple Utils Paper plugin for the latest Paper version (1.21.4).  
