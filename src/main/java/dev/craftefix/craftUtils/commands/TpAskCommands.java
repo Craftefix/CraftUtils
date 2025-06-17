@@ -22,10 +22,18 @@ public class TpAskCommands implements Listener {
     private final HashMap<UUID, TpRequest> tpRequests = new HashMap<>();
     private final YamlConfiguration lang;
 
+    /**
+     * Initializes the TpAskCommands instance and loads the language configuration for localized messages.
+     */
     public TpAskCommands() {
         this.lang = Main.getInstance().getLang();
     }
 
+    /**
+     * Sends a teleport request from one player to another.
+     *
+     * If the target player does not already have a pending request, creates a new teleport request and notifies both players with localized messages and interactive options. Prevents self-requests and duplicate requests to the same target.
+     */
     @Command({"tpask", "tpa", "cu tpask"})
     @CommandPermission("CraftUtils.tpask")
     public void tpask(Player actor, @Named("Player") Player target) {
@@ -77,6 +85,14 @@ public class TpAskCommands implements Listener {
         }
     }
 
+    /**
+     * Accepts a pending teleport request for the specified player, teleporting the requester to the target.
+     *
+     * If a valid request exists and the requester is online, the requester is teleported to the target player.
+     * Both players receive a localized acceptance message. The request is then removed from the active requests.
+     *
+     * @param target the player accepting the teleport request
+     */
     @Command({"tpaaccept", "cu tpaaccept"})
     @CommandPermission("CraftUtils.tpaaccept")
     public void tpaccept(Player target) {
@@ -100,6 +116,11 @@ public class TpAskCommands implements Listener {
         }
     }
 
+    /**
+     * Denies a pending teleport request received by the specified player.
+     *
+     * Notifies both the requester and the target player of the denial and removes the request from the active requests list.
+     */
     @Command({"tpadeny", "cu tpadeny"})
     @CommandPermission("CraftUtils.tpadeny")
     public void tpdeny(Player target) {
@@ -122,6 +143,11 @@ public class TpAskCommands implements Listener {
         }
     }
 
+    /**
+     * Cancels all pending teleport requests sent by the specified player.
+     *
+     * Notifies both the actor and any target players involved that the requests have been cancelled.
+     */
     @Command({"tpacancel", "cu tpacancel"})
     @CommandPermission("CraftUtils.tpacancel")
     public void tpcancel(Player actor) {
@@ -147,11 +173,19 @@ public class TpAskCommands implements Listener {
         });
     }
 
+    /**
+     * Removes any pending teleport requests for a player when they leave the server.
+     *
+     * @param e the player quit event containing the departing player
+     */
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         tpRequests.remove(e.getPlayer().getUniqueId());
     }
 
+    /**
+     * Removes expired teleport requests older than two minutes and notifies both the requesting and target players if they are online.
+     */
     private void cleanUpOldRequests() {
         long currentTime = System.currentTimeMillis();
         tpRequests.entrySet().removeIf(entry -> {
