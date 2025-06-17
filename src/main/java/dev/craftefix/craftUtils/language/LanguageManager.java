@@ -29,6 +29,11 @@ public class LanguageManager {
     private final YamlConfiguration defaultLang;
     private final List<String> availableLanguages;
 
+    /**
+     * Initializes the LanguageManager, setting up language file management and player language preferences.
+     *
+     * Loads the default and available language files, validates them against the default, and creates the database table for storing player language settings.
+     */
     public LanguageManager(Main plugin, DatabaseManager databaseManager) {
         this.plugin = plugin;
         this.databaseManager = databaseManager;
@@ -45,6 +50,11 @@ public class LanguageManager {
         validateAllLanguages();
     }
 
+    /****
+     * Creates the `player_languages` table in the database if it does not already exist.
+     * The table stores player UUIDs and their associated language codes.
+     * Logs a severe error if the table creation fails.
+     */
     private void createLanguageTable() {
         try (Connection conn = databaseManager.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
@@ -59,6 +69,14 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Loads a YAML language configuration file for the specified language code.
+     *
+     * If the language file does not exist in the plugin's `lang` directory, it is copied from the plugin resources.
+     *
+     * @param langCode the language code (e.g., "en_US") to load
+     * @return the loaded YamlConfiguration for the specified language
+     */
     private YamlConfiguration loadLanguageFile(String langCode) {
         File langFile = new File(plugin.getDataFolder(), "lang/" + langCode + ".yml");
         if (!langFile.exists()) {
@@ -67,6 +85,11 @@ public class LanguageManager {
         return YamlConfiguration.loadConfiguration(langFile);
     }
 
+    /**
+     * Loads all language YAML files from the plugin's `lang` directory into memory and updates the list of available language codes.
+     *
+     * Creates the `lang` directory if it does not exist. Only files with a `.yml` extension are loaded. Logs an error if file loading fails.
+     */
     public void loadAllLanguages() {
         File langDir = new File(plugin.getDataFolder(), "lang");
         if (!langDir.exists() || !langDir.isDirectory()) {
@@ -88,6 +111,11 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Checks all loaded language files for missing translation keys compared to the default language.
+     *
+     * Logs warnings for any language file that does not contain all keys present in the default language ("en_US").
+     */
     public void validateAllLanguages() {
         YamlConfiguration defaultConfig = loadedLanguages.get("en_US");
         if (defaultConfig == null) {
@@ -116,6 +144,12 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Retrieves all non-section keys from the given YAML configuration.
+     *
+     * @param config the YAML configuration to extract keys from
+     * @return a list of all keys that do not represent configuration sections
+     */
     private List<String> getAllKeys(YamlConfiguration config) {
         List<String> keys = new ArrayList<>();
         for (String key : config.getKeys(true)) {
@@ -125,6 +159,13 @@ public class LanguageManager {
         return keys;
     }
 
+    /**
+     * Sets the language preference for a player and persists it to the database.
+     *
+     * @param player the player whose language is being set
+     * @param langCode the language code to assign to the player
+     * @throws IllegalArgumentException if the specified language code is not available
+     */
     public void setPlayerLanguage(Player player, String langCode) {
         if (!availableLanguages.contains(langCode)) {
             throw new IllegalArgumentException("Language " + langCode + " is not available");
@@ -146,10 +187,23 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Retrieves the language code associated with the specified player.
+     *
+     * @param player the player whose language code is to be retrieved
+     * @return the player's language code, or "en_US" if none is set
+     */
     public String getPlayerLanguage(Player player) {
         return playerLanguages.getOrDefault(player.getUniqueId(), "en_US");
     }
 
+    /**
+     * Loads a player's language preference from the database and updates the in-memory mapping.
+     * <p>
+     * If the player has no language set or if a database error occurs, defaults to "en_US".
+     *
+     * @param player the player whose language preference should be loaded
+     */
     public void loadPlayerLanguage(Player player) {
         try (Connection conn = databaseManager.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
@@ -170,10 +224,24 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Returns a list of all available language codes.
+     *
+     * @return a list containing the codes of all loaded languages
+     */
     public List<String> getAvailableLanguages() {
         return new ArrayList<>(availableLanguages);
     }
 
+    /**
+     * Retrieves the language configuration for the specified player.
+     *
+     * Returns the loaded language configuration corresponding to the player's language code,
+     * or the default language configuration if the player's language is not found.
+     *
+     * @param player the player whose language configuration is requested
+     * @return the appropriate YamlConfiguration for the player
+     */
     public YamlConfiguration getPlayerLangConfig(Player player) {
         String langCode = getPlayerLanguage(player);
         return loadedLanguages.getOrDefault(langCode, defaultLang);

@@ -33,7 +33,12 @@ public class DatabaseManager {
 
 
 
-    // Get a connection from the pool
+    /****
+         * Retrieves a database connection from the connection pool.
+         *
+         * @return a {@link Connection} from the HikariCP pool
+         * @throws SQLException if a database access error occurs or the pool is exhausted
+         */
         public static Connection getConnection() throws SQLException {
             return dataSource.getConnection();
         }

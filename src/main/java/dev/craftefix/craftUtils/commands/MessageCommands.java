@@ -20,11 +20,23 @@ public class MessageCommands implements Listener {
     private final YamlConfiguration lang;
     private final Main plugin;
 
+    /**
+     * Initializes the MessageCommands instance with the main plugin and loads the default language configuration.
+     */
     public MessageCommands() {
         this.plugin = Main.getInstance();
         this.lang = plugin.getLang(null); // null for default language
     }
 
+    /**
+     * Sends a private message from one player to another.
+     *
+     * If the sender attempts to message themselves, an error message is shown. Otherwise, the message is delivered to both sender and recipient, and the recipient is recorded as the last messaged player for reply functionality.
+     *
+     * @param actor   the player sending the message
+     * @param target  the player receiving the message
+     * @param message the message content
+     */
     @Command({"msg", "message", "tell", "cu msg", "w", "whisper"})
     @CommandPermission("CraftUtils.message")
     public void msg(Player actor, @Named("player") Player target, @Named("message") String message) {
@@ -40,11 +52,25 @@ public class MessageCommands implements Listener {
         }
     }
 
+    /**
+     * Removes the quitting player's UUID from the message tracking map when they leave the server.
+     *
+     * This ensures that reply targets are cleared for players who disconnect.
+     */
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
          messagers.remove(e.getPlayer().getUniqueId());
     }
 
+    /**
+     * Sends a formatted private message between two players, displaying appropriate localized text to both sender and recipient.
+     *
+     * The message format and color styling are determined by the language configuration and color manager.
+     *
+     * @param actor   the player sending the message
+     * @param target  the player receiving the message
+     * @param message the message content to send
+     */
     public void sendMessages(Player actor, Player target, String message) {
         String toFormat = lang.getString("messaging.format.to", "To {player}: {message}")
                 .replace("{player}", target.getName())
@@ -63,6 +89,11 @@ public class MessageCommands implements Listener {
                 .append(Component.text(fromFormat, plugin.getColorManager().getTextColor("normal"))));
     }
 
+    /**
+     * Sends a private reply message to the last player the sender messaged.
+     *
+     * If there is no recent message target or the target is offline, notifies the sender with an appropriate error message.
+     */
     @Command({"r", "reply", "cu reply"})
     @CommandPermission("CraftUtils.reply")
     public void reply(Player actor, @Named("message") String message) {

@@ -25,11 +25,21 @@ import java.util.List;
 public class AdminGUI {
     private final YamlConfiguration lang;
 
+    /**
+     * Initializes the AdminGUI with localization support using the plugin's language configuration.
+     */
     public AdminGUI() {
         this.lang = Main.getInstance().getLang();
     }
 
 
+    /**
+     * Opens the main admin GUI for the specified player, providing access to gamemode selection, broadcast messaging, and player moderation interfaces.
+     *
+     * The GUI and all sub-menus are dynamically constructed with localized titles and button labels. Sub-GUIs include gamemode selection, broadcast message sending, a paginated player list, and player moderation actions. All GUIs prevent item removal and use a consistent filler item for unused slots.
+     *
+     * @param player the player to whom the admin GUI will be shown
+     */
     public void openAdminGUI(Player player) {
         ChestGui adminGui = new ChestGui(3, lang.getString("admin-gui.titles.main", "Admin GUI"));
         StaticPane adminPane = new StaticPane(0, 0, 9, 1);
@@ -110,6 +120,12 @@ public class AdminGUI {
         playerListGui.setOnGlobalClick(this::cancelEvent);
         moderatePlayerGui.setOnGlobalClick(this::cancelEvent);
     }
+    /**
+     * Changes the gamemode of the player who triggered the inventory click event.
+     *
+     * If the player is already in the specified gamemode, sends a localized message indicating no change was made.
+     * Otherwise, updates the player's gamemode and sends a localized confirmation message.
+     */
     public void changeGamemode(InventoryClickEvent event, GameMode gameMode) {
         if (event.getWhoClicked().getGameMode() == gameMode) {
             event.getWhoClicked().sendMessage(Component.text(lang.getString("admin-gui.messages.gamemode-already", "You are already in {gamemode}")
@@ -121,6 +137,11 @@ public class AdminGUI {
         }
     }
 
+    /**
+     * Opens a gamemode selection GUI for the player who triggered the event.
+     *
+     * Displays a GUI with buttons for Creative, Survival, Adventure, and Spectator gamemodes, allowing the player to change their gamemode.
+     */
     private void openGamemodeGui(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         ChestGui gui = new ChestGui(3, lang.getString("admin-gui.titles.gamemode", "Gamemode Selection"));
@@ -135,6 +156,9 @@ public class AdminGUI {
         gui.show(player);
     }
 
+    /**
+     * Opens a broadcast message GUI for the player, allowing them to send predefined server-wide messages such as shutdown, restart, or maintenance notifications.
+     */
     private void openBroadcastGui(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         ChestGui gui = new ChestGui(3, lang.getString("admin-gui.titles.broadcasts", "Broadcast Messages"));
@@ -156,6 +180,11 @@ public class AdminGUI {
         gui.show(player);
     }
 
+    /**
+     * Opens a paginated GUI displaying all online players, allowing the user to select a player for moderation.
+     *
+     * The GUI excludes players with the "CraftUtils.hide" permission and provides navigation buttons for paging and returning to the main admin GUI. Selecting a player opens the moderation GUI for that player. If no players are online, displays a message indicating this.
+     */
     private void openSelectorGui(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         ChestGui playerListGui = new ChestGui(6, lang.getString("admin-gui.titles.player-list", "Player List"));
@@ -236,6 +265,14 @@ public class AdminGUI {
         playerListGui.show(player);
     }
 
+    /**
+     * Opens a moderation GUI for the executor to perform actions on the target player.
+     *
+     * The GUI provides buttons for banning, kicking, killing, IP banning, clearing inventory, clearing ender chest, teleporting to the target, and returning to the player list. Each action is executed immediately upon button click.
+     *
+     * @param executor the player performing moderation actions
+     * @param target the player being moderated
+     */
     private void openPlayerGUI(Player executor, Player target) {
         ChestGui moderatePlayerGui = new ChestGui(1, lang.getString("admin-gui.titles.moderate-player", "Moderate Player"));
         StaticPane moderatePlayerPane = new StaticPane(0, 0, 9, 1);
@@ -262,7 +299,13 @@ public class AdminGUI {
 
     private final GuiItem fillerItem;
 
-    // Create a button with both a (Material,  Name)
+    /**
+     * Creates an ItemStack button with the specified material and display name.
+     *
+     * @param material the material for the button item
+     * @param name the display name to set on the item
+     * @return an ItemStack representing the button with the given material and name
+     */
     private ItemStack createButton(Material material, String name) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
@@ -273,11 +316,18 @@ public class AdminGUI {
         return item;
     }
 
+    /**
+     * Cancels the inventory click event to prevent item movement or interaction.
+     *
+     * @param event the inventory click event to cancel
+     */
     private void cancelEvent(InventoryClickEvent event) {
         event.setCancelled(true);
     }
 
-    // Make items non-removable
+    /**
+     * Constructs an AdminGUI instance, initializing the localized language configuration and creating a non-interactive gray filler item for GUI backgrounds.
+     */
     public AdminGUI(){
         // Create grey filler item
         ItemStack greyFiller = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
@@ -291,6 +341,18 @@ public class AdminGUI {
         this.fillerItem = new GuiItem(greyFiller);
     }
 
+    /**
+     * Adds a gamemode selection button to the specified pane at the given coordinates.
+     *
+     * When clicked, changes the player's gamemode if it differs from the selected one, sending a localized feedback message and closing the inventory.
+     *
+     * @param pane the pane to which the button is added
+     * @param player the player whose gamemode may be changed
+     * @param gameMode the gamemode represented by the button
+     * @param icon the material used as the button's icon
+     * @param x the x-coordinate in the pane
+     * @param y the y-coordinate in the pane
+     */
     private void addGamemodeButton(StaticPane pane, Player player, GameMode gameMode, Material icon, int x, int y) {
         pane.addItem(new GuiItem(createButton(icon, gameMode.toString()), event -> {
             if (player.getGameMode() == gameMode) {
