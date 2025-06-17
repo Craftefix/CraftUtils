@@ -31,7 +31,9 @@ public class DatabaseManager {
             dataSource = new HikariDataSource(hikariConfig);
         }
 
-        // Get a connection from the pool
+
+
+    // Get a connection from the pool
         public static Connection getConnection() throws SQLException {
             return dataSource.getConnection();
         }

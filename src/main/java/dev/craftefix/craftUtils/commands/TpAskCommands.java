@@ -1,9 +1,12 @@
 package dev.craftefix.craftUtils.commands;
 
+import dev.craftefix.craftUtils.Main;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,9 +19,12 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class TpAskCommands implements Listener {
+    private final HashMap<UUID, TpRequest> tpRequests = new HashMap<>();
+    private final YamlConfiguration lang;
 
-    // Target UUID, TpRequest (Actor UUID and Timestamp)
-    HashMap<UUID, TpRequest> tpRequests = new HashMap<>();
+    public TpAskCommands() {
+        this.lang = Main.getInstance().getLang();
+    }
 
     @Command({"tpask", "tpa", "cu tpask"})
     @CommandPermission("CraftUtils.tpask")
@@ -26,41 +32,47 @@ public class TpAskCommands implements Listener {
         cleanUpOldRequests();
         if (actor.isOnline() && target.isOnline()) {
             if (actor.equals(target)) {
+                String message = lang.getString("teleport.tpa.error.self", "You can't teleport to yourself!");
                 actor.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append(Component.text("You can't teleport to yourself!", NamedTextColor.RED)));
+                        .append(Component.text(message, NamedTextColor.RED)));
                 return;
             }
             if (tpRequests.get(target.getUniqueId()) == null) {
                 tpRequests.put(target.getUniqueId(), new TpRequest(actor.getUniqueId(), System.currentTimeMillis()));
+
+                String sentMessage = lang.getString("teleport.tpa.request.sent", "Sent teleport request to {player}")
+                        .replace("{player}", target.getName());
                 actor.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append(Component.text("Sent teleport request to ", NamedTextColor.GRAY))
-                        .append(Component.text(target.getName(), NamedTextColor.BLUE))
-                        .append(Component.text(". \n", NamedTextColor.DARK_GRAY))
-                        .append(Component.text(" [Cancel] ", NamedTextColor.RED))
+                        .append(Component.text(sentMessage, NamedTextColor.GRAY))
+                        .append(Component.text("\n", NamedTextColor.DARK_GRAY))
+                        .append(Component.text(lang.getString("teleport.tpa.request.cancel", "[Cancel]"), NamedTextColor.RED))
                         .clickEvent(ClickEvent.runCommand("/cu tpacancel")));
+
+                String receivedMessage = lang.getString("teleport.tpa.request.received", "{player} wants to teleport to you.")
+                        .replace("{player}", actor.getName());
+                target.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text(receivedMessage, NamedTextColor.GRAY)));
 
                 target.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append(Component.text(actor.getName(), NamedTextColor.GREEN))
-                        .append(Component.text(" wants to teleport to ", NamedTextColor.GRAY))
-                        .append(Component.text("you.", NamedTextColor.BLUE)));
+                        .append(Component.text(lang.getString("teleport.tpa.request.accept", "[Accept]"), NamedTextColor.GREEN))
+                        .clickEvent(ClickEvent.runCommand("/cu tpaaccept")));
+
                 target.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append(Component.text("Accept]", NamedTextColor.GREEN))
-                                .clickEvent(ClickEvent.runCommand("/cu tpaaccept")));
-                target.sendMessage(Component.text()
-                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
-                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append(Component.text("[Deny]", NamedTextColor.RED))
-                                .clickEvent(ClickEvent.runCommand("/cu tpadeny")));
+                        .append(Component.text(lang.getString("teleport.tpa.request.deny", "[Deny]"), NamedTextColor.RED))
+                        .clickEvent(ClickEvent.runCommand("/cu tpadeny")));
             } else {
-                actor.sendMessage(Component.text("You already have a pending request to this player!", NamedTextColor.RED));
+                String message = lang.getString("teleport.tpa.error.pending", "You already have a pending request to this player!");
+                actor.sendMessage(Component.text(message, NamedTextColor.RED));
             }
         }
     }
@@ -74,14 +86,15 @@ public class TpAskCommands implements Listener {
             Player actor = target.getServer().getPlayer(request.getActorUUID());
             if (actor != null) {
                 actor.teleport(target);
+                String message = lang.getString("teleport.tpa.result.accepted", "Teleport request accepted!");
                 actor.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append( Component.text("Teleport request accepted!", NamedTextColor.GREEN)));
+                        .append(Component.text(message, NamedTextColor.GREEN)));
                 target.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append( Component.text("Teleport request accepted!", NamedTextColor.GREEN)));
+                        .append(Component.text(message, NamedTextColor.GREEN)));
                 tpRequests.remove(target.getUniqueId());
             }
         }
@@ -95,14 +108,15 @@ public class TpAskCommands implements Listener {
         if (request != null) {
             Player actor = target.getServer().getPlayer(request.getActorUUID());
             if (actor != null) {
+                String message = lang.getString("teleport.tpa.result.denied", "Teleport request denied!");
                 actor.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append( Component.text("Teleport request denied!", NamedTextColor.GREEN)));
+                        .append(Component.text(message, NamedTextColor.RED)));
                 target.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append( Component.text("Teleport request denied!", NamedTextColor.GREEN)));
+                        .append(Component.text(message, NamedTextColor.RED)));
                 tpRequests.remove(target.getUniqueId());
             }
         }
@@ -112,38 +126,59 @@ public class TpAskCommands implements Listener {
     @CommandPermission("CraftUtils.tpacancel")
     public void tpcancel(Player actor) {
         cleanUpOldRequests();
-        TpRequest request = tpRequests.get(actor.getUniqueId());
-        if (request == null) {
-            actor.sendMessage(Component.text("You have no pending teleport requests to cancel!", NamedTextColor.RED));
-        } else {
-            tpRequests.entrySet().removeIf(entry -> {
-                if (entry.getValue().getActorUUID().equals(actor.getUniqueId())) {
-                    Player target = actor.getServer().getPlayer(entry.getKey());
-                    if (target != null ){
-                        target.sendMessage(Component.text("Teleport request from " + actor + " canceled!", NamedTextColor.RED));
-                    }
-
-                    return true;
+        UUID actorId = actor.getUniqueId();
+        tpRequests.entrySet().removeIf(entry -> {
+            if (entry.getValue().getActorUUID().equals(actorId)) {
+                Player target = actor.getServer().getPlayer(entry.getKey());
+                String message = lang.getString("teleport.tpa.result.cancelled", "Teleport request cancelled!");
+                if (target != null) {
+                    target.sendMessage(Component.text()
+                            .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                            .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                            .append(Component.text(message, NamedTextColor.RED)));
                 }
-                return false;
-            });
-        }
+                actor.sendMessage(Component.text()
+                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text(message, NamedTextColor.RED)));
+                return true;
+            }
+            return false;
+        });
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        tpRequests.remove(e.getPlayer().getUniqueId());
     }
 
     private void cleanUpOldRequests() {
         long currentTime = System.currentTimeMillis();
-        long fiveMinutesInMillis = 5 * 60 * 1000;
-        tpRequests.entrySet().removeIf(entry -> currentTime - entry.getValue().getTimestamp() > fiveMinutesInMillis);
+        tpRequests.entrySet().removeIf(entry -> {
+            if (currentTime - entry.getValue().getTimestamp() > 120000) { // 2 minutes
+                Player actor = Bukkit.getPlayer(entry.getValue().getActorUUID());
+                Player target = Bukkit.getPlayer(entry.getKey());
+                String message = lang.getString("teleport.tpa.result.expired", "Teleport request expired!");
+
+                if (actor != null) {
+                    actor.sendMessage(Component.text()
+                            .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                            .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                            .append(Component.text(message, NamedTextColor.RED)));
+                }
+                if (target != null) {
+                    target.sendMessage(Component.text()
+                            .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                            .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                            .append(Component.text(message, NamedTextColor.RED)));
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        UUID playerUUID = event.getPlayer().getUniqueId();
-        tpRequests.remove(playerUUID);
-        tpRequests.entrySet().removeIf(entry -> entry.getValue().getActorUUID().equals(playerUUID));
-    }
-
-    private static class TpRequest {
+    public static class TpRequest {
         private final UUID actorUUID;
         private final long timestamp;
 

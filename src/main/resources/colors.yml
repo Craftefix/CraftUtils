@@ -1,0 +1,27 @@
+# Color configuration for CraftUtils messages
+colors:
+  prefix:
+    perk: LIGHT_PURPLE
+    msg: GREEN
+    tpa: GREEN
+    warps: LIGHT_PURPLE
+    homes: DARK_GREEN
+    trash: GRAY
+  borders:
+    separator: DARK_GRAY
+  text:
+    normal: GRAY
+    success: GREEN
+    error: RED
+    highlight: YELLOW
+    important: BLUE
+    header: DARK_PURPLE
+    links: DARK_BLUE
+  gui:
+    title: DARK_PURPLE
+    description: GRAY
+    warning: RED
+    positive: GREEN
+    negative: RED
+    neutral: YELLOW
+

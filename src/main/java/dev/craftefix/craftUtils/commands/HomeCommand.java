@@ -1,12 +1,15 @@
 package dev.craftefix.craftUtils.commands;
 
+import dev.craftefix.craftUtils.Main;
 import dev.craftefix.craftUtils.database.HomeManager;
 import dev.craftefix.craftUtils.database.HomeManager.Home;
 import dev.craftefix.craftUtils.suggestions.HomeSuggestionProvider;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Default;
@@ -19,10 +22,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class HomeCommand {
-    HomeManager homeManager;
+    private final HomeManager homeManager;
+    private final YamlConfiguration lang;
 
     public HomeCommand(HomeManager homeManager) {
         this.homeManager = homeManager;
+        this.lang = Main.getInstance().getLang();
     }
 
     @Command({"home", "cu home"})
@@ -32,15 +37,20 @@ public class HomeCommand {
         if (homeOpt.isPresent()) {
             Home home = homeOpt.get();
             actor.teleport(new Location(home.getWorld(), home.getX(), home.getY(), home.getZ()));
+
+            String message = lang.getString("homes.success.teleported", "Teleported to home {name}")
+                    .replace("{name}", name);
             actor.sendMessage(Component.text()
                     .append(Component.text("Homes ", NamedTextColor.DARK_GREEN).decorate(TextDecoration.BOLD))
                     .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                    .append(Component.text("Teleported to your home.", NamedTextColor.GRAY)));
+                    .append(Component.text(message, NamedTextColor.GRAY)));
         } else {
+            String message = lang.getString("homes.error.not-found", "Home {name} does not exist")
+                    .replace("{name}", name);
             actor.sendMessage(Component.text()
                     .append(Component.text("Homes ", NamedTextColor.DARK_GREEN).decorate(TextDecoration.BOLD))
                     .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                    .append(Component.text("Couldn't find this home.", NamedTextColor.DARK_RED)));
+                    .append(Component.text(message, NamedTextColor.DARK_RED)));
         }
     }
 
@@ -53,12 +63,12 @@ public class HomeCommand {
 
         String finalName = name;
         if (homes.size() >= homeLimit && homes.stream().noneMatch(h -> h.getHomeName().equalsIgnoreCase(finalName))) {
+            String message = lang.getString("homes.error.limit-reached", "You have reached your homes limit")
+                    .replace("{limit}", String.valueOf(homeLimit));
             actor.sendMessage(Component.text()
                     .append(Component.text("Homes ", NamedTextColor.DARK_GREEN).decorate(TextDecoration.BOLD))
                     .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                    .append(Component.text("You have reached your home limit of", NamedTextColor.DARK_RED))
-                    .append(Component.text(homeLimit, NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
-                    .append(Component.text(" homes.", NamedTextColor.DARK_RED).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE)));
+                    .append(Component.text(message, NamedTextColor.DARK_RED)));
             return;
         } else if (homes.size() == 0) {
             actor.sendMessage(Component.text()
