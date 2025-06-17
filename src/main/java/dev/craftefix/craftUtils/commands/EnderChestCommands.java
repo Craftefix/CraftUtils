@@ -22,10 +22,20 @@ public class EnderChestCommands implements Listener {
     private final Map<UUID, Player> openInventories = new HashMap<>();
     private final YamlConfiguration lang;
 
+    /**
+     * Initializes the EnderChestCommands instance and loads the language configuration for localized messages.
+     */
     public EnderChestCommands() {
         this.lang = Main.getInstance().getLang();
     }
 
+    /**
+     * Opens the Ender Chest inventory of the specified player for the command executor.
+     *
+     * If no target is specified, opens the executor's own Ender Chest. If a target is specified, the executor must have the appropriate permission to view others' Ender Chests. Sends localized success or error messages based on the outcome.
+     *
+     * @param target the player whose Ender Chest to open; if null, opens the executor's own Ender Chest
+     */
     @Command({"enderchest", "ec", "cu enderchest"})
     @CommandPermission("CraftUtils.enderchest")
     public void enderchest(Player player, @Optional @Named("target") Player target) {
@@ -54,6 +64,11 @@ public class EnderChestCommands implements Listener {
         }
     }
 
+    /**
+     * Handles player quit events by closing any Ender Chest inventory viewers and cleaning up tracking data.
+     *
+     * If another player is viewing the quitting player's Ender Chest, their inventory is closed.
+     */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player target = event.getPlayer();
