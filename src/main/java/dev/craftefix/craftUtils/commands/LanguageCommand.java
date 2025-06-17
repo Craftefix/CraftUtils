@@ -14,10 +14,22 @@ import revxrsal.commands.bukkit.annotation.CommandPermission;
 public class LanguageCommand {
     private final Main plugin;
 
+    /**
+     * Creates a new LanguageCommand handler for managing player language commands.
+     *
+     * @param plugin the main plugin instance used for language management and localization
+     */
     public LanguageCommand(Main plugin) {
         this.plugin = plugin;
     }
 
+    /**
+     * Changes the player's language to the specified language code.
+     *
+     * If the language code is valid, updates the player's language and sends a green confirmation message. If the language code is invalid, sends a red error message indicating the language is not available.
+     *
+     * @param langCode the language code to set for the player
+     */
     @Subcommand("set")
     @CommandPermission("CraftUtils.language.set")
     public void setLanguage(Player player, @Named("language") @SuggestWith(LanguageSuggestionProvider.class) String langCode) {
@@ -33,6 +45,11 @@ public class LanguageCommand {
         }
     }
 
+    /**
+     * Sends the player a list of all available languages, highlighting their current language.
+     *
+     * The list is prefixed with a localized header message. The player's current language is marked with a green "(current)" label.
+     */
     @Subcommand("list")
     @CommandPermission("CraftUtils.language.list")
     public void listLanguages(Player player) {
@@ -49,6 +66,11 @@ public class LanguageCommand {
         }
     }
 
+    /**
+     * Displays the player's current language setting.
+     *
+     * Sends a yellow-colored message to the player indicating their current language code.
+     */
     @Subcommand("current")
     @CommandPermission("CraftUtils.language.current")
     public void getCurrentLanguage(Player player) {

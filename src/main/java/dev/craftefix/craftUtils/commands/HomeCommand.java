@@ -25,11 +25,23 @@ public class HomeCommand {
     private final HomeManager homeManager;
     private final YamlConfiguration lang;
 
+    /**
+     * Initializes the HomeCommand handler with the provided HomeManager and loads localized language configuration.
+     *
+     * @param homeManager the manager responsible for player home data persistence
+     */
     public HomeCommand(HomeManager homeManager) {
         this.homeManager = homeManager;
         this.lang = Main.getInstance().getLang();
     }
 
+    /**
+     * Teleports the player to one of their saved homes by name.
+     *
+     * If the specified home exists, the player is teleported to its location and receives a confirmation message. If the home does not exist, an error message is sent.
+     *
+     * @param name the name of the home to teleport to (defaults to "default" if not specified)
+     */
     @Command({"home", "cu home"})
     @CommandPermission("CraftUtils.home")
     public void home(Player actor, @SuggestWith(HomeSuggestionProvider.class)@revxrsal.commands.annotation.Optional @Default("default") String name) {
@@ -54,6 +66,13 @@ public class HomeCommand {
         }
     }
 
+    /**
+     * Sets a home for the player at their current location with the specified name.
+     *
+     * If the player has reached their home limit and the home name is new, an error message is sent. If the player has no permission to set homes, a permissions error is sent. If a home with the given name already exists, the player is informed and prompted to delete it first. Otherwise, the home is created and a confirmation message is sent.
+     *
+     * @param name the name of the home to set; defaults to "default" if not specified
+     */
     @Command({"sethome", "cu sethome"})
     @CommandPermission("CraftUtils.home.sethome")
     public void setHome(Player actor, @Named("home") @Default("default") String name) {

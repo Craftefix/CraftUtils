@@ -18,6 +18,9 @@ import revxrsal.commands.bukkit.annotation.CommandPermission;
 public class AbilityCommands {
     private final YamlConfiguration lang;
 
+    /**
+     * Initializes the AbilityCommands instance with the language configuration from the main plugin.
+     */
     public AbilityCommands() {
         this.lang = Main.getInstance().getLang();
     }
@@ -27,7 +30,11 @@ public class AbilityCommands {
     // The /fly command toggles the player's flight mode. (Doesn't work with most Anti-Cheat plugins)
     // The /heal command sets the player's health and food level to 20.
     // The /eat command sets the player's food level to 20.
-    // The /trash command opens a chest inventory that acts as a trash can.
+    /**
+     * Toggles flight mode for the executing player or a specified target player.
+     *
+     * If a target is provided, the executor must have the "CraftUtils.fly.others" permission; otherwise, a no-permission message is sent.
+     */
 
     @Command({"fly", "cu fly"})
     @CommandPermission("CraftUtils.fly")
@@ -47,6 +54,11 @@ public class AbilityCommands {
         }
     }
 
+    /**
+     * Toggles the player's flight mode and sends a localized message indicating whether flight was enabled or disabled.
+     *
+     * @param player the player whose flight mode is being toggled
+     */
     private void setFly(Player player) {
         player.setAllowFlight(!player.getAllowFlight());
         String message;
@@ -63,6 +75,11 @@ public class AbilityCommands {
                 .append(Component.text(message, NamedTextColor.GRAY)));
     }
 
+    /**
+     * Restores health and food level to maximum for the executor or a specified player.
+     *
+     * If a target player is provided, heals that player and notifies the executor. Otherwise, heals the executor.
+     */
     @Command({"heal", "cu heal"})
     @CommandPermission("CraftUtils.heal")
     public void heal(Player actor, @Optional Player target) {
@@ -86,6 +103,11 @@ public class AbilityCommands {
         }
     }
 
+    /**
+     * Restores the food level to maximum for the executor or a specified target player.
+     *
+     * If a target is provided, their food level is set to full and the executor is notified. Otherwise, the executor's own food level is restored and they receive a confirmation message.
+     */
     @Command({"feed", "eat", "cu feed"})
     @CommandPermission("CraftUtils.feed")
     public void feed(Player actor, @Optional Player target) {
@@ -107,6 +129,11 @@ public class AbilityCommands {
         }
     }
 
+    /****
+     * Opens a chest inventory titled "Trash" for the player to use as a disposal container.
+     *
+     * Sends a localized confirmation message to the player after opening the inventory.
+     */
     @Command({"trash", "disposal", "cu trash"})
     @CommandPermission("CraftUtils.trash")
     public void trash(Player actor) {

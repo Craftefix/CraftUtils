@@ -13,11 +13,23 @@ public final class EnableLamp {
     private final Main plugin;
     private HomeManager homeManager;
 
+    /**
+     * Constructs an EnableLamp instance and initializes the HomeManager.
+     *
+     * @param plugin the main plugin instance
+     */
     public EnableLamp(Main plugin) {
         this.plugin = plugin;
         this.homeManager = new HomeManager(); // Initialize homeManager here
     }
 
+    /****
+     * Registers plugin commands and event listeners based on the configuration.
+     *
+     * <p>
+     * Initializes command handlers and registers them with the BukkitLamp framework according to the "commands" section in the plugin's configuration file. Logs the number of commands registered, disabled, or not found. Always registers the core command. Registers event listeners after command registration.
+     * </p>
+     */
     public void enable() {
         var lamp = BukkitLamp.builder(plugin).build();
         int registeredCount = 0;
@@ -70,6 +82,11 @@ public final class EnableLamp {
         registerListeners();
     }
 
+    /**
+     * Registers one or more event listeners with the server's plugin manager.
+     *
+     * @param listeners event listeners to be registered
+     */
     public void registerListeners(Listener... listeners) {
         PluginManager pluginManager = plugin.getServer().getPluginManager();
         for (Listener listener : listeners) {

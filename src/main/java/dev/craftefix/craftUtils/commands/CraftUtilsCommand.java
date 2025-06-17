@@ -14,11 +14,21 @@ public class CraftUtilsCommand {
     private final Main plugin;
     private final YamlConfiguration lang;
 
+    /**
+     * Constructs a new CraftUtilsCommand with the specified plugin instance.
+     *
+     * Initializes the command handler and loads the language configuration from the provided plugin.
+     */
     public CraftUtilsCommand(Main plugin) {
         this.plugin = plugin;
         this.lang = plugin.getLang();
     }
 
+    /**
+     * Sends the player an informational message about the CraftUtils plugin, including its name, description, version, and clickable links to GitHub, Modrinth, and Discord.
+     *
+     * The displayed text is localized using the plugin's language configuration, with default values as fallbacks.
+     */
     @Command({"craftutils", "cu"})
     public void craftutils(Player actor) {
         String pluginName = lang.getString("plugin.name", "~~~ CraftUtils ~~~");
