@@ -11,17 +11,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HomeSuggestionProvider implements SuggestionProvider<BukkitCommandActor> {
+    private final HomeManager homeManager = new HomeManager();
 
     @Override
     public List<String> getSuggestions(ExecutionContext<BukkitCommandActor> context) {
-            try {
-                Player player = context.actor().asPlayer();
-                List<HomeManager.Home> homes = HomeManager.getAllHomes(player.getUniqueId().toString());
-                return homes.stream()
-                        .map(HomeManager.Home::getHomeName)
-                        .collect(Collectors.toList());
-            } catch (Exception e) {
-                return Collections.emptyList();
-            }
+        try {
+            Player player = context.actor().asPlayer();
+            List<HomeManager.Home> homes = homeManager.getAllHomes(player.getUniqueId().toString());
+            return homes.stream()
+                    .map(HomeManager.Home::getHomeName)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 }

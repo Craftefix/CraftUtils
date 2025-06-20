@@ -60,7 +60,7 @@ public class  WarpCommand{
 
 
         Location loc = actor.getLocation();
-        warpManager.createWarp(actor.getUniqueId().toString(), name, loc.getX(), loc.getY(), loc.getZ(), hidden ? 1 : 0 ,loc.getWorld());
+        warpManager.createWarp(name, loc.getX(), loc.getY(), loc.getZ(), hidden ? 1 : 0 ,loc.getWorld());
         actor.sendMessage(Component.text()
                 .append(Component.text("Warps ", NamedTextColor.DARK_GREEN).decorate(TextDecoration.BOLD))
                 .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
