@@ -8,12 +8,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class WarpManager {
-   // Existing code remains the same...
+    // Existing code remains the same...
 
 
     public List<Warp> getAllWarps(Player player) {
@@ -85,17 +86,19 @@ public class WarpManager {
     }
 
     // Create a warp with name and world
-    public void createWarp(String name, String warpName, double x, double y, double z, int hidden ,World world) {
+    public void createWarp(String warpName, double x, double y, double z, int hidden, World world) {
         String query = "INSERT INTO warps (warp_name, x, y, z, private ,world) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, warpName);
             stmt.setDouble(2, x);
             stmt.setDouble(3, y);
-            stmt.setDouble(4, 4);
+            stmt.setDouble(4, z);
             stmt.setInt(5, hidden);
             stmt.setString(6, world.getName());
             stmt.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            System.err.println("Warp creation failed: Duplicate warp name or location.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -117,21 +120,24 @@ public class WarpManager {
         private String warpName;
         private double x, y, z;
         private String world;
+        private boolean hidden;
 
-        public Warp(String warpName, double x, double y, double z, boolean Private, String world) {
+        public Warp(String warpName, double x, double y, double z, boolean hidden, String world) {
             this.warpName = warpName;
             this.x = x;
             this.y = y;
             this.z = z;
-            this.world= world;
+            this.hidden = hidden;
+            this.world = world;
         }
 
-        // Add world getter
         public String getWarpName() { return warpName; }
         public double getX() { return x; }
         public double getY() { return y; }
         public double getZ() { return z; }
         public String getWarp() { return getWarpName(); }
+        public boolean isHidden() { return hidden; }
+        public String getWorldName() { return world; }
         public World getWorld() { return Bukkit.getWorld(world); }
     }
 }

@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +24,14 @@ public class HomeManager {
             stmt.setDouble(5, z);
             stmt.setString(6, world.getName());
             stmt.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            System.err.println("Home creation failed: Duplicate home name or location.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static List<Home> getAllHomes(String playerUUID) {
+    public List<Home> getAllHomes(String playerUUID) {
         List<Home> homes = new ArrayList<>();
         String query = "SELECT * FROM homes WHERE owner_uuid = ?";
         try (Connection connection = DatabaseManager.getConnection();
@@ -86,6 +89,7 @@ public class HomeManager {
             stmt.setString(5, playerUUID);
             stmt.setString(6, homeName);
             stmt.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e) {
         } catch (SQLException e) {
             e.printStackTrace();
         }
