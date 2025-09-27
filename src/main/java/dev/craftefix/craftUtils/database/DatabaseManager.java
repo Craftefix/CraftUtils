@@ -12,15 +12,15 @@ import java.sql.Statement;
 
 public class DatabaseManager {
 
-    private static HikariDataSource dataSource;
-    private static DatabaseType databaseType;
+    private HikariDataSource dataSource;
+    private DatabaseType databaseType;
 
     public enum DatabaseType {
         SQLITE, MARIADB
     }
 
     // Initialize the HikariCP DataSource
-    public static void initialize() {
+    public void initialize() {
         Main plugin = Main.getInstance();
         FileConfiguration config = plugin.getConfig();
         String type = config.getString("database.type", "sqlite").toLowerCase();
@@ -54,7 +54,7 @@ public class DatabaseManager {
     }
 
     // Get a connection from the pool
-    public static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         if (dataSource == null) {
             initialize();
         }
@@ -62,19 +62,19 @@ public class DatabaseManager {
     }
 
     // Close the data source
-    public static void close() {
+    public void close() {
         if (dataSource != null) {
             dataSource.close();
         }
     }
 
     // Get the database type
-    public static DatabaseType getDatabaseType() {
+    public DatabaseType getDatabaseType() {
         return databaseType;
     }
 
     // Create tables if they do not exist
-    private static void createTablesIfNotExist() {
+    private void createTablesIfNotExist() {
         String createHomes, createWarps, createVaults, createMutes;
         
         if (databaseType == DatabaseType.SQLITE) {

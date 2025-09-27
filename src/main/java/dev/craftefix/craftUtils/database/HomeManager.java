@@ -14,9 +14,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class HomeManager {
+    private final DatabaseManager databaseManager;
+    
+    public HomeManager(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
+    }
     public void createHome(String playerUUID, String homeName, double x, double y, double z, float yaw, float pitch, World world) {
         String query = "INSERT INTO homes (owner_uuid, home_name, x, y, z, yaw, pitch, world) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             stmt.setString(2, homeName);
@@ -42,7 +47,7 @@ public class HomeManager {
     public List<Home> getAllHomes(String playerUUID) {
         List<Home> homes = new ArrayList<>();
         String query = "SELECT * FROM homes WHERE owner_uuid = ?";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             try (ResultSet resultSet = stmt.executeQuery()) {
@@ -67,7 +72,7 @@ public class HomeManager {
 
     public Optional<Home> getHome(String playerUUID, String homeName) {
         String query = "SELECT * FROM homes WHERE owner_uuid = ? AND home_name = ?";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             stmt.setString(2, homeName);
@@ -92,7 +97,7 @@ public class HomeManager {
 
     public void updateHome(String playerUUID, String homeName, double x, double y, double z, float yaw, float pitch, World world) {
         String query = "UPDATE homes SET x = ?, y = ?, z = ?, yaw = ?, pitch = ?, world = ? WHERE owner_uuid = ? AND home_name = ?";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setDouble(1, x);
             stmt.setDouble(2, y);
@@ -115,7 +120,7 @@ public class HomeManager {
 
     public void deleteHome(String playerUUID, String homeName) {
         String query = "DELETE FROM homes WHERE owner_uuid = ? AND home_name = ?";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             stmt.setString(2, homeName);

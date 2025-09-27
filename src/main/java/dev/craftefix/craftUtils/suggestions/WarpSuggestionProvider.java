@@ -1,6 +1,8 @@
 package dev.craftefix.craftUtils.suggestions;
 
+import dev.craftefix.craftUtils.Main;
 import dev.craftefix.craftUtils.database.WarpManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import revxrsal.commands.autocomplete.SuggestionProvider;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
@@ -11,11 +13,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class WarpSuggestionProvider implements SuggestionProvider<BukkitCommandActor> {
-    private final WarpManager warpManager = new WarpManager();
 
     @Override
     public List<String> getSuggestions(ExecutionContext<BukkitCommandActor> context) {
         try {
+            Main plugin = (Main) Bukkit.getPluginManager().getPlugin("CraftUtils");
+            if (plugin == null) return Collections.emptyList();
+            
+            WarpManager warpManager = new WarpManager(plugin.getDatabaseManager());
             Player player = context.actor().requirePlayer();
             List<WarpManager.Warp> warps = warpManager.getAllWarps(player);
             return warps.stream()

@@ -15,10 +15,15 @@ import java.util.List;
 import java.util.Optional;
 
 public class WarpManager {
+    private final DatabaseManager databaseManager;
+    
+    public WarpManager(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
+    }
     
     public void createWarp(String warpName, double x, double y, double z, float yaw, float pitch, World world, boolean isPrivate) {
         String query = "INSERT INTO warps (warp_name, x, y, z, yaw, pitch, world, `private`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, warpName);
             stmt.setDouble(2, x);
@@ -53,7 +58,7 @@ public class WarpManager {
     private List<Warp> getAllWarps(Optional<Player> player) {
         List<Warp> warps = new ArrayList<>();
         String query = "SELECT * FROM warps";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()) {
@@ -89,7 +94,7 @@ public class WarpManager {
 
     private Optional<Warp> getWarp(String warpName, Optional<Player> player) {
         String query = "SELECT * FROM warps WHERE warp_name = ?";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, warpName);
             ResultSet resultSet = stmt.executeQuery();
@@ -118,7 +123,7 @@ public class WarpManager {
 
     public void updateWarp(String warpName, double x, double y, double z, float yaw, float pitch, World world, boolean isPrivate) {
         String query = "UPDATE warps SET x = ?, y = ?, z = ?, yaw = ?, pitch = ?, world = ?, `private` = ? WHERE warp_name = ?";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setDouble(1, x);
             stmt.setDouble(2, y);
@@ -137,7 +142,7 @@ public class WarpManager {
 
     public void deleteWarp(String warpName) {
         String query = "DELETE FROM warps WHERE warp_name = ?";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, warpName);
             stmt.executeUpdate();

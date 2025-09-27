@@ -15,17 +15,22 @@ import java.util.Base64;
 import java.util.Optional;
 
 public class PlayerVaultManager {
+    private final DatabaseManager databaseManager;
+    
+    public PlayerVaultManager(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
+    }
     
     public void saveVault(String playerUUID, int vaultNumber, ItemStack[] contents) {
         String query = "INSERT INTO player_vaults (owner_uuid, vault_number, contents) VALUES (?, ?, ?) " +
                       "ON DUPLICATE KEY UPDATE contents = VALUES(contents)";
         
         // For SQLite, we need a different approach since it doesn't support ON DUPLICATE KEY UPDATE
-        if (DatabaseManager.getDatabaseType() == DatabaseManager.DatabaseType.SQLITE) {
+        if (databaseManager.getDatabaseType() == DatabaseManager.DatabaseType.SQLITE) {
             query = "INSERT OR REPLACE INTO player_vaults (owner_uuid, vault_number, contents) VALUES (?, ?, ?)";
         }
         
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             stmt.setInt(2, vaultNumber);
@@ -38,7 +43,7 @@ public class PlayerVaultManager {
     
     public Optional<ItemStack[]> getVault(String playerUUID, int vaultNumber) {
         String query = "SELECT contents FROM player_vaults WHERE owner_uuid = ? AND vault_number = ?";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             stmt.setInt(2, vaultNumber);
@@ -55,7 +60,7 @@ public class PlayerVaultManager {
     
     public void deleteVault(String playerUUID, int vaultNumber) {
         String query = "DELETE FROM player_vaults WHERE owner_uuid = ? AND vault_number = ?";
-        try (Connection connection = DatabaseManager.getConnection();
+        try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerUUID);
             stmt.setInt(2, vaultNumber);

@@ -10,6 +10,11 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public class MuteManager {
+    private final DatabaseManager databaseManager;
+    
+    public MuteManager(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
+    }
     
     public static class MuteData {
         public final String playerName;
@@ -37,13 +42,13 @@ public class MuteManager {
         }
     }
     
-    public static void mutePlayer(UUID playerUuid, String playerName, String mutedBy, String reason, Long duration) {
+    public void mutePlayer(UUID playerUuid, String playerName, String mutedBy, String reason, Long duration) {
         String sql = "INSERT OR REPLACE INTO mutes (player_uuid, player_name, muted_by, reason, mute_time, unmute_time, active) VALUES (?, ?, ?, ?, ?, ?, 1)";
-        if (DatabaseManager.getDatabaseType() == DatabaseManager.DatabaseType.MARIADB) {
+        if (databaseManager.getDatabaseType() == DatabaseManager.DatabaseType.MARIADB) {
             sql = "INSERT INTO mutes (player_uuid, player_name, muted_by, reason, mute_time, unmute_time, active) VALUES (?, ?, ?, ?, ?, ?, 1) ON DUPLICATE KEY UPDATE player_name=VALUES(player_name), muted_by=VALUES(muted_by), reason=VALUES(reason), mute_time=VALUES(mute_time), unmute_time=VALUES(unmute_time), active=1";
         }
         
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, playerUuid.toString());
             stmt.setString(2, playerName);
             stmt.setString(3, mutedBy);
@@ -61,10 +66,10 @@ public class MuteManager {
         }
     }
     
-    public static void unmutePlayer(UUID playerUuid) {
+    public void unmutePlayer(UUID playerUuid) {
         String sql = "UPDATE mutes SET active = 0 WHERE player_uuid = ?";
         
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, playerUuid.toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -72,10 +77,10 @@ public class MuteManager {
         }
     }
     
-    public static MuteData getMuteData(UUID playerUuid) {
+    public MuteData getMuteData(UUID playerUuid) {
         String sql = "SELECT player_name, muted_by, reason, mute_time, unmute_time, active FROM mutes WHERE player_uuid = ? AND active = 1";
         
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, playerUuid.toString());
             ResultSet rs = stmt.executeQuery();
             
@@ -96,7 +101,7 @@ public class MuteManager {
         return null;
     }
     
-    public static boolean isPlayerMuted(UUID playerUuid) {
+    public boolean isPlayerMuted(UUID playerUuid) {
         MuteData muteData = getMuteData(playerUuid);
         if (muteData == null) return false;
         
@@ -108,10 +113,10 @@ public class MuteManager {
         return muteData.active;
     }
     
-    public static MuteData getMuteDataByName(String playerName) {
+    public MuteData getMuteDataByName(String playerName) {
         String sql = "SELECT player_name, muted_by, reason, mute_time, unmute_time, active FROM mutes WHERE LOWER(player_name) = LOWER(?) AND active = 1";
         
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, playerName);
             ResultSet rs = stmt.executeQuery();
             
@@ -132,10 +137,10 @@ public class MuteManager {
         return null;
     }
     
-    public static void unmutePlayerByName(String playerName) {
+    public void unmutePlayerByName(String playerName) {
         String sql = "UPDATE mutes SET active = 0 WHERE LOWER(player_name) = LOWER(?)";
         
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, playerName);
             stmt.executeUpdate();
         } catch (SQLException e) {
