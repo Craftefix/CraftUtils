@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class CraftUtilsCommand {
 
     @Command({"cu"})
-    @CommandPermission("craftutils.main")
+    @CommandPermission("CraftUtils.main")
     public void craftUtils(Player actor) {
         actor.sendMessage(Component.text()
                 .append(Component.text(" ~~~ CraftUtils ~~~ ", NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD))

@@ -41,7 +41,7 @@ class CommandTest {
     @Test
     @DisplayName("Player should be able to execute main command")
     void testMainCommand() {
-        assertTrue(player.hasPermission("craftutils.main"), "Player should have main permission");
+        assertTrue(player.hasPermission("CraftUtils.main"), "Player should have main permission");
         
         // Execute main command
         var result = server.execute("cu", player);

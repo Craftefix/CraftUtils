@@ -32,7 +32,7 @@ public class MuteCommand {
 
     @Command("mute")
     @Description("Mute a player")
-    @CommandPermission("craftutils.mute")
+    @CommandPermission("CraftUtils.mute")
     public void mute(CommandSender sender, @Named("player") String playerName, 
                     @Optional @Named("duration") String duration, 
                     @Optional @Named("reason") String reason) {
@@ -91,7 +91,7 @@ public class MuteCommand {
         // Broadcast to staff
         String broadcastMessage = ChatColor.YELLOW + senderName + " muted " + targetName + " for " + durationText + ". Reason: " + reason;
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasPermission("craftutils.mute.notify")) {
+            if (player.hasPermission("CraftUtils.mute.notify")) {
                 player.sendMessage(broadcastMessage);
             }
         }
@@ -102,7 +102,7 @@ public class MuteCommand {
 
     @Command("unmute")
     @Description("Unmute a player")
-    @CommandPermission("craftutils.unmute")
+    @CommandPermission("CraftUtils.unmute")
     public void unmute(CommandSender sender, @Named("player") String playerName) {
         MuteManager.MuteData muteData = MuteManager.getMuteDataByName(playerName);
         
@@ -124,7 +124,7 @@ public class MuteCommand {
         // Broadcast to staff
         String broadcastMessage = ChatColor.YELLOW + senderName + " unmuted " + playerName + ".";
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasPermission("craftutils.mute.notify")) {
+            if (player.hasPermission("CraftUtils.mute.notify")) {
                 player.sendMessage(broadcastMessage);
             }
         }
@@ -135,7 +135,7 @@ public class MuteCommand {
 
     @Command("pardon")
     @Description("Pardon (unban) a player")
-    @CommandPermission("craftutils.pardon")
+    @CommandPermission("CraftUtils.pardon")
     public void pardon(CommandSender sender, @Named("player") String playerName) {
         // Check both modern and legacy ban lists
         boolean wasProfileBanned = false;
@@ -185,7 +185,7 @@ public class MuteCommand {
                 .append(Component.text(senderName + " pardoned " + playerName + ".", NamedTextColor.YELLOW))
                 .build();
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasPermission("craftutils.pardon.notify")) {
+            if (player.hasPermission("CraftUtils.pardon.notify")) {
                 player.sendMessage(broadcastMessage);
             }
         }
