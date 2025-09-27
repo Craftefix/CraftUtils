@@ -142,3 +142,17 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,gradle
+
+# Docker testing
+docker-compose.yml
+docker-compose.yaml
+docker-compose.test.yml
+docker-compose.test.yaml
+test-server-data/
+TESTING.md
+start-test-server.sh
+*.test.yml
+*.test.yaml
+
+# IntelliJ IDEA
+.idea/

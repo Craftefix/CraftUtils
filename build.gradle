@@ -40,15 +40,6 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.1")
     
     // Test dependencies
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
-    testImplementation("org.mockito:mockito-core:5.14.2")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
-    testImplementation("com.github.MockBukkit:MockBukkit:v1.21-SNAPSHOT")
-    testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
-    testImplementation("org.testcontainers:junit-jupiter:1.20.4")
-    testImplementation("org.testcontainers:mariadb:1.20.4")
-    testImplementation("org.testcontainers:mysql:1.20.4")
-    testImplementation("org.awaitility:awaitility:4.2.2")
 }
 
 java {
