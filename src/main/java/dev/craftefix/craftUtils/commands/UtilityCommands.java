@@ -1,5 +1,6 @@
 package dev.craftefix.craftUtils.commands;
 
+import dev.craftefix.craftUtils.database.BackLocationManager;
 import dev.craftefix.craftUtils.database.PlayerVaultManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -8,6 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -20,13 +24,30 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class UtilityCommands {
+public class UtilityCommands implements Listener {
     
     private final PlayerVaultManager vaultManager;
-    private final Map<UUID, Location> lastLocations = new HashMap<>();
+    private final BackLocationManager backLocationManager;
+    private final Map<Inventory, VaultInfo> openVaults = new HashMap<>();
+    private dev.craftefix.craftUtils.listeners.TeleportTrackingListener teleportListener;
     
-    public UtilityCommands(PlayerVaultManager vaultManager) {
+    public UtilityCommands(PlayerVaultManager vaultManager, BackLocationManager backLocationManager) {
         this.vaultManager = vaultManager;
+        this.backLocationManager = backLocationManager;
+    }
+    
+    public void setTeleportListener(dev.craftefix.craftUtils.listeners.TeleportTrackingListener teleportListener) {
+        this.teleportListener = teleportListener;
+    }
+    
+    private static class VaultInfo {
+        final String playerUUID;
+        final int vaultNumber;
+        
+        VaultInfo(String playerUUID, int vaultNumber) {
+            this.playerUUID = playerUUID;
+            this.vaultNumber = vaultNumber;
+        }
     }
     
     @Command({"vault", "cu vault", "pv"})
@@ -47,12 +68,13 @@ public class UtilityCommands {
         ItemStack[] contents = vaultManager.getVault(actor.getUniqueId().toString(), vaultNumber).orElse(new ItemStack[54]);
         vaultInventory.setContents(contents);
         
+        openVaults.put(vaultInventory, new VaultInfo(actor.getUniqueId().toString(), vaultNumber));
         actor.openInventory(vaultInventory);
     }
     
-    @Command({"workbench", "cu workbench", "wb"})
-    @CommandPermission("CraftUtils.workbench")
-    public void workbench(Player actor) {
+    @Command({"craftingtable", "cu craftingtable", "ct"})
+    @CommandPermission("CraftUtils.craftingtable")
+    public void craftingtable(Player actor) {
         actor.openWorkbench(null, true);
         actor.sendMessage(Component.text()
                 .append(Component.text("Utility ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
@@ -99,8 +121,8 @@ public class UtilityCommands {
     @Command({"back", "cu back"})
     @CommandPermission("CraftUtils.back")
     public void back(Player actor) {
-        Location lastLocation = lastLocations.get(actor.getUniqueId());
-        if (lastLocation == null) {
+        java.util.Optional<Location> lastLocationOpt = backLocationManager.getLocation(actor.getUniqueId());
+        if (!lastLocationOpt.isPresent()) {
             actor.sendMessage(Component.text()
                     .append(Component.text("Teleport ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
                     .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
@@ -108,10 +130,12 @@ public class UtilityCommands {
             return;
         }
         
-        // Store current location before teleporting
-        Location currentLocation = actor.getLocation();
+        Location lastLocation = lastLocationOpt.get();
+        // Mark this as a /back teleport to prevent tracking
+        if (teleportListener != null) {
+            teleportListener.markBackTeleport(actor.getUniqueId());
+        }
         actor.teleport(lastLocation);
-        lastLocations.put(actor.getUniqueId(), currentLocation);
         
         actor.sendMessage(Component.text()
                 .append(Component.text("Teleport ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
@@ -188,8 +212,17 @@ public class UtilityCommands {
         }
     }
     
-    // Store last location when player teleports
-    public void storeLastLocation(Player player, Location location) {
-        lastLocations.put(player.getUniqueId(), location);
+
+    
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        Inventory inventory = event.getInventory();
+        VaultInfo vaultInfo = openVaults.get(inventory);
+        
+        if (vaultInfo != null) {
+            ItemStack[] contents = inventory.getContents();
+            vaultManager.saveVault(vaultInfo.playerUUID, vaultInfo.vaultNumber, contents);
+            openVaults.remove(inventory);
+        }
     }
 }

@@ -76,7 +76,7 @@ public class DatabaseManager {
 
     // Create tables if they do not exist
     private void createTablesIfNotExist() {
-        String createHomes, createWarps, createVaults, createMutes;
+        String createHomes, createWarps, createVaults, createMutes, createBackLocations;
         
         if (databaseType == DatabaseType.SQLITE) {
             createHomes = "CREATE TABLE IF NOT EXISTS homes (" +
@@ -119,6 +119,18 @@ public class DatabaseManager {
                     "contents TEXT NOT NULL," +
                     "UNIQUE(owner_uuid, vault_number)" +
                     ")";
+            createBackLocations = "CREATE TABLE IF NOT EXISTS back_locations (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "player_uuid TEXT NOT NULL UNIQUE," +
+                    "world_name TEXT NOT NULL," +
+                    "x REAL NOT NULL," +
+                    "y REAL NOT NULL," +
+                    "z REAL NOT NULL," +
+                    "yaw REAL NOT NULL," +
+                    "pitch REAL NOT NULL," +
+                    "created_at INTEGER NOT NULL," +
+                    "last_online INTEGER NOT NULL DEFAULT 0" +
+                    ")";
         } else {
             createHomes = "CREATE TABLE IF NOT EXISTS homes (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
@@ -160,6 +172,18 @@ public class DatabaseManager {
                     "contents TEXT NOT NULL," +
                     "UNIQUE KEY unique_vault (owner_uuid, vault_number)" +
                     ")";
+            createBackLocations = "CREATE TABLE IF NOT EXISTS back_locations (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY," +
+                    "player_uuid VARCHAR(36) NOT NULL UNIQUE," +
+                    "world_name VARCHAR(64) NOT NULL," +
+                    "x DOUBLE NOT NULL," +
+                    "y DOUBLE NOT NULL," +
+                    "z DOUBLE NOT NULL," +
+                    "yaw FLOAT NOT NULL," +
+                    "pitch FLOAT NOT NULL," +
+                    "created_at BIGINT NOT NULL," +
+                    "last_online BIGINT NOT NULL DEFAULT 0" +
+                    ")";
         }
         
         try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
@@ -167,6 +191,7 @@ public class DatabaseManager {
             stmt.executeUpdate(createWarps);
             stmt.executeUpdate(createVaults);
             stmt.executeUpdate(createMutes);
+            stmt.executeUpdate(createBackLocations);
             
             // Drop kits table if it exists (removing kit system)
             try {
