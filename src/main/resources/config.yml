@@ -1,4 +1,8 @@
-database: # MariaDB only
+database:
+  type: sqlite # sqlite or mariadb
+  # SQLite settings (used when type is sqlite)
+  file: plugins/CraftUtils/database.db
+  # MariaDB settings (used when type is mariadb)
   username: user
   host: localhost
   port: 3306
@@ -14,3 +18,17 @@ commands:
   ability: true
   homes: true
   warps: true
+  mute: true
+  pardon: true
+discord:
+  webhooks:
+    logs: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    joins: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    leaves: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    bans: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    mutes: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    unmutes: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+  enabled: true
+messages:
+  join: "&a{player} joined the server!"
+  leave: "&c{player} left the server!"

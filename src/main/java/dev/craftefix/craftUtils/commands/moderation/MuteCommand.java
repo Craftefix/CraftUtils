@@ -8,6 +8,9 @@ import revxrsal.commands.annotation.Description;
 import revxrsal.commands.annotation.Named;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -134,21 +137,53 @@ public class MuteCommand {
     @Description("Pardon (unban) a player")
     @CommandPermission("craftutils.pardon")
     public void pardon(CommandSender sender, @Named("player") String playerName) {
-        @SuppressWarnings("deprecation")
-        org.bukkit.BanList banList = Bukkit.getBanList(org.bukkit.BanList.Type.NAME);
+        // Check both modern and legacy ban lists
+        boolean wasProfileBanned = false;
+        boolean wasNameBanned = false;
         
-        if (!banList.isBanned(playerName)) {
-            sender.sendMessage(ChatColor.RED + playerName + " is not banned.");
+        // Check profile ban list (modern Paper API)
+        try {
+            var profileBanList = Bukkit.getBanList(io.papermc.paper.ban.BanListType.PROFILE);
+            @SuppressWarnings("deprecation")
+            org.bukkit.OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+            com.destroystokyo.paper.profile.PlayerProfile profile = offlinePlayer.getPlayerProfile();
+            
+            wasProfileBanned = profileBanList.isBanned(profile);
+            if (wasProfileBanned) {
+                profileBanList.pardon(profile);
+            }
+        } catch (Exception e) {
+            // Fallback if profile ban list doesn't work
+        }
+        
+        // Also check name ban list for backwards compatibility
+        @SuppressWarnings("deprecation")
+        org.bukkit.BanList nameBanList = Bukkit.getBanList(org.bukkit.BanList.Type.NAME);
+        wasNameBanned = nameBanList.isBanned(playerName);
+        if (wasNameBanned) {
+            nameBanList.pardon(playerName);
+        }
+        
+        if (!wasProfileBanned && !wasNameBanned) {
+            sender.sendMessage(Component.text()
+                    .append(Component.text("PARDON ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                    .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                    .append(Component.text(playerName + " is not banned.", NamedTextColor.RED)));
             return;
         }
         
-        banList.pardon(playerName);
-        
         String senderName = sender instanceof Player ? sender.getName() : "Console";
-        sender.sendMessage(ChatColor.GREEN + "Successfully pardoned " + playerName + ".");
+        sender.sendMessage(Component.text()
+                .append(Component.text("PARDON ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                .append(Component.text("Successfully pardoned " + playerName + ".", NamedTextColor.GREEN)));
         
         // Broadcast to staff
-        String broadcastMessage = ChatColor.YELLOW + senderName + " pardoned " + playerName + ".";
+        Component broadcastMessage = Component.text()
+                .append(Component.text("STAFF ", NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
+                .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                .append(Component.text(senderName + " pardoned " + playerName + ".", NamedTextColor.YELLOW))
+                .build();
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.hasPermission("craftutils.pardon.notify")) {
                 player.sendMessage(broadcastMessage);

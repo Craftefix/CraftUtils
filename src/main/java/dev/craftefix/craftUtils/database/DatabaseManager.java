@@ -98,7 +98,7 @@ public class DatabaseManager {
                     "z REAL NOT NULL," +
                     "yaw REAL NOT NULL DEFAULT 0," +
                     "pitch REAL NOT NULL DEFAULT 0," +
-                    "private INTEGER NOT NULL DEFAULT 0," +
+                    "`private` INTEGER NOT NULL DEFAULT 0," +
                     "world TEXT NOT NULL" +
                     ")";
             createMutes = "CREATE TABLE IF NOT EXISTS mutes (" +
@@ -139,7 +139,7 @@ public class DatabaseManager {
                     "z DOUBLE NOT NULL," +
                     "yaw FLOAT NOT NULL DEFAULT 0," +
                     "pitch FLOAT NOT NULL DEFAULT 0," +
-                    "private TINYINT(1) NOT NULL DEFAULT 0," +
+                     "`private` TINYINT(1) NOT NULL DEFAULT 0," +
                     "world VARCHAR(64) NOT NULL" +
                     ")";
             createMutes = "CREATE TABLE IF NOT EXISTS mutes (" +
@@ -172,6 +172,7 @@ public class DatabaseManager {
                 stmt.executeUpdate("DROP TABLE IF EXISTS kits");
             } catch (SQLException ignored) {}
         } catch (SQLException e) {
+            Main.getInstance().getLogger().severe("Failed to create database tables: " + e.getMessage());
             e.printStackTrace();
         }
     }

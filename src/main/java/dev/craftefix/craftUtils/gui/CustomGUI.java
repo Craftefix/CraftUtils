@@ -135,12 +135,16 @@ public class CustomGUI implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory().equals(inventory)) {
-            event.setCancelled(true); // Cancel by default
-
-            Consumer<InventoryClickEvent> handler = clickHandlers.get(event.getSlot());
-            if (handler != null) {
-                handler.accept(event);
+            // Only cancel clicks on GUI slots, not player inventory slots
+            if (event.getRawSlot() < inventory.getSize()) {
+                event.setCancelled(true); // Cancel clicks on GUI items
+                
+                Consumer<InventoryClickEvent> handler = clickHandlers.get(event.getSlot());
+                if (handler != null) {
+                    handler.accept(event);
+                }
             }
+            // Player inventory clicks (rawSlot >= inventory.getSize()) are not cancelled
         }
     }
 

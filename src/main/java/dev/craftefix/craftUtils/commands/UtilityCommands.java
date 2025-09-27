@@ -1,6 +1,5 @@
 package dev.craftefix.craftUtils.commands;
 
-import dev.craftefix.craftUtils.database.KitManager;
 import dev.craftefix.craftUtils.database.PlayerVaultManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -12,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
@@ -22,45 +22,8 @@ import java.util.UUID;
 
 public class UtilityCommands {
     
-    private final KitManager kitManager = new KitManager();
     private final PlayerVaultManager vaultManager = new PlayerVaultManager();
     private final Map<UUID, Location> lastLocations = new HashMap<>();
-    
-    @Command({"kit", "cu kit"})
-    @CommandPermission("CraftUtils.kit")
-    public void kit(Player actor, String kitName) {
-        KitManager.Kit kit = kitManager.getKit(kitName).orElse(null);
-        if (kit == null) {
-            actor.sendMessage(Component.text()
-                    .append(Component.text("Kit ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
-                    .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                    .append(Component.text("Kit '" + kitName + "' not found.", NamedTextColor.RED)));
-            return;
-        }
-        
-        if (kit.getPermission() != null && !actor.hasPermission(kit.getPermission())) {
-            actor.sendMessage(Component.text()
-                    .append(Component.text("Kit ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
-                    .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                    .append(Component.text("You don't have permission to use this kit.", NamedTextColor.RED)));
-            return;
-        }
-        
-        for (ItemStack item : kit.getItems()) {
-            if (item != null) {
-                if (actor.getInventory().firstEmpty() == -1) {
-                    actor.getWorld().dropItem(actor.getLocation(), item);
-                } else {
-                    actor.getInventory().addItem(item);
-                }
-            }
-        }
-        
-        actor.sendMessage(Component.text()
-                .append(Component.text("Kit ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
-                .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                .append(Component.text("You received the '" + kitName + "' kit.", NamedTextColor.GREEN)));
-    }
     
     @Command({"vault", "cu vault", "pv"})
     @CommandPermission("CraftUtils.vault")
@@ -165,12 +128,21 @@ public class UtilityCommands {
                 return;
             }
             
-            if (item.getItemMeta() != null && item.getItemMeta().hasEnchants()) {
-                item.setDurability((short) 0);
-                actor.sendMessage(Component.text()
-                        .append(Component.text("Repair ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
-                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append(Component.text("Item repaired successfully.", NamedTextColor.GREEN)));
+            if (item.getItemMeta() instanceof Damageable) {
+                Damageable damageable = (Damageable) item.getItemMeta();
+                if (damageable.hasDamage()) {
+                    damageable.setDamage(0);
+                    item.setItemMeta(damageable);
+                    actor.sendMessage(Component.text()
+                            .append(Component.text("Repair ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
+                            .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                            .append(Component.text("Item repaired successfully.", NamedTextColor.GREEN)));
+                } else {
+                    actor.sendMessage(Component.text()
+                            .append(Component.text("Repair ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
+                            .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                            .append(Component.text("This item is already fully repaired.", NamedTextColor.YELLOW)));
+                }
             } else {
                 actor.sendMessage(Component.text()
                         .append(Component.text("Repair ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
@@ -188,16 +160,27 @@ public class UtilityCommands {
             
             int repairedCount = 0;
             for (ItemStack item : actor.getInventory().getContents()) {
-                if (item != null && item.getType() != Material.AIR && item.getItemMeta() != null && item.getItemMeta().hasEnchants()) {
-                    item.setDurability((short) 0);
-                    repairedCount++;
+                if (item != null && item.getType() != Material.AIR && item.getItemMeta() instanceof Damageable) {
+                    Damageable damageable = (Damageable) item.getItemMeta();
+                    if (damageable.hasDamage()) {
+                        damageable.setDamage(0);
+                        item.setItemMeta(damageable);
+                        repairedCount++;
+                    }
                 }
             }
             
-            actor.sendMessage(Component.text()
-                    .append(Component.text("Repair ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
-                    .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                    .append(Component.text("Repaired " + repairedCount + " items.", NamedTextColor.GREEN)));
+            if (repairedCount > 0) {
+                actor.sendMessage(Component.text()
+                        .append(Component.text("Repair ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text("Repaired " + repairedCount + " items.", NamedTextColor.GREEN)));
+            } else {
+                actor.sendMessage(Component.text()
+                        .append(Component.text("Repair ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text("No damaged items found to repair.", NamedTextColor.YELLOW)));
+            }
         }
     }
     
