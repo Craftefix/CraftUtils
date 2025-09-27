@@ -132,9 +132,9 @@ public class HomeCommand {
     }
 
     private int getHomeLimit(Player player) {
-        if (player.hasPermission("craftutils.homes.unlimited")) return Integer.MAX_VALUE;
+        if (player.hasPermission("CraftUtils.homes.unlimited")) return Integer.MAX_VALUE;
         for (int i = 20; i > 0; i--) {
-            if (player.hasPermission("craftutils.homes." + i)) return i;
+            if (player.hasPermission("CraftUtils.homes." + i)) return i;
         }
         return 0;
     }

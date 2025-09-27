@@ -1,4 +1,4 @@
-name: craftUtils
+name: CraftUtils
 version: 0.0.b55
 main: dev.craftefix.craftUtils.Main
 api-version: 1.21.8
