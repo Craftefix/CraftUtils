@@ -17,6 +17,7 @@ public class MuteManager {
     }
     
     public static class MuteData {
+        public final UUID playerUuid;
         public final String playerName;
         public final String mutedBy;
         public final String reason;
@@ -24,7 +25,8 @@ public class MuteManager {
         public final Long unmuteTime;
         public final boolean active;
         
-        public MuteData(String playerName, String mutedBy, String reason, long muteTime, Long unmuteTime, boolean active) {
+        public MuteData(UUID playerUuid, String playerName, String mutedBy, String reason, long muteTime, Long unmuteTime, boolean active) {
+            this.playerUuid = playerUuid;
             this.playerName = playerName;
             this.mutedBy = mutedBy;
             this.reason = reason;
@@ -78,13 +80,14 @@ public class MuteManager {
     }
     
     public MuteData getMuteData(UUID playerUuid) {
-        String sql = "SELECT player_name, muted_by, reason, mute_time, unmute_time, active FROM mutes WHERE player_uuid = ? AND active = 1";
+        String sql = "SELECT player_uuid, player_name, muted_by, reason, mute_time, unmute_time, active FROM mutes WHERE player_uuid = ? AND active = 1";
         
         try (Connection conn = databaseManager.getConnection(); 
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, playerUuid.toString());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
+                    UUID uuid = UUID.fromString(rs.getString("player_uuid"));
                     String playerName = rs.getString("player_name");
                     String mutedBy = rs.getString("muted_by");
                     String reason = rs.getString("reason");
@@ -92,7 +95,7 @@ public class MuteManager {
                     Long unmuteTime = rs.getObject("unmute_time", Long.class);
                     boolean active = rs.getBoolean("active");
                     
-                    return new MuteData(playerName, mutedBy, reason, muteTime, unmuteTime, active);
+                    return new MuteData(uuid, playerName, mutedBy, reason, muteTime, unmuteTime, active);
                 }
             }
         } catch (SQLException e) {
@@ -115,13 +118,14 @@ public class MuteManager {
     }
     
     public MuteData getMuteDataByName(String playerName) {
-        String sql = "SELECT player_name, muted_by, reason, mute_time, unmute_time, active FROM mutes WHERE LOWER(player_name) = LOWER(?) AND active = 1";
+        String sql = "SELECT player_uuid, player_name, muted_by, reason, mute_time, unmute_time, active FROM mutes WHERE LOWER(player_name) = LOWER(?) AND active = 1";
         
         try (Connection conn = databaseManager.getConnection(); 
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, playerName);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
+                    UUID uuid = UUID.fromString(rs.getString("player_uuid"));
                     String name = rs.getString("player_name");
                     String mutedBy = rs.getString("muted_by");
                     String reason = rs.getString("reason");
@@ -129,7 +133,7 @@ public class MuteManager {
                     Long unmuteTime = rs.getObject("unmute_time", Long.class);
                     boolean active = rs.getBoolean("active");
                     
-                    return new MuteData(name, mutedBy, reason, muteTime, unmuteTime, active);
+                    return new MuteData(uuid, name, mutedBy, reason, muteTime, unmuteTime, active);
                 }
             }
         } catch (SQLException e) {
