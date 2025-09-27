@@ -80,19 +80,20 @@ public class MuteManager {
     public MuteData getMuteData(UUID playerUuid) {
         String sql = "SELECT player_name, muted_by, reason, mute_time, unmute_time, active FROM mutes WHERE player_uuid = ? AND active = 1";
         
-        try (Connection conn = databaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = databaseManager.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, playerUuid.toString());
-            ResultSet rs = stmt.executeQuery();
-            
-            if (rs.next()) {
-                String playerName = rs.getString("player_name");
-                String mutedBy = rs.getString("muted_by");
-                String reason = rs.getString("reason");
-                long muteTime = rs.getLong("mute_time");
-                Long unmuteTime = rs.getObject("unmute_time", Long.class);
-                boolean active = rs.getBoolean("active");
-                
-                return new MuteData(playerName, mutedBy, reason, muteTime, unmuteTime, active);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String playerName = rs.getString("player_name");
+                    String mutedBy = rs.getString("muted_by");
+                    String reason = rs.getString("reason");
+                    long muteTime = rs.getLong("mute_time");
+                    Long unmuteTime = rs.getObject("unmute_time", Long.class);
+                    boolean active = rs.getBoolean("active");
+                    
+                    return new MuteData(playerName, mutedBy, reason, muteTime, unmuteTime, active);
+                }
             }
         } catch (SQLException e) {
             Main.getInstance().getLogger().severe("Error getting mute data: " + e.getMessage());
@@ -116,19 +117,20 @@ public class MuteManager {
     public MuteData getMuteDataByName(String playerName) {
         String sql = "SELECT player_name, muted_by, reason, mute_time, unmute_time, active FROM mutes WHERE LOWER(player_name) = LOWER(?) AND active = 1";
         
-        try (Connection conn = databaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = databaseManager.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, playerName);
-            ResultSet rs = stmt.executeQuery();
-            
-            if (rs.next()) {
-                String name = rs.getString("player_name");
-                String mutedBy = rs.getString("muted_by");
-                String reason = rs.getString("reason");
-                long muteTime = rs.getLong("mute_time");
-                Long unmuteTime = rs.getObject("unmute_time", Long.class);
-                boolean active = rs.getBoolean("active");
-                
-                return new MuteData(name, mutedBy, reason, muteTime, unmuteTime, active);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String name = rs.getString("player_name");
+                    String mutedBy = rs.getString("muted_by");
+                    String reason = rs.getString("reason");
+                    long muteTime = rs.getLong("mute_time");
+                    Long unmuteTime = rs.getObject("unmute_time", Long.class);
+                    boolean active = rs.getBoolean("active");
+                    
+                    return new MuteData(name, mutedBy, reason, muteTime, unmuteTime, active);
+                }
             }
         } catch (SQLException e) {
             Main.getInstance().getLogger().severe("Error getting mute data by name: " + e.getMessage());

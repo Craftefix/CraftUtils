@@ -33,8 +33,9 @@ public class HomeManager {
             stmt.setString(8, world.getName());
             stmt.executeUpdate();
         } catch (SQLIntegrityConstraintViolationException e) {
-            System.err.println("Home creation failed: Duplicate home name.");
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().warning("Home creation failed: Duplicate home name for player " + playerUUID + ", home: " + homeName);
         } catch (SQLException e) {
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().severe("Database error creating home: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -65,6 +66,7 @@ public class HomeManager {
                 }
             }
         } catch (SQLException e) {
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().severe("Database error: " + e.getMessage());
             e.printStackTrace();
         }
         return homes;
@@ -90,6 +92,7 @@ public class HomeManager {
                 }
             }
         } catch (SQLException e) {
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().severe("Database error: " + e.getMessage());
             e.printStackTrace();
         }
         return Optional.empty();
@@ -109,6 +112,7 @@ public class HomeManager {
             stmt.setString(8, homeName);
             stmt.executeUpdate();
         } catch (SQLException e) {
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().severe("Database error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -126,6 +130,7 @@ public class HomeManager {
             stmt.setString(2, homeName);
             stmt.executeUpdate();
         } catch (SQLException e) {
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().severe("Database error: " + e.getMessage());
             e.printStackTrace();
         }
     }

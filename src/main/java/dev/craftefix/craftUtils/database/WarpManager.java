@@ -35,9 +35,9 @@ public class WarpManager {
             stmt.setInt(8, isPrivate ? 1 : 0);
             stmt.executeUpdate();
         } catch (SQLIntegrityConstraintViolationException e) {
-            System.err.println("Warp creation failed: Duplicate warp name.");
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().warning("Warp creation failed: Duplicate warp name: " + warpName);
         } catch (SQLException e) {
-            System.err.println("Database error while creating warp: " + e.getMessage());
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().severe("Database error while creating warp: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -60,25 +60,26 @@ public class WarpManager {
         String query = "SELECT * FROM warps";
         try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
-            ResultSet resultSet = stmt.executeQuery();
-            while (resultSet.next()) {
-                boolean hidden = resultSet.getInt("`private`") == 1;
-                if (hidden && player.map(p -> !p.hasPermission("CraftUtils.warps.showhidden")).orElse(true)) {
-                    continue;
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    boolean hidden = resultSet.getInt("`private`") == 1;
+                    if (hidden && player.map(p -> !p.hasPermission("CraftUtils.warps.showhidden")).orElse(true)) {
+                        continue;
+                    }
+                    warps.add(new Warp(
+                        resultSet.getString("warp_name"),
+                        resultSet.getDouble("x"),
+                        resultSet.getDouble("y"),
+                        resultSet.getDouble("z"),
+                        resultSet.getFloat("yaw"),
+                        resultSet.getFloat("pitch"),
+                        resultSet.getString("world"),
+                        hidden
+                    ));
                 }
-                warps.add(new Warp(
-                    resultSet.getString("warp_name"),
-                    resultSet.getDouble("x"),
-                    resultSet.getDouble("y"),
-                    resultSet.getDouble("z"),
-                    resultSet.getFloat("yaw"),
-                    resultSet.getFloat("pitch"),
-                    resultSet.getString("world"),
-                    hidden
-                ));
             }
         } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().severe("Database error: " + e.getMessage());
             e.printStackTrace();
         }
         return warps;
@@ -97,25 +98,26 @@ public class WarpManager {
         try (Connection connection = databaseManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, warpName);
-            ResultSet resultSet = stmt.executeQuery();
-            if (resultSet.next()) {
-                boolean hidden = resultSet.getInt("`private`") == 1;
-                if (hidden && player.map(p -> !p.hasPermission("CraftUtils.warps.showhidden")).orElse(true)) {
-                    return Optional.empty();
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                if (resultSet.next()) {
+                    boolean hidden = resultSet.getInt("`private`") == 1;
+                    if (hidden && player.map(p -> !p.hasPermission("CraftUtils.warps.showhidden")).orElse(true)) {
+                        return Optional.empty();
+                    }
+                    return Optional.of(new Warp(
+                        resultSet.getString("warp_name"),
+                        resultSet.getDouble("x"),
+                        resultSet.getDouble("y"),
+                        resultSet.getDouble("z"),
+                        resultSet.getFloat("yaw"),
+                        resultSet.getFloat("pitch"),
+                        resultSet.getString("world"),
+                        hidden
+                    ));
                 }
-                return Optional.of(new Warp(
-                    resultSet.getString("warp_name"),
-                    resultSet.getDouble("x"),
-                    resultSet.getDouble("y"),
-                    resultSet.getDouble("z"),
-                    resultSet.getFloat("yaw"),
-                    resultSet.getFloat("pitch"),
-                    resultSet.getString("world"),
-                    hidden
-                ));
             }
         } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().severe("Database error: " + e.getMessage());
             e.printStackTrace();
         }
         return Optional.empty();
@@ -135,7 +137,7 @@ public class WarpManager {
             stmt.setString(8, warpName);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().severe("Database error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -147,7 +149,7 @@ public class WarpManager {
             stmt.setString(1, warpName);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().severe("Database error: " + e.getMessage());
             e.printStackTrace();
         }
     }

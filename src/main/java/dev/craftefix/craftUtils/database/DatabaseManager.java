@@ -54,7 +54,7 @@ public class DatabaseManager {
     }
 
     // Get a connection from the pool
-    public Connection getConnection() throws SQLException {
+    public synchronized Connection getConnection() throws SQLException {
         if (dataSource == null) {
             initialize();
         }
@@ -62,9 +62,10 @@ public class DatabaseManager {
     }
 
     // Close the data source
-    public void close() {
+    public synchronized void close() {
         if (dataSource != null) {
             dataSource.close();
+            dataSource = null;
         }
     }
 

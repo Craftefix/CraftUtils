@@ -56,7 +56,7 @@ public final class Main extends JavaPlugin {
         }
         getLogger().info("Plugin disabled successfully.");
     }
-    public static Main getInstance() {
+    public static synchronized Main getInstance() {
         return instance;
     }
     
