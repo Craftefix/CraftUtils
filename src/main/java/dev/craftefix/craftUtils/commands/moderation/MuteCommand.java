@@ -114,18 +114,19 @@ public class MuteCommand {
             return;
         }
         
-        muteManager.unmutePlayerByName(playerName);
+        // Use UUID-based unmute operation instead of name-based
+        muteManager.unmutePlayer(muteData.playerUuid);
         
         String senderName = sender instanceof Player ? sender.getName() : "Console";
-        sender.sendMessage(ChatColor.GREEN + "Successfully unmuted " + playerName + ".");
+        sender.sendMessage(ChatColor.GREEN + "Successfully unmuted " + muteData.playerName + ".");
         
-        Player target = Bukkit.getPlayer(playerName);
+        Player target = Bukkit.getPlayer(muteData.playerUuid);
         if (target != null && target.isOnline()) {
             target.sendMessage(ChatColor.GREEN + "You have been unmuted by " + senderName + ".");
         }
         
         // Broadcast to staff
-        String broadcastMessage = ChatColor.YELLOW + senderName + " unmuted " + playerName + ".";
+        String broadcastMessage = ChatColor.YELLOW + senderName + " unmuted " + muteData.playerName + ".";
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.hasPermission("CraftUtils.mute.notify")) {
                 player.sendMessage(broadcastMessage);
@@ -133,7 +134,7 @@ public class MuteCommand {
         }
         
         // Send to Discord
-        discordManager.sendPlayerUnmute(playerName, senderName);
+        discordManager.sendPlayerUnmute(muteData.playerName, senderName);
     }
 
     @Command("pardon")

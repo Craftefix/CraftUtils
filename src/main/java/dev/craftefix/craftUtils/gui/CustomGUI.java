@@ -143,8 +143,12 @@ public class CustomGUI implements Listener {
                 if (handler != null) {
                     handler.accept(event);
                 }
+            } else {
+                // For player inventory slots, cancel shift-click and double-click actions
+                if (event.isShiftClick() || event.getClick() == org.bukkit.event.inventory.ClickType.DOUBLE_CLICK) {
+                    event.setCancelled(true);
+                }
             }
-            // Player inventory clicks (rawSlot >= inventory.getSize()) are not cancelled
         }
     }
 

@@ -7,3 +7,20 @@ website: craftefix.dev
 authors:
   - Craftefix
 folia-supported: true
+
+permissions:
+  CraftUtils.mute:
+    description: Allows muting players
+    default: op
+  CraftUtils.mute.notify:
+    description: Receive notifications when players are muted
+    default: op
+  CraftUtils.unmute:
+    description: Allows unmuting players
+    default: op
+  CraftUtils.pardon:
+    description: Allows pardoning (unbanning) players
+    default: op
+  CraftUtils.pardon.notify:
+    description: Receive notifications when players are pardoned
+    default: op
