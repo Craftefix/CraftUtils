@@ -50,7 +50,7 @@ public class AbilityCommands {
                     .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
                     .append(Component.text("You have been healed.", NamedTextColor.GRAY)));
         } else {
-            if (actor.hasPermission("Craftutils.heal.others")) {
+            if (actor.hasPermission("CraftUtils.heal.others")) {
                 target.setHealth(20);
                 target.setFoodLevel(20);
                 target.sendMessage(Component.text()

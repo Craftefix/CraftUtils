@@ -13,18 +13,23 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        // Plugin startup logic
-        // Register the suggestion provider
-        HomeManager homeManager = new HomeManager();
-        Player player = getServer().getPlayer("playerName"); // Replace "playerName" with the actual player name
-
+        
+        // Create the config file
+        saveDefaultConfig();
+        
+        // Initialize database
+        try {
+            DatabaseManager.initialize();
+            getLogger().info("Database initialized successfully (" + DatabaseManager.getDatabaseType() + ")");
+        } catch (Exception e) {
+            getLogger().severe("Failed to initialize database: " + e.getMessage());
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // Register the commands
         EnableLamp enableLamp = new EnableLamp(this);
         enableLamp.enable();
-
-        // Create the config file
-        saveDefaultConfig();
 
         // Initialize bStats
         try {
