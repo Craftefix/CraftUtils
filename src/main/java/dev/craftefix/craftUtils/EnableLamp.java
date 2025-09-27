@@ -52,16 +52,28 @@ public final class EnableLamp {
         commandMap.put("pardon", muteCommand);
 
         // Register commands based on config
-        var commands = plugin.getConfig().getConfigurationSection("commands").getKeys(false);
-        for (String command : commands) {
-            if (plugin.getConfig().getBoolean("commands." + command)) {
-                var commandInstance = commandMap.get(command);
-                if (commandInstance != null) {
-                    lamp.register(commandInstance);
-                    plugin.getLogger().info("Registered command: " + command);
+        var configSection = plugin.getConfig().getConfigurationSection("commands");
+        if (configSection != null) {
+            var commands = configSection.getKeys(false);
+            for (String command : commands) {
+                if (plugin.getConfig().getBoolean("commands." + command)) {
+                    var commandInstance = commandMap.get(command);
+                    if (commandInstance != null) {
+                        lamp.register(commandInstance);
+                        plugin.getLogger().info("Registered command: " + command);
+                    } else {
+                        plugin.getLogger().warning("Unknown command in config: " + command);
+                    }
                 } else {
-                    plugin.getLogger().warning("Unknown command in config: " + command);
+                    plugin.getLogger().info("Command disabled in config: " + command);
                 }
+            }
+        } else {
+            plugin.getLogger().warning("Commands section not found in config! Loading all commands...");
+            // Fallback: register all commands if config section is missing
+            for (var entry : commandMap.entrySet()) {
+                lamp.register(entry.getValue());
+                plugin.getLogger().info("Registered command (fallback): " + entry.getKey());
             }
         }
 

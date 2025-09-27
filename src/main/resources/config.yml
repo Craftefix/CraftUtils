@@ -18,6 +18,7 @@ commands:
   ability: true
   homes: true
   warps: true
+  utility: true
   mute: true
   pardon: true
 discord:
