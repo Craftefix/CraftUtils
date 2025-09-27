@@ -51,20 +51,24 @@ public class HomeCommand {
         List<Home> homes = homeManager.getAllHomes(actor.getUniqueId().toString());
         int homeLimit = getHomeLimit(actor);
 
+        // Check if player has permission to set homes
+        if (homeLimit == 0) {
+            actor.sendMessage(Component.text()
+                    .append(Component.text("Homes ", NamedTextColor.DARK_GREEN).decorate(TextDecoration.BOLD))
+                    .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                    .append(Component.text("Homes are not allowed with your permissions, contact your server administrator", NamedTextColor.DARK_RED)));
+            return;
+        }
+
         String finalName = name;
         if (homes.size() >= homeLimit && homes.stream().noneMatch(h -> h.getHomeName().equalsIgnoreCase(finalName))) {
             actor.sendMessage(Component.text()
                     .append(Component.text("Homes ", NamedTextColor.DARK_GREEN).decorate(TextDecoration.BOLD))
                     .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                    .append(Component.text("You have reached your home limit of", NamedTextColor.DARK_RED))
+                    .append(Component.text("You have reached your home limit of ", NamedTextColor.DARK_RED))
                     .append(Component.text(homeLimit, NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
                     .append(Component.text(" homes.", NamedTextColor.DARK_RED).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE)));
             return;
-        } else if (homes.size() == 0) {
-            actor.sendMessage(Component.text()
-                    .append(Component.text("Homes ", NamedTextColor.DARK_GREEN).decorate(TextDecoration.BOLD))
-                    .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                    .append(Component.text("Homes are not allowed with your permissions, contact your server administrator", NamedTextColor.DARK_RED)));
         }
 
         String finalName1 = name;

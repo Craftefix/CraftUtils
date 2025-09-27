@@ -9,6 +9,7 @@ database:
   password: password
   database: CraftUtils
 commands:
+  cu: true
   tp: true
   message: true
   tpAsk: true
@@ -18,9 +19,10 @@ commands:
   ability: true
   homes: true
   warps: true
-  utility: true
-  mute: true
-  pardon: true
+  utility: false
+  mute: false
+  pardon: false
+  cug: true
 discord:
   webhooks:
     logs: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"

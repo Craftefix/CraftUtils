@@ -3,6 +3,7 @@ package dev.craftefix.craftUtils;
 
 import dev.craftefix.craftUtils.database.DatabaseManager;
 import dev.craftefix.craftUtils.database.HomeManager;
+import dev.craftefix.craftUtils.language.LanguageManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Main extends JavaPlugin {
     private static Main instance;
     private DatabaseManager databaseManager;
+    private LanguageManager languageManager;
 
     @Override
     public void onEnable() {
@@ -32,6 +34,9 @@ public final class Main extends JavaPlugin {
         // Register the commands
         EnableLamp enableLamp = new EnableLamp(this, databaseManager);
         enableLamp.enable();
+        
+        // Get language manager from EnableLamp
+        this.languageManager = enableLamp.getLanguageManager();
 
         // Initialize bStats
         try {
@@ -62,6 +67,10 @@ public final class Main extends JavaPlugin {
     
     public DatabaseManager getDatabaseManager() {
         return databaseManager;
+    }
+    
+    public LanguageManager getLanguageManager() {
+        return languageManager;
     }
 
 }
