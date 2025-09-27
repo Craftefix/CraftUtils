@@ -1,98 +1,42 @@
-name: Build CraftUtils
+name: Build
 
 on:
+  pull_request:
+    types: [opened]
   workflow_dispatch:
-    inputs:
-      force_build:
-        description: 'Force build'
-        required: false
-        default: 'false'
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
       
-      - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v4
-      
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: 21
-          check-latest: true
-      
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/main' }}
-      
-      - name: Set version to beta 0.1.0
-        run: |
-          echo "📝 Setting version to beta 0.1.0"
-          sed -i "s/version = '.*'/version = '0.1.0-beta'/" build.gradle
-          echo "Current version in build.gradle:"
-          grep "version = " build.gradle
-      
-       - name: Build Plugin
-        run: |
-          echo "🔨 Building CraftUtils plugin..."
-          ./gradlew assemble shadowJar --info --stacktrace
-      
-
-      
-      - name: Get artifact name
-        id: artifact
-        run: |
-          VERSION="0.1.0-beta"
-          ARTIFACT_NAME="CraftUtils-${VERSION}.jar"
-          echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-      
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.artifact.outputs.artifact_name }}
-          path: |
-            build/libs/CraftUtils-*.jar
-            !build/libs/*-sources.jar
-            !build/libs/*-javadoc.jar
-          retention-days: 30
-      
-      - name: Upload Shadow JAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: CraftUtils-${{ steps.artifact.outputs.version }}-shadow
-          path: build/libs/*-all.jar
-          retention-days: 30
-      
-      - name: Build Summary
-        run: |
-          echo "## 🎉 Build Completed Successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Version:** \`${{ steps.artifact.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Built at:** \`$(date -u)\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📦 Artifacts Generated:" >> $GITHUB_STEP_SUMMARY
-          echo "- \`${{ steps.artifact.outputs.artifact_name }}\` - Main plugin JAR" >> $GITHUB_STEP_SUMMARY
-          echo "- \`CraftUtils-${{ steps.artifact.outputs.version }}-shadow.jar\` - Shaded JAR with dependencies" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📊 Build Information:" >> $GITHUB_STEP_SUMMARY
-          echo "- **Java Version:** 21 (Temurin)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Gradle Version:** $(./gradlew --version | grep Gradle | head -1)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Target Minecraft:** 1.21.8+" >> $GITHUB_STEP_SUMMARY
-          echo "- **Server Software:** Paper/Spigot" >> $GITHUB_STEP_SUMMARY
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
           
-          # List actual files created
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📁 Generated Files:" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          ls -la build/libs/ >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
       
-
+    - name: Build shadow JAR
+      run: ./gradlew shadowJar
+      
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: craftutils-jar
+        path: build/libs/*.jar
