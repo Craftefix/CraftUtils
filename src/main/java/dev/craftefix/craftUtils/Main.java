@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
     private static Main instance;
+    private DatabaseManager databaseManager;
 
     @Override
     public void onEnable() {
@@ -19,8 +20,9 @@ public final class Main extends JavaPlugin {
         
         // Initialize database
         try {
-            DatabaseManager.initialize();
-            getLogger().info("Database initialized successfully (" + DatabaseManager.getDatabaseType() + ")");
+            databaseManager = new DatabaseManager();
+            databaseManager.initialize();
+            getLogger().info("Database initialized successfully (" + databaseManager.getDatabaseType() + ")");
         } catch (Exception e) {
             getLogger().severe("Failed to initialize database: " + e.getMessage());
             getServer().getPluginManager().disablePlugin(this);
@@ -28,7 +30,7 @@ public final class Main extends JavaPlugin {
         }
 
         // Register the commands
-        EnableLamp enableLamp = new EnableLamp(this);
+        EnableLamp enableLamp = new EnableLamp(this, databaseManager);
         enableLamp.enable();
 
         // Initialize bStats
@@ -45,7 +47,9 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         try {
-            DatabaseManager.close();
+            if (databaseManager != null) {
+                databaseManager.close();
+            }
         } catch (Exception exception) {
             getLogger().warning("Failed to close the database connection.");
             getLogger().warning(exception.getMessage());
@@ -54,6 +58,10 @@ public final class Main extends JavaPlugin {
     }
     public static Main getInstance() {
         return instance;
+    }
+    
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 
 }

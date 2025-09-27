@@ -22,8 +22,12 @@ import java.util.UUID;
 
 public class UtilityCommands {
     
-    private final PlayerVaultManager vaultManager = new PlayerVaultManager();
+    private final PlayerVaultManager vaultManager;
     private final Map<UUID, Location> lastLocations = new HashMap<>();
+    
+    public UtilityCommands(PlayerVaultManager vaultManager) {
+        this.vaultManager = vaultManager;
+    }
     
     @Command({"vault", "cu vault", "pv"})
     @CommandPermission("CraftUtils.vault")

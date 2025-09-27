@@ -2,8 +2,10 @@ package dev.craftefix.craftUtils;
 
 import dev.craftefix.craftUtils.commands.*;
 import dev.craftefix.craftUtils.commands.moderation.MuteCommand;
+import dev.craftefix.craftUtils.database.DatabaseManager;
 import dev.craftefix.craftUtils.database.HomeManager;
 import dev.craftefix.craftUtils.database.WarpManager;
+import dev.craftefix.craftUtils.database.PlayerVaultManager;
 import dev.craftefix.craftUtils.listeners.PlayerEventListener;
 import dev.craftefix.craftUtils.listeners.ModerationEventListener;
 import org.bukkit.event.Listener;
@@ -14,11 +16,13 @@ import java.util.Map;
 
 public final class EnableLamp {
     private final Main plugin;
+    private final DatabaseManager databaseManager;
     private HomeManager homeManager;
 
-    public EnableLamp(Main plugin) {
+    public EnableLamp(Main plugin, DatabaseManager databaseManager) {
         this.plugin = plugin;
-        this.homeManager = new HomeManager(); // Initialize homeManager here
+        this.databaseManager = databaseManager;
+        this.homeManager = new HomeManager(databaseManager);
     }
 
     public void enable() {
@@ -27,10 +31,10 @@ public final class EnableLamp {
             .build();
 
         // Initialize managers and GUI
-        HomeManager homeManager = new HomeManager();
         AdminGUI adminGUI = new AdminGUI(this.plugin);
-        WarpManager warpManager = new WarpManager();
-        MuteCommand muteCommand = new MuteCommand(this.plugin);
+        WarpManager warpManager = new WarpManager(databaseManager);
+        PlayerVaultManager vaultManager = new PlayerVaultManager(databaseManager);
+        MuteCommand muteCommand = new MuteCommand(this.plugin, databaseManager);
 
         // Map of command names to their implementations
         var commandMap = new java.util.HashMap<String, Object>();
@@ -41,8 +45,9 @@ public final class EnableLamp {
         commandMap.put("adminGUI", new AdminGUICommand(adminGUI));
         commandMap.put("alias", new AliasCommands());
         commandMap.put("ability", new AbilityCommands());
-        commandMap.put("homes", new HomeCommand(homeManager));
+        commandMap.put("homes", new HomeCommand(this.homeManager));
         commandMap.put("warps", new WarpCommand(warpManager));
+        commandMap.put("utility", new UtilityCommands(vaultManager));
         commandMap.put("mute", muteCommand);
         commandMap.put("pardon", muteCommand);
 
@@ -66,7 +71,7 @@ public final class EnableLamp {
         
         // Register event listeners
         registerListeners(
-            new PlayerEventListener(plugin),
+            new PlayerEventListener(plugin, muteCommand.getMuteManager()),
             new ModerationEventListener(plugin)
         );
     }

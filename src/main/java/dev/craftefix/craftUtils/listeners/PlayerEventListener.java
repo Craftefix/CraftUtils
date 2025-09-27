@@ -13,10 +13,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerEventListener implements Listener {
     private final Main plugin;
+    private final MuteManager muteManager;
     private final DiscordWebhookManager discordManager;
 
-    public PlayerEventListener(Main plugin) {
+    public PlayerEventListener(Main plugin, MuteManager muteManager) {
         this.plugin = plugin;
+        this.muteManager = muteManager;
         this.discordManager = new DiscordWebhookManager(plugin);
     }
 
@@ -50,8 +52,8 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (MuteManager.isPlayerMuted(event.getPlayer().getUniqueId())) {
-            MuteManager.MuteData muteData = MuteManager.getMuteData(event.getPlayer().getUniqueId());
+        if (muteManager.isPlayerMuted(event.getPlayer().getUniqueId())) {
+            MuteManager.MuteData muteData = muteManager.getMuteData(event.getPlayer().getUniqueId());
             if (muteData != null) {
                 event.setCancelled(true);
                 

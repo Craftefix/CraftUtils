@@ -1,6 +1,7 @@
 package dev.craftefix.craftUtils.commands.moderation;
 
 import dev.craftefix.craftUtils.Main;
+import dev.craftefix.craftUtils.database.DatabaseManager;
 import dev.craftefix.craftUtils.database.MuteManager;
 import dev.craftefix.craftUtils.discord.DiscordWebhookManager;
 import revxrsal.commands.annotation.Command;
@@ -22,11 +23,13 @@ import java.util.regex.Pattern;
 
 public class MuteCommand {
     private final Main plugin;
+    private final MuteManager muteManager;
     private final DiscordWebhookManager discordManager;
     private static final Pattern DURATION_PATTERN = Pattern.compile("(\\d+)([smhd])");
 
-    public MuteCommand(Main plugin) {
+    public MuteCommand(Main plugin, DatabaseManager databaseManager) {
         this.plugin = plugin;
+        this.muteManager = new MuteManager(databaseManager);
         this.discordManager = new DiscordWebhookManager(plugin);
     }
 
@@ -56,7 +59,7 @@ public class MuteCommand {
             targetName = offlinePlayer.getName();
         }
         
-        if (MuteManager.isPlayerMuted(targetUuid)) {
+        if (muteManager.isPlayerMuted(targetUuid)) {
             sender.sendMessage(ChatColor.RED + targetName + " is already muted.");
             return;
         }
@@ -77,7 +80,7 @@ public class MuteCommand {
         String senderName = sender instanceof Player ? sender.getName() : "Console";
         
         // Mute the player
-        MuteManager.mutePlayer(targetUuid, targetName, senderName, reason, durationSeconds);
+        muteManager.mutePlayer(targetUuid, targetName, senderName, reason, durationSeconds);
         
         // Send messages
         String durationText = durationSeconds != null ? formatDuration(durationSeconds) : "permanently";
@@ -104,14 +107,14 @@ public class MuteCommand {
     @Description("Unmute a player")
     @CommandPermission("CraftUtils.unmute")
     public void unmute(CommandSender sender, @Named("player") String playerName) {
-        MuteManager.MuteData muteData = MuteManager.getMuteDataByName(playerName);
+        MuteManager.MuteData muteData = muteManager.getMuteDataByName(playerName);
         
         if (muteData == null || !muteData.active) {
             sender.sendMessage(ChatColor.RED + playerName + " is not muted.");
             return;
         }
         
-        MuteManager.unmutePlayerByName(playerName);
+        muteManager.unmutePlayerByName(playerName);
         
         String senderName = sender instanceof Player ? sender.getName() : "Console";
         sender.sendMessage(ChatColor.GREEN + "Successfully unmuted " + playerName + ".");
@@ -219,5 +222,9 @@ public class MuteCommand {
         } else {
             return (seconds / 86400) + " days";
         }
+    }
+    
+    public MuteManager getMuteManager() {
+        return muteManager;
     }
 }
