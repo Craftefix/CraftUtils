@@ -1,8 +1,9 @@
 package dev.craftefix.craftUtils.commands;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import org.mockbukkit.mockbukkit.MockBukkit;
+import org.mockbukkit.mockbukkit.ServerMock;
+import org.mockbukkit.mockbukkit.entity.PlayerMock;
+import org.mockbukkit.mockbukkit.command.CommandResult;
 import dev.craftefix.craftUtils.Main;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -43,8 +44,8 @@ class CommandTest {
         assertTrue(player.hasPermission("craftutils.main"), "Player should have main permission");
         
         // Execute main command
-        boolean result = server.execute("cu", player);
-        assertTrue(result, "Main command should execute successfully");
+        var result = server.execute("cu", player);
+        assertTrue(result.hasSucceeded(), "Main command should execute successfully");
         
         // Check that player received some message (plugin info)
         assertTrue(player.nextMessage() != null, "Player should receive a response message");
@@ -53,8 +54,8 @@ class CommandTest {
     @Test
     @DisplayName("Player should be able to access help")
     void testHelpCommand() {
-        boolean result = server.execute("cu help", player);
-        assertTrue(result, "Help command should execute successfully");
+        var result = server.execute("cu help", player);
+        assertTrue(result.hasSucceeded(), "Help command should execute successfully");
     }
     
     @Test
@@ -69,8 +70,8 @@ class CommandTest {
         player.getInventory().setItemInMainHand(sword);
         
         // Execute repair command
-        boolean result = server.execute("repair hand", player);
-        assertTrue(result, "Repair command should execute successfully");
+        var result = server.execute("repair hand", player);
+        assertTrue(result.hasSucceeded(), "Repair command should execute successfully");
         
         // Check that player received a message
         assertNotNull(player.nextMessage(), "Player should receive a response message");
@@ -81,10 +82,10 @@ class CommandTest {
     void testCommandPermissions() {
         // Test command without permission
         player.setOp(false);
-        boolean result = server.execute("admingui", player);
+        var result = server.execute("admingui", player);
         
         // Command should execute but player should get no permission message
-        assertTrue(result, "Command should execute (permission check happens in command handler)");
+        assertTrue(result.hasSucceeded(), "Command should execute (permission check happens in command handler)");
     }
     
     @Test
@@ -93,12 +94,12 @@ class CommandTest {
         player.addAttachment(plugin, "CraftUtils.vault", true);
         
         // Test valid vault number
-        boolean result1 = server.execute("vault 1", player);
-        assertTrue(result1, "Valid vault command should execute");
+        var result1 = server.execute("vault 1", player);
+        assertTrue(result1.hasSucceeded(), "Valid vault command should execute");
         
         // Test invalid vault number
-        boolean result2 = server.execute("vault 15", player);
-        assertTrue(result2, "Command should execute (validation happens in handler)");
+        var result2 = server.execute("vault 15", player);
+        assertTrue(result2.hasSucceeded(), "Command should execute (validation happens in handler)");
     }
     
     @Test
@@ -108,12 +109,12 @@ class CommandTest {
         player.addAttachment(plugin, "CraftUtils.Gamemode.Survival", true);
         
         // Test creative mode
-        boolean result1 = server.execute("gmc", player);
-        assertTrue(result1, "Creative mode command should execute");
+        var result1 = server.execute("gmc", player);
+        assertTrue(result1.hasSucceeded(), "Creative mode command should execute");
         
         // Test survival mode
-        boolean result2 = server.execute("gms", player);
-        assertTrue(result2, "Survival mode command should execute");
+        var result2 = server.execute("gms", player);
+        assertTrue(result2.hasSucceeded(), "Survival mode command should execute");
     }
     
     @Test
@@ -122,8 +123,8 @@ class CommandTest {
         player.addAttachment(plugin, "CraftUtils.teleport.location", true);
         
         // Test valid coordinates
-        boolean result = server.execute("cu tp location 100 64 200", player);
-        assertTrue(result, "Valid teleport command should execute");
+        var result = server.execute("cu tp location 100 64 200", player);
+        assertTrue(result.hasSucceeded(), "Valid teleport command should execute");
     }
     
     @Test
@@ -134,15 +135,15 @@ class CommandTest {
         player.addAttachment(plugin, "CraftUtils.home.list", true);
         
         // Test setting a home
-        boolean result1 = server.execute("sethome test", player);
-        assertTrue(result1, "Set home command should execute");
+        var result1 = server.execute("sethome test", player);
+        assertTrue(result1.hasSucceeded(), "Set home command should execute");
         
         // Test listing homes
-        boolean result2 = server.execute("homes", player);
-        assertTrue(result2, "List homes command should execute");
+        var result2 = server.execute("homes", player);
+        assertTrue(result2.hasSucceeded(), "List homes command should execute");
         
         // Test going to home
-        boolean result3 = server.execute("home test", player);
-        assertTrue(result3, "Go to home command should execute");
+        var result3 = server.execute("home test", player);
+        assertTrue(result3.hasSucceeded(), "Go to home command should execute");
     }
 }
