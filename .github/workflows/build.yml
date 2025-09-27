@@ -35,23 +35,8 @@ jobs:
     - name: Build shadow JAR
       run: ./gradlew shadowJar
       
-    - name: Generate build tag
-      id: build_tag
-      run: |
-        BUILD_TAG="build-$(date +%Y%m%d-%H%M%S)-${GITHUB_SHA:0:8}"
-        echo "tag=$BUILD_TAG" >> $GITHUB_OUTPUT
-        
-    - name: Create build release
-      uses: softprops/action-gh-release@v1
+    - name: Upload JAR artifact
+      uses: actions/upload-artifact@v4
       with:
-        tag_name: ${{ steps.build_tag.outputs.tag }}
-        name: "Build ${{ steps.build_tag.outputs.tag }}"
-        body: |
-          Automated build from commit ${{ github.sha }}
-          
-          **Download the JAR file directly from the assets below.**
-        files: build/libs/CraftUtils-1.0.0-all.jar
-        prerelease: true
-        draft: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: CraftUtils
+        path: build/libs/CraftUtils-1.0.0-all.jar
