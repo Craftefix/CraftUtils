@@ -92,7 +92,8 @@ public class MuteManager {
                     String mutedBy = rs.getString("muted_by");
                     String reason = rs.getString("reason");
                     long muteTime = rs.getLong("mute_time");
-                    Long unmuteTime = rs.getObject("unmute_time", Long.class);
+                    long unmuteTimeLong = rs.getLong("unmute_time");
+                    Long unmuteTime = rs.wasNull() ? null : unmuteTimeLong;
                     boolean active = rs.getBoolean("active");
                     
                     return new MuteData(uuid, playerName, mutedBy, reason, muteTime, unmuteTime, active);
@@ -130,7 +131,8 @@ public class MuteManager {
                     String mutedBy = rs.getString("muted_by");
                     String reason = rs.getString("reason");
                     long muteTime = rs.getLong("mute_time");
-                    Long unmuteTime = rs.getObject("unmute_time", Long.class);
+                    long unmuteTimeLong = rs.getLong("unmute_time");
+                    Long unmuteTime = rs.wasNull() ? null : unmuteTimeLong;
                     boolean active = rs.getBoolean("active");
                     
                     return new MuteData(uuid, name, mutedBy, reason, muteTime, unmuteTime, active);
