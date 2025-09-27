@@ -35,21 +35,23 @@ jobs:
     - name: Build shadow JAR
       run: ./gradlew shadowJar
       
-    - name: Upload JAR to transfer.sh
+    - name: Generate build tag
+      id: build_tag
       run: |
-        echo "Uploading JAR to transfer.sh for direct download..."
-        UPLOAD_URL=$(curl --upload-file build/libs/CraftUtils-1.0.0-all.jar https://transfer.sh/CraftUtils.jar)
-        echo "Direct download URL: $UPLOAD_URL"
-        echo "DOWNLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
+        BUILD_TAG="build-$(date +%Y%m%d-%H%M%S)-${GITHUB_SHA:0:8}"
+        echo "tag=$BUILD_TAG" >> $GITHUB_OUTPUT
         
-    - name: Comment download link
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v7
+    - name: Create build release
+      uses: softprops/action-gh-release@v1
       with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '🚀 **Build completed!** Download the JAR file directly: ${{ env.DOWNLOAD_URL }}'
-          })
+        tag_name: ${{ steps.build_tag.outputs.tag }}
+        name: "Build ${{ steps.build_tag.outputs.tag }}"
+        body: |
+          Automated build from commit ${{ github.sha }}
+          
+          **Download the JAR file directly from the assets below.**
+        files: build/libs/CraftUtils-1.0.0-all.jar
+        prerelease: true
+        draft: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
