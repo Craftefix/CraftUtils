@@ -1,5 +1,5 @@
 name: CraftUtils
-version: 0.0.b55
+version: 1.0.0
 main: dev.craftefix.craftUtils.Main
 api-version: 1.21.8
 description: A simple Utils plugin for Paper
