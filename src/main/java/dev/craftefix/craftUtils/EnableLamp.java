@@ -12,6 +12,7 @@ import dev.craftefix.craftUtils.database.PlayerVaultManager;
 import dev.craftefix.craftUtils.listeners.PlayerEventListener;
 import dev.craftefix.craftUtils.listeners.ModerationEventListener;
 import dev.craftefix.craftUtils.listeners.TeleportTrackingListener;
+import dev.craftefix.craftUtils.listeners.VaultEventListener;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import revxrsal.commands.bukkit.BukkitLamp;
@@ -48,6 +49,7 @@ public final class EnableLamp {
         adminGUIInstance = adminGUI;
         WarpManager warpManager = new WarpManager(databaseManager);
         PlayerVaultManager vaultManager = new PlayerVaultManager(databaseManager);
+        VaultEventListener vaultEventListener = new VaultEventListener(vaultManager);
         BackLocationManager backLocationManager = new BackLocationManager(databaseManager);
         MuteCommand muteCommand = new MuteCommand(this.plugin, databaseManager);
 
@@ -65,7 +67,7 @@ public final class EnableLamp {
         commandMap.put("ability", new AbilityCommands());
         commandMap.put("homes", new HomeCommand(this.homeManager));
         commandMap.put("warps", new WarpCommand(warpManager));
-        UtilityCommands utilityCommands = new UtilityCommands(vaultManager, backLocationManager);
+        UtilityCommands utilityCommands = new UtilityCommands(vaultManager, backLocationManager, vaultEventListener);
         TeleportTrackingListener teleportTrackingListener = new TeleportTrackingListener(backLocationManager);
         utilityCommands.setTeleportListener(teleportTrackingListener);
         commandMap.put("utility", utilityCommands);
@@ -116,13 +118,18 @@ public final class EnableLamp {
 
         plugin.getLogger().info("CraftUtils commands initialized successfully.");
         
-        // Register event listeners
+        // Register event listeners - VaultEventListener should always be registered for vault functionality
         registerListeners(
             new PlayerEventListener(plugin, muteCommand.getMuteManager(), backLocationManager),
             new ModerationEventListener(plugin),
             teleportTrackingListener,
-            utilityCommands
+            vaultEventListener
         );
+        
+        // Register utility commands listener only if utility commands are enabled
+        if (configSection != null && plugin.getConfig().getBoolean("commands.utility")) {
+            registerListeners(utilityCommands);
+        }
         
         // Start periodic cleanup task for back locations (every 5 minutes)
         plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {

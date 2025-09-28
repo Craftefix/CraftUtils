@@ -2,6 +2,7 @@ package dev.craftefix.craftUtils.commands;
 
 import dev.craftefix.craftUtils.database.BackLocationManager;
 import dev.craftefix.craftUtils.database.PlayerVaultManager;
+import dev.craftefix.craftUtils.listeners.VaultEventListener;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -28,27 +29,20 @@ public class UtilityCommands implements Listener {
     
     private final PlayerVaultManager vaultManager;
     private final BackLocationManager backLocationManager;
-    private final Map<Inventory, VaultInfo> openVaults = new HashMap<>();
+    private final VaultEventListener vaultEventListener;
     private dev.craftefix.craftUtils.listeners.TeleportTrackingListener teleportListener;
     
-    public UtilityCommands(PlayerVaultManager vaultManager, BackLocationManager backLocationManager) {
+    public UtilityCommands(PlayerVaultManager vaultManager, BackLocationManager backLocationManager, VaultEventListener vaultEventListener) {
         this.vaultManager = vaultManager;
         this.backLocationManager = backLocationManager;
+        this.vaultEventListener = vaultEventListener;
     }
     
     public void setTeleportListener(dev.craftefix.craftUtils.listeners.TeleportTrackingListener teleportListener) {
         this.teleportListener = teleportListener;
     }
     
-    private static class VaultInfo {
-        final String playerUUID;
-        final int vaultNumber;
-        
-        VaultInfo(String playerUUID, int vaultNumber) {
-            this.playerUUID = playerUUID;
-            this.vaultNumber = vaultNumber;
-        }
-    }
+
     
     @Command({"vault", "cu vault", "pv"})
     @CommandPermission("CraftUtils.vault")
@@ -63,13 +57,22 @@ public class UtilityCommands implements Listener {
             return;
         }
         
-        Inventory vaultInventory = Bukkit.createInventory(null, 54, Component.text("Vault #" + vaultNumber).color(NamedTextColor.DARK_PURPLE));
+        final int finalVaultNumber = vaultNumber;
+        final String playerUUID = actor.getUniqueId().toString();
         
-        ItemStack[] contents = vaultManager.getVault(actor.getUniqueId().toString(), vaultNumber).orElse(new ItemStack[54]);
-        vaultInventory.setContents(contents);
-        
-        openVaults.put(vaultInventory, new VaultInfo(actor.getUniqueId().toString(), vaultNumber));
-        actor.openInventory(vaultInventory);
+        // Load vault contents asynchronously
+        Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("CraftUtils"), () -> {
+            ItemStack[] contents = vaultManager.getVault(playerUUID, finalVaultNumber).orElse(new ItemStack[54]);
+            
+            // Return to main thread to open inventory
+            Bukkit.getScheduler().runTask(Bukkit.getPluginManager().getPlugin("CraftUtils"), () -> {
+                Inventory vaultInventory = Bukkit.createInventory(null, 54, Component.text("Vault #" + finalVaultNumber).color(NamedTextColor.DARK_PURPLE));
+                vaultInventory.setContents(contents);
+                
+                vaultEventListener.registerVault(vaultInventory, playerUUID, finalVaultNumber);
+                actor.openInventory(vaultInventory);
+            });
+        });
     }
     
     @Command({"craftingtable", "cu craftingtable", "ct"})
@@ -93,30 +96,7 @@ public class UtilityCommands implements Listener {
                 .append(Component.text("Opened anvil.", NamedTextColor.GRAY)));
     }
     
-    @Command({"enderchest", "cu enderchest", "ec"})
-    @CommandPermission("CraftUtils.enderchest")
-    public void enderchest(Player actor, @Optional Player target) {
-        if (target == null) {
-            actor.openInventory(actor.getEnderChest());
-            actor.sendMessage(Component.text()
-                    .append(Component.text("Utility ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
-                    .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                    .append(Component.text("Opened your ender chest.", NamedTextColor.GRAY)));
-        } else {
-            if (actor.hasPermission("CraftUtils.enderchest.others")) {
-                actor.openInventory(target.getEnderChest());
-                actor.sendMessage(Component.text()
-                        .append(Component.text("Utility ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
-                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append(Component.text("Opened " + target.getName() + "'s ender chest.", NamedTextColor.GRAY)));
-            } else {
-                actor.sendMessage(Component.text()
-                        .append(Component.text("Utility ", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD))
-                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append(Component.text("You don't have permission to open other players' ender chests.", NamedTextColor.RED)));
-            }
-        }
-    }
+
     
     @Command({"back", "cu back"})
     @CommandPermission("CraftUtils.back")
@@ -214,15 +194,5 @@ public class UtilityCommands implements Listener {
     
 
     
-    @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event) {
-        Inventory inventory = event.getInventory();
-        VaultInfo vaultInfo = openVaults.get(inventory);
-        
-        if (vaultInfo != null) {
-            ItemStack[] contents = inventory.getContents();
-            vaultManager.saveVault(vaultInfo.playerUUID, vaultInfo.vaultNumber, contents);
-            openVaults.remove(inventory);
-        }
-    }
+
 }

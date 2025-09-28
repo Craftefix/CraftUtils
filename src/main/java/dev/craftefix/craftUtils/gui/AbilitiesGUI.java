@@ -12,7 +12,7 @@ public class AbilitiesGUI {
     
     public static void openAbilitiesGUI(Player player, JavaPlugin plugin, LanguageManager languageManager) {
         String title = languageManager != null ? 
-            languageManager.getMessage(player, "gui.abilities").toString() : 
+            languageManager.getLegacy(player, "gui.abilities") : 
             "§a§lAbilities";
             
         CustomGUI gui = GUIBuilder.create(plugin, title, 1).build();
@@ -61,7 +61,7 @@ public class AbilitiesGUI {
         
         // Back to main menu
         String backText = languageManager != null ? 
-            languageManager.getMessage(player, "gui.back").toString() : 
+            languageManager.getLegacy(player, "gui.back") : 
             "§7Back to Main Menu";
             
         GUIItem backItem = GUIItem.createButton(Material.ARROW, backText, event -> {

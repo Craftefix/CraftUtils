@@ -24,7 +24,7 @@ public class GUIPermissionChecker {
     public static boolean hasAbilitiesAccess(Player player) {
         return hasPermission(player, "fly") || 
                hasPermission(player, "heal") || 
-               hasPermission(player, "eat") || 
+               hasPermission(player, "feed") || 
                hasPermission(player, "trash");
     }
     
@@ -44,9 +44,10 @@ public class GUIPermissionChecker {
      * Checks if player has permission for gamemode category
      */
     public static boolean hasGamemodeAccess(Player player) {
-        return hasPermission(player, "Gamemode.Creative") ||
-               hasPermission(player, "Gamemode.Survival") ||
-               hasPermission(player, "Gamemode.Adventure");
+        return hasPermission(player, "gamemode.creative") ||
+               hasPermission(player, "gamemode.survival") ||
+               hasPermission(player, "gamemode.adventure") ||
+               hasPermission(player, "gamemode.spectator");
     }
     
     /**

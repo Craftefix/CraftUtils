@@ -154,6 +154,9 @@ public class CustomGUI implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        // Optional: handle cleanup if needed
+        if (event.getInventory().equals(inventory)) {
+            // Unregister this listener when the GUI is closed to prevent memory leaks
+            org.bukkit.event.HandlerList.unregisterAll(this);
+        }
     }
 }

@@ -31,6 +31,13 @@ public class HomeCommand {
         Optional<Home> homeOpt = homeManager.getHome(actor.getUniqueId().toString(), name);
         if (homeOpt.isPresent()) {
             Home home = homeOpt.get();
+            if (home.getWorld() == null) {
+                actor.sendMessage(Component.text()
+                        .append(Component.text("Homes ", NamedTextColor.DARK_GREEN).decorate(TextDecoration.BOLD))
+                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text("The world for this home no longer exists.", NamedTextColor.DARK_RED)));
+                return;
+            }
             actor.teleport(new Location(home.getWorld(), home.getX(), home.getY(), home.getZ()));
             actor.sendMessage(Component.text()
                     .append(Component.text("Homes ", NamedTextColor.DARK_GREEN).decorate(TextDecoration.BOLD))
