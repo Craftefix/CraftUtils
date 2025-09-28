@@ -159,3 +159,6 @@ start-test-server.sh
 
 # IntelliJ IDEA files
 .idea/test-server/
+
+# Test server directory
+test-server/
