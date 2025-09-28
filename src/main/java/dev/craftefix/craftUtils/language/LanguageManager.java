@@ -297,6 +297,34 @@ public class LanguageManager {
     }
     
     /**
+     * Get raw string for player in their preferred language (without color processing)
+     */
+    public String getString(Player player, String key, Object... args) {
+        String lang = getPlayerLanguage(player);
+        return getString(lang, key, args);
+    }
+    
+    /**
+     * Get raw string in specific language (without color processing)
+     */
+    public String getString(String lang, String key, Object... args) {
+        YamlConfiguration config = languages.get(lang);
+        if (config == null) {
+            config = languages.get(defaultLanguage);
+        }
+        if (config == null) {
+            return key;
+        }
+        
+        String message = config.getString(key, key);
+        if (args.length > 0) {
+            message = String.format(message, args);
+        }
+        
+        return message;
+    }
+
+    /**
      * Clear player language setting (cleanup on disconnect)
      */
     public void clearPlayer(Player player) {

@@ -15,7 +15,7 @@ public class ModerationEventListener implements Listener {
 
     public ModerationEventListener(Main plugin) {
         this.plugin = plugin;
-        this.discordManager = new DiscordWebhookManager(plugin);
+        this.discordManager = DiscordWebhookManager.getInstance(plugin);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

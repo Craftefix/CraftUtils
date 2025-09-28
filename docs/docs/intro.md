@@ -2,48 +2,51 @@
 sidebar_position: 1
 ---
 
-# Welcome to CraftUtils
+# CraftUtils
 
-**CraftUtils** is a lightweight utilities plugin for Paper servers (Minecraft 1.21+) designed to enhance your server experience with essential commands and features.
+**A lightweight utilities plugin for Minecraft Paper servers.**
 
-## ✨ Key Features
+## What it does
 
-- **🏠 Home & Warp System** - Players can set homes and administrators can create warps
-- **📞 Teleport Requests** - Safe player-to-player teleportation with accept/deny system
-- **🛠️ Utility Commands** - Quick access to workbench, anvil, enderchest, and more
-- **💬 Messaging System** - Private messaging between players
-- **🎮 GUI Interfaces** - User-friendly graphical menus for all features
-- **🔨 Moderation Tools** - Mute system with Discord integration
-- **📊 Database Support** - SQLite for small servers, MariaDB for large servers
-- **🌍 Multi-language** - English and German support with custom messages
-- **🤖 Discord Integration** - Real-time server event logging to Discord
+- **🏠 Homes & Warps** - Players set homes, admins create warps
+- **✈️ Teleportation** - TPA requests, admin teleports, `/back` command  
+- **🎒 Storage** - Personal vaults, portable crafting tables, enderchests
+- **⚡ Player Tools** - Fly toggle, heal/feed, gamemode shortcuts
+- **💬 Messaging** - Private messages with reply system
+- **🔨 Moderation** - Mute players with Discord webhooks
+- **🖱️ GUI Interface** - Point-and-click for everything above
 
-## 🚀 Quick Start
+## Installation
 
-1. **Download** the latest release from [GitHub Releases](https://github.com/Craftefix/CraftUtils/releases)
-2. **Install** by placing the JAR file in your `plugins/` folder
+1. **Download** the latest `.jar` from releases
+2. **Drop** into your server's `plugins/` folder  
 3. **Restart** your server
-4. **Configure** via `plugins/CraftUtils/config.yml`
+4. **Edit** `plugins/CraftUtils/config.yml` to enable features you want
 
-## 📋 Requirements
+## Requirements
 
-- **Minecraft:** 1.21 or higher
-- **Server Software:** Paper or Spigot
-- **Java:** 21 or higher
+- **Server:** Paper 1.21+ (Spigot works but Paper recommended)
+- **Java:** Version 21 or higher
+- **Permissions:** Any plugin (LuckPerms, GroupManager, etc.)
 
-## 🎯 Perfect For
+## Default Configuration
 
-- **Small to Medium Servers** - Essential utilities without bloat
-- **Community Servers** - Player-friendly features and social commands
-- **Moderated Environments** - Built-in moderation tools with Discord logging
-- **Multi-language Communities** - Support for English and German players
+Most core features are **enabled by default**. Configure what you need in `config.yml`:
 
-## 📖 Next Steps
+```yaml
+commands:
+  homes: true      # /home, /sethome commands  
+  warps: true      # /warp command (admin sets warps)
+  tpAsk: true      # /tpa teleport requests
+  ability: true    # /fly, /heal, /eat commands
+  message: true    # /msg, /reply commands
+  cug: true        # /cug GUI interface
+  utility: false   # /vault, /repair, /back (disabled by default)
+  mute: false      # /mute, /unmute (disabled by default)
+  pardon: false    # /pardon (disabled by default)
+```
 
-- [Getting Started Guide](./getting-started) - Complete installation and setup
-- [Commands Overview](./commands/overview) - All available commands and usage
-- [Configuration Guide](./configuration/basic-setup) - Customize your server setup
+## What's Next?
 
----
-
-*Need help? Check our [FAQ](./support/faq) or create an issue on [GitHub](https://github.com/Craftefix/CraftUtils/issues).*
+- **[Commands Reference](./commands)** - All available commands and permissions
+- **[Setup Guide](./getting-started)** - Detailed installation and configuration

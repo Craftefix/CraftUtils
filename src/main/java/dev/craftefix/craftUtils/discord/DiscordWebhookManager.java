@@ -14,14 +14,22 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CompletableFuture;
 
 public class DiscordWebhookManager {
+    private static DiscordWebhookManager instance;
     private final Main plugin;
     private final FileConfiguration config;
     private final boolean enabled;
 
-    public DiscordWebhookManager(Main plugin) {
+    private DiscordWebhookManager(Main plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
         this.enabled = config.getBoolean("discord.enabled", false);
+    }
+    
+    public static DiscordWebhookManager getInstance(Main plugin) {
+        if (instance == null) {
+            instance = new DiscordWebhookManager(plugin);
+        }
+        return instance;
     }
 
     public void sendPlayerJoin(Player player) {
@@ -89,10 +97,12 @@ public class DiscordWebhookManager {
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setDoOutput(true);
 
-                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "Z";
+                String escapedMessage = escapeJsonString(message);
+                String escapedUsername = escapeJsonString(username);
                 String jsonPayload = String.format(
-                    "{\"username\":\"%s\",\"content\":\"%s\",\"embeds\":[{\"description\":\"%s\",\"timestamp\":\"%s\",\"color\":5814783}]}", 
-                    username, message, message.replace("\"", "\\\""), timestamp
+                    "{\"username\":\"%s\",\"embeds\":[{\"description\":\"%s\",\"timestamp\":\"%s\",\"color\":5814783}]}", 
+                    escapedUsername, escapedMessage, timestamp
                 );
 
                 try (OutputStream os = connection.getOutputStream()) {
@@ -101,8 +111,18 @@ public class DiscordWebhookManager {
                 }
 
                 int responseCode = connection.getResponseCode();
-                if (responseCode != 200 && responseCode != 204) {
-                    plugin.getLogger().warning("Discord webhook failed with response code: " + responseCode);
+                if (responseCode == 200 || responseCode == 204) {
+                    plugin.getLogger().info("Discord webhook sent successfully (" + username + ")");
+                } else {
+                    // Read error response for better debugging
+                    try (var errorStream = connection.getErrorStream()) {
+                        if (errorStream != null) {
+                            String errorResponse = new String(errorStream.readAllBytes(), StandardCharsets.UTF_8);
+                            plugin.getLogger().warning("Discord webhook failed with response code: " + responseCode + ", error: " + errorResponse);
+                        } else {
+                            plugin.getLogger().warning("Discord webhook failed with response code: " + responseCode);
+                        }
+                    }
                 }
             } catch (IOException e) {
                 plugin.getLogger().warning("Failed to send Discord webhook: " + e.getMessage());
@@ -120,5 +140,32 @@ public class DiscordWebhookManager {
         } else {
             return (seconds / 86400) + " days";
         }
+    }
+    
+    private String escapeJsonString(String str) {
+        if (str == null) return "";
+        return str.replace("\\", "\\\\")
+                  .replace("\"", "\\\"")
+                  .replace("\b", "\\b")
+                  .replace("\f", "\\f")
+                  .replace("\n", "\\n")
+                  .replace("\r", "\\r")
+                  .replace("\t", "\\t");
+    }
+    
+    public void testDiscordConnection() {
+        if (!enabled) {
+            plugin.getLogger().info("Discord webhooks are disabled in config");
+            return;
+        }
+        
+        String testWebhook = config.getString("discord.webhooks.logs");
+        if (testWebhook == null || testWebhook.contains("YOUR_WEBHOOK")) {
+            plugin.getLogger().warning("Discord webhook URL is not configured properly");
+            return;
+        }
+        
+        sendWebhookMessage(testWebhook, "🔧 CraftUtils Discord integration test - connection successful!", "CraftUtils Test");
+        plugin.getLogger().info("Discord webhook test message sent");
     }
 }

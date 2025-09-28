@@ -86,7 +86,7 @@ After restarting your server with the new configuration:
 
 ## Permission Setup
 
-CraftUtils integrates with permission plugins like **LuckPerms**. See our [Permissions Guide](../configuration/permissions) for detailed setup.
+CraftUtils integrates with permission plugins like **LuckPerms**.
 
 ### Quick Permission Setup
 
@@ -106,12 +106,8 @@ Give staff moderation access:
 
 ## Next Steps
 
-- **[Commands Overview](../commands/overview)** - Learn about all available commands
-- **[Discord Integration](../configuration/discord)** - Set up Discord webhooks
-- **[Troubleshooting](../support/troubleshooting)** - Common issues and solutions
+- **[Commands Reference](./commands)** - Complete list of all available commands and permissions
 
 ## Need Help?
 
 - **Issues or Bugs:** [GitHub Issues](https://github.com/Craftefix/CraftUtils/issues)
-- **Questions:** Check our [FAQ](../support/faq)
-- **Discord:** Join our [Discord server](https://discord.gg/craftefix)

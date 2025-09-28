@@ -13,6 +13,7 @@ import dev.craftefix.craftUtils.listeners.PlayerEventListener;
 import dev.craftefix.craftUtils.listeners.ModerationEventListener;
 import dev.craftefix.craftUtils.listeners.TeleportTrackingListener;
 import dev.craftefix.craftUtils.listeners.VaultEventListener;
+import dev.craftefix.craftUtils.logging.CommandLogger;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import revxrsal.commands.bukkit.BukkitLamp;
@@ -74,6 +75,7 @@ public final class EnableLamp {
         commandMap.put("mute", muteCommand);
         commandMap.put("pardon", muteCommand);
         commandMap.put("cug", new CraftUtilsGUICommand(plugin));
+        commandMap.put("vanish", new VanishCommand(plugin));
 
         // Register commands based on config
         var configSection = plugin.getConfig().getConfigurationSection("commands");
@@ -118,12 +120,16 @@ public final class EnableLamp {
 
         plugin.getLogger().info("CraftUtils commands initialized successfully.");
         
+        // Initialize command logger if enabled
+        CommandLogger commandLogger = CommandLogger.getInstance(plugin);
+        
         // Register event listeners - VaultEventListener should always be registered for vault functionality
         registerListeners(
             new PlayerEventListener(plugin, muteCommand.getMuteManager(), backLocationManager),
             new ModerationEventListener(plugin),
             teleportTrackingListener,
-            vaultEventListener
+            vaultEventListener,
+            commandLogger
         );
         
         // Register utility commands listener only if utility commands are enabled

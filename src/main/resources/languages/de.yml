@@ -25,6 +25,7 @@ gui:
   sound-settings: "&e&lTon-Einstellungen"
   sound-settings-desc: "&7GUI-Töne umschalten"
   back: "&7Zurück zum Hauptmenü"
+  back-desc: "&7Zurück zum Hauptmenü"
   sounds-enabled: "&aGUI-Töne aktiviert!"
   sounds-disabled: "&cGUI-Töne deaktiviert!"
 
@@ -32,8 +33,44 @@ gui:
   language-title: "&f&lSprachauswahl"
   english: "&f&lEnglish"
   english-desc: "&7Zu Englisch wechseln"
+  english-head: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTQzOTNmZmE5NDhhNmNjNzUyN2ZkNmUzODY2ZTY1YzE2NmM2Mzc5NTc2ZWYzYmY4ZmJhOTU1NjY4Yjc5ZSJ9fX0="
   german: "&f&lDeutsch"
   german-desc: "&7Zu Deutsch wechseln"
+  german-head: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWU3ODk5YjQ4MDY4NTg2OTdlMjgzZjA4NGQ5MTczZmU0ODc4ODY5NjQxOGVkNGU2ZDg0OTQzNWZhMTg0ZjFiMiJ9fX0="
+
+# Abilities GUI
+  fly: "&bFliegen"
+  fly-on: " &a(AN)"
+  fly-off: " &c(AUS)"
+  fly-lore: "&7Flugmodus umschalten"
+  heal: "&cHeilen"
+  heal-lore: "&7Stelle deine Gesundheit wieder her"
+  feed: "&6Sättigen"
+  feed-lore: "&7Stelle deinen Hunger wieder her"
+  trash: "&4Müll"
+  trash-lore: "&7Öffne Müll GUI"
+
+# Homes & Warps GUI
+  homes-warps-separator: "&8Heime & Warps"
+  homes-warps-separator-desc: "&7Heime oben, Warps unten"
+  home-unavailable: "&cHeim-System nicht verfügbar"
+  home-unavailable-desc: "&7Bitte versuche es später erneut"
+  home-no-permission: "&cKeine Heim-Berechtigung"
+  home-no-permission-desc: "&7Du benötigst Berechtigung für Heim-Befehle"
+  no-homes: "&eKeine Heime gesetzt"
+  no-homes-desc: "&7Verwende &e/sethome &7um eines zu erstellen"
+  home-teleport-desc: "&7Klicken zum Heimteleport"
+  home-error: "&cFehler beim Laden der Heime"
+  home-error-desc: "&7Bitte versuche es später erneut"
+  warp-unavailable: "&cWarp-System nicht verfügbar"
+  warp-unavailable-desc: "&7Bitte versuche es später erneut"
+  warp-no-permission: "&cKeine Warp-Berechtigung"
+  warp-no-permission-desc: "&7Du benötigst Berechtigung für Warp-Befehle"
+  no-warps: "&eKeine Warps verfügbar"
+  no-warps-desc: "&7Kontaktiere einen Admin um Warps zu erstellen"
+  warp-teleport-desc: "&7Klicken zum Warp-Teleport"
+  warp-error: "&cFehler beim Laden der Warps"
+  warp-error-desc: "&7Bitte versuche es später erneut"
 
 # Commands
 commands:
@@ -48,3 +85,19 @@ commands:
   teleported-warp: "&aZu Warp teleportiert: %s"
   no-homes: "&cDu hast keine Heime gesetzt!"
   no-warps: "&cKeine Warps verfügbar!"
+
+# Vanish System
+vanish:
+  enabled: "&7Du bist jetzt &cunsichtbar&7."
+  disabled: "&7Du bist jetzt &asichtbar&7."
+  player-vanished: "&aSpieler %s ist jetzt unsichtbar."
+  player-unvanished: "&aSpieler %s ist jetzt sichtbar."
+  player-not-found: "&cSpieler '%s' ist nicht online."
+  no-permission-others: "&cDu hast keine Berechtigung, andere Spieler unsichtbar zu machen."
+  list-header: "&aUnsichtbare Spieler (%d):"
+  list-player: "&7- %s"
+  list-empty: "&eKeine Spieler sind derzeit unsichtbar."
+
+# Cooldown System
+cooldowns:
+  message: "&cDu musst %s warten, bevor du das wieder verwenden kannst."

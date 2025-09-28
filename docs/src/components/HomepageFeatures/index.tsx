@@ -11,32 +11,32 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: '🏠 Homes & Warps',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Players can set multiple homes and admins can create server warps.
+        Simple teleportation with <code>/home</code> and <code>/warp</code> commands.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: '⚡ Player Utilities',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Essential player tools including personal vaults, repair commands,
+        portable workbenches, flight toggle, and healing commands.
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: '🖱️ GUI Interface',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Point-and-click interface for all features. Players can access
+        everything through intuitive GUIs with <code>/cug</code>.
       </>
     ),
   },

@@ -132,21 +132,29 @@ public class CustomGUI implements Listener {
         fillBackground();
     }
 
+    /**
+     * Refreshes the entire GUI by clearing and rebuilding it
+     */
+    public void refresh() {
+        // Clear the inventory
+        inventory.clear();
+        clickHandlers.clear();
+        
+        // Refill background
+        fillBackground();
+    }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory().equals(inventory)) {
-            // Only cancel clicks on GUI slots, not player inventory slots
+            // Cancel ALL interactions with the GUI to prevent item movement
+            event.setCancelled(true);
+            
+            // Only handle click handlers for GUI slots
             if (event.getRawSlot() < inventory.getSize()) {
-                event.setCancelled(true); // Cancel clicks on GUI items
-                
                 Consumer<InventoryClickEvent> handler = clickHandlers.get(event.getSlot());
                 if (handler != null) {
                     handler.accept(event);
-                }
-            } else {
-                // For player inventory slots, cancel shift-click and double-click actions
-                if (event.isShiftClick() || event.getClick() == org.bukkit.event.inventory.ClickType.DOUBLE_CLICK) {
-                    event.setCancelled(true);
                 }
             }
         }

@@ -1,3 +1,9 @@
+# Plugin Version Information
+version:
+  config: "1.0.3"
+  database: "1.0.3"
+  plugin: "1.0.3"
+
 database:
   type: sqlite # sqlite or mariadb
   # SQLite settings (used when type is sqlite)
@@ -19,19 +25,64 @@ commands:
   ability: true
   homes: true
   warps: true
-  utility: false
-  mute: false
-  pardon: false
+  utility: true
+  mute: true
+  pardon: true
   cug: true
+  vanish: true
+# Discord Integration Settings
 discord:
-  webhooks:
-    logs: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
-    joins: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
-    leaves: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
-    bans: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
-    mutes: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
-    unmutes: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+  # Set to true to enable Discord webhooks
   enabled: false
+  webhooks:
+    # Server logs webhook - general server events and log messages
+    logs: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    # Player join notifications
+    joins: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    # Player leave notifications
+    leaves: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    # Player ban notifications
+    bans: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    # Player mute notifications
+    mutes: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    # Player unmute notifications
+    unmutes: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+# Custom join/leave messages
 messages:
   join: "&a{player} joined the server!"
   leave: "&c{player} left the server!"
+  vanish-on: "&7You are now &cinvisible&7."
+  vanish-off: "&7You are now &avisible&7."
+  cooldown-message: "&cYou must wait {time} before using this again."
+
+# Logging Settings
+logging:
+  # Enable command logging - logs all commands used by players
+  command-logging: true
+  # Create latest.log file with timestamp format dd.mm.yyyy hh:mm
+  create-latest-log: true
+
+# UI Cooldown Settings (in seconds)
+# Players can bypass with permissions: CraftUtils.cooldown.bypass.<action> or CraftUtils.cooldown.bypass.*
+cooldowns:
+  enabled: true
+  fly: 3
+  heal: 5
+  feed: 5
+  gamemode: 2
+  teleport: 1
+  home: 1
+  warp: 1
+  trash: 1
+  gui: 1
+
+# Migration System Settings
+migrations:
+  # Enable migration system during plugin startup
+  enabled: true
+  # Create backups before applying migrations
+  create-backups: true
+  # Fail startup if migrations fail
+  fail-on-error: true
+  # Log migration execution details
+  verbose-logging: true

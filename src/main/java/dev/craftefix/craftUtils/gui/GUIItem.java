@@ -100,6 +100,27 @@ public class GUIItem {
     }
 
     /**
+     * Adds enchantment glint to the item (makes it appear enchanted)
+     * @return This GUIItem for chaining
+     */
+    public GUIItem setGlint(boolean glint) {
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta != null) {
+            if (glint) {
+                // Add a fake enchantment to create glint effect
+                meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
+                meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
+            } else {
+                // Remove enchantments
+                meta.getEnchants().keySet().forEach(meta::removeEnchant);
+                meta.removeItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
+            }
+            itemStack.setItemMeta(meta);
+        }
+        return this;
+    }
+
+    /**
      * Gets the click handler
      * @return The click handler consumer
      */
@@ -134,5 +155,17 @@ public class GUIItem {
      */
     public static GUIItem createButton(Material material, String name, Consumer<InventoryClickEvent> clickHandler) {
         return createButton(material, name).setClickHandler(clickHandler);
+    }
+
+    /**
+     * Creates a custom head button with base64 texture, name, and click handler
+     * @param base64Texture The base64 encoded texture data
+     * @param name The display name
+     * @param clickHandler The click handler
+     * @return A new GUIItem with custom head
+     */
+    public static GUIItem createCustomHeadButton(String base64Texture, String name, Consumer<InventoryClickEvent> clickHandler) {
+        ItemStack customHead = HeadUtils.createCustomHead(base64Texture);
+        return new GUIItem(customHead).setName(name).setClickHandler(clickHandler);
     }
 }

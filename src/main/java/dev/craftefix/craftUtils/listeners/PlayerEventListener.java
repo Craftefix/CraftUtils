@@ -3,7 +3,9 @@ package dev.craftefix.craftUtils.listeners;
 import dev.craftefix.craftUtils.Main;
 import dev.craftefix.craftUtils.database.BackLocationManager;
 import dev.craftefix.craftUtils.database.MuteManager;
+import dev.craftefix.craftUtils.database.VanishManager;
 import dev.craftefix.craftUtils.discord.DiscordWebhookManager;
+import dev.craftefix.craftUtils.logging.CommandLogger;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,18 +19,29 @@ public class PlayerEventListener implements Listener {
     private final MuteManager muteManager;
     private final BackLocationManager backLocationManager;
     private final DiscordWebhookManager discordManager;
+    private final VanishManager vanishManager;
 
     public PlayerEventListener(Main plugin, MuteManager muteManager, BackLocationManager backLocationManager) {
         this.plugin = plugin;
         this.muteManager = muteManager;
         this.backLocationManager = backLocationManager;
-        this.discordManager = new DiscordWebhookManager(plugin);
+        this.discordManager = DiscordWebhookManager.getInstance(plugin);
+        this.vanishManager = VanishManager.getInstance(plugin);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         // Update last online timestamp for back locations
         backLocationManager.updatePlayerOnlineStatus(event.getPlayer().getUniqueId());
+        
+        // Handle vanish system for joining player
+        vanishManager.handlePlayerJoin(event.getPlayer());
+        
+        // Log player join
+        CommandLogger commandLogger = CommandLogger.getInstance();
+        if (commandLogger != null) {
+            commandLogger.logPlayerEvent(event.getPlayer().getName(), "joined the server");
+        }
         
         // Send to Discord
         discordManager.sendPlayerJoin(event.getPlayer());
@@ -44,6 +57,15 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
+        // Handle vanish system cleanup
+        vanishManager.handlePlayerQuit(event.getPlayer());
+        
+        // Log player leave
+        CommandLogger commandLogger = CommandLogger.getInstance();
+        if (commandLogger != null) {
+            commandLogger.logPlayerEvent(event.getPlayer().getName(), "left the server");
+        }
+        
         // Send to Discord
         discordManager.sendPlayerLeave(event.getPlayer());
         

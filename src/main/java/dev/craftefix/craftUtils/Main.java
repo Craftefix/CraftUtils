@@ -4,6 +4,10 @@ package dev.craftefix.craftUtils;
 import dev.craftefix.craftUtils.database.DatabaseManager;
 import dev.craftefix.craftUtils.database.HomeManager;
 import dev.craftefix.craftUtils.language.LanguageManager;
+import dev.craftefix.craftUtils.migration.MigrationManager;
+import dev.craftefix.craftUtils.migration.VersionManager;
+import dev.craftefix.craftUtils.migration.migrations.AddUserPreferencesMigration;
+import dev.craftefix.craftUtils.migration.migrations.UpdateCooldownConfigMigration;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,6 +31,33 @@ public final class Main extends JavaPlugin {
             getLogger().info("Database initialized successfully (" + databaseManager.getDatabaseType() + ")");
         } catch (Exception e) {
             getLogger().severe("Failed to initialize database: " + e.getMessage());
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        // Initialize version tracking and migrations
+        try {
+            MigrationManager.initialize(this);
+            VersionManager.initialize(this);
+            
+            VersionManager versionManager = VersionManager.getInstance();
+            MigrationManager migrationManager = MigrationManager.getInstance();
+            
+            // Initialize version tracking
+            versionManager.initializeVersionTracking();
+            
+            // Check version compatibility
+            versionManager.checkVersionCompatibility();
+            
+            // Register migrations here
+            registerMigrations(migrationManager);
+            
+            // Run pending migrations
+            migrationManager.runMigrations();
+            getLogger().info("Migration and version system initialized successfully");
+        } catch (Exception e) {
+            getLogger().severe("Failed to initialize migration/version system: " + e.getMessage());
+            e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -55,6 +86,17 @@ public final class Main extends JavaPlugin {
             // Disable plugin and stop further initialization
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+
+        // Test Discord integration if enabled
+        try {
+            if (getConfig().getBoolean("discord.enabled", false)) {
+                getServer().getScheduler().runTaskLater(this, () -> {
+                    dev.craftefix.craftUtils.discord.DiscordWebhookManager.getInstance(this).testDiscordConnection();
+                }, 40L); // 2 second delay to ensure everything is loaded
+            }
+        } catch (Exception e) {
+            getLogger().warning("Failed to test Discord integration: " + e.getMessage());
         }
 
         // Initialize bStats
@@ -90,6 +132,14 @@ public final class Main extends JavaPlugin {
     
     public LanguageManager getLanguageManager() {
         return languageManager;
+    }
+
+    private void registerMigrations(MigrationManager migrationManager) {
+        // Register example migrations
+        migrationManager.registerMigration(new AddUserPreferencesMigration());
+        migrationManager.registerMigration(new UpdateCooldownConfigMigration());
+        
+        getLogger().info("Registered migrations with MigrationManager");
     }
 
 }

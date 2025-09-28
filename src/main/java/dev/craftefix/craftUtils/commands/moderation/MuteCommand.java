@@ -30,7 +30,7 @@ public class MuteCommand {
     public MuteCommand(Main plugin, DatabaseManager databaseManager) {
         this.plugin = plugin;
         this.muteManager = new MuteManager(databaseManager);
-        this.discordManager = new DiscordWebhookManager(plugin);
+        this.discordManager = DiscordWebhookManager.getInstance(plugin);
     }
 
     @Command("mute")

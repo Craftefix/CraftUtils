@@ -52,11 +52,8 @@ public class TpAskCommands implements Listener {
                 target.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append(Component.text("Accept]", NamedTextColor.GREEN))
-                                .clickEvent(ClickEvent.runCommand("/cu tpaaccept")));
-                target.sendMessage(Component.text()
-                        .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
-                        .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                        .append(Component.text("[Accept] ", NamedTextColor.GREEN))
+                                .clickEvent(ClickEvent.runCommand("/cu tpaaccept"))
                         .append(Component.text("[Deny]", NamedTextColor.RED))
                                 .clickEvent(ClickEvent.runCommand("/cu tpadeny")));
             } else {
@@ -98,11 +95,11 @@ public class TpAskCommands implements Listener {
                 actor.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append( Component.text("Teleport request denied!", NamedTextColor.GREEN)));
+                        .append( Component.text("Teleport request denied!", NamedTextColor.RED)));
                 target.sendMessage(Component.text()
                         .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                         .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
-                        .append( Component.text("Teleport request denied!", NamedTextColor.GREEN)));
+                        .append( Component.text("Teleport request denied!", NamedTextColor.RED)));
                 tpRequests.remove(target.getUniqueId());
             }
         }
@@ -114,13 +111,21 @@ public class TpAskCommands implements Listener {
         cleanUpOldRequests();
         TpRequest request = tpRequests.get(actor.getUniqueId());
         if (request == null) {
-            actor.sendMessage(Component.text("You have no pending teleport requests to cancel!", NamedTextColor.RED));
+            actor.sendMessage(Component.text()
+                    .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                    .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                    .append(Component.text("You have no pending teleport requests to cancel!", NamedTextColor.RED)));
         } else {
             tpRequests.entrySet().removeIf(entry -> {
                 if (entry.getValue().getActorUUID().equals(actor.getUniqueId())) {
                     Player target = actor.getServer().getPlayer(entry.getKey());
                     if (target != null ){
-                        target.sendMessage(Component.text("Teleport request from " + actor + " canceled!", NamedTextColor.RED));
+                        target.sendMessage(Component.text()
+                                .append(Component.text("TPA ", NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                                .append(Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+                                .append(Component.text("Teleport request from ", NamedTextColor.GRAY))
+                                .append(Component.text(actor.getName(), NamedTextColor.BLUE))
+                                .append(Component.text(" canceled!", NamedTextColor.RED)));
                     }
 
                     return true;
