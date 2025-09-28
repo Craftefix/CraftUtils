@@ -55,14 +55,15 @@ public class LanguageManager {
         if (!langFile.exists()) {
             try {
                 // Try to copy from resources first
-                InputStream resourceStream = plugin.getResource("languages/" + lang + ".yml");
-                if (resourceStream != null) {
-                    Files.copy(resourceStream, langFile.toPath());
-                    plugin.getLogger().info("Created language file: " + lang + ".yml from resources");
-                } else {
-                    // Create default content
-                    createDefaultLanguageContent(langFile, lang);
-                    plugin.getLogger().info("Created default language file: " + lang + ".yml");
+                try (InputStream resourceStream = plugin.getResource("languages/" + lang + ".yml")) {
+                    if (resourceStream != null) {
+                        Files.copy(resourceStream, langFile.toPath());
+                        plugin.getLogger().info("Created language file: " + lang + ".yml from resources");
+                    } else {
+                        // Create default content
+                        createDefaultLanguageContent(langFile, lang);
+                        plugin.getLogger().info("Created default language file: " + lang + ".yml");
+                    }
                 }
             } catch (IOException e) {
                 plugin.getLogger().log(Level.SEVERE, "Could not create language file: " + lang + ".yml", e);
@@ -258,6 +259,41 @@ public class LanguageManager {
      */
     public boolean isLanguageAvailable(String language) {
         return languages.containsKey(language);
+    }
+    
+    /**
+     * Get legacy string for player in their preferred language (for GUIs)
+     */
+    public String getLegacy(Player player, String key, Object... args) {
+        String lang = getPlayerLanguage(player);
+        return getLegacy(lang, key, args);
+    }
+    
+    /**
+     * Get legacy string in specific language (for GUIs)
+     */
+    public String getLegacy(String lang, String key, Object... args) {
+        YamlConfiguration config = languages.get(lang);
+        if (config == null) {
+            config = languages.get(defaultLanguage);
+        }
+        if (config == null) {
+            return key;
+        }
+        
+        String message = config.getString(key, key);
+        if (args.length > 0) {
+            message = String.format(message, args);
+        }
+        
+        // Convert & codes to § codes for legacy GUIs
+        return message.replace("&0", "§0").replace("&1", "§1").replace("&2", "§2")
+                     .replace("&3", "§3").replace("&4", "§4").replace("&5", "§5")
+                     .replace("&6", "§6").replace("&7", "§7").replace("&8", "§8")
+                     .replace("&9", "§9").replace("&a", "§a").replace("&b", "§b")
+                     .replace("&c", "§c").replace("&d", "§d").replace("&e", "§e")
+                     .replace("&f", "§f").replace("&l", "§l").replace("&m", "§m")
+                     .replace("&n", "§n").replace("&o", "§o").replace("&r", "§r");
     }
     
     /**

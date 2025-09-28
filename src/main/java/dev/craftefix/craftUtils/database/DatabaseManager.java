@@ -37,11 +37,11 @@ public class DatabaseManager {
             hikariConfig.setJdbcUrl("jdbc:sqlite:" + dbFile);
             hikariConfig.setMaximumPoolSize(1); // SQLite doesn't support multiple connections well
         } else {
-            String username = config.getString("database.username");
-            String host = config.getString("database.host");
-            int port = config.getInt("database.port");
-            String password = config.getString("database.password");
-            String database = config.getString("database.database");
+            String username = config.getString("database.username", "craftutils");
+            String host = config.getString("database.host", "localhost");
+            int port = config.getInt("database.port", 3306);
+            String password = config.getString("database.password", "");
+            String database = config.getString("database.database", "craftutils");
 
             hikariConfig.setJdbcUrl("jdbc:mariadb://" + host + ":" + port + "/" + database);
             hikariConfig.setUsername(username);

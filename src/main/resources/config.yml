@@ -31,7 +31,7 @@ discord:
     bans: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
     mutes: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
     unmutes: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
-  enabled: true
+  enabled: false
 messages:
   join: "&a{player} joined the server!"
   leave: "&c{player} left the server!"

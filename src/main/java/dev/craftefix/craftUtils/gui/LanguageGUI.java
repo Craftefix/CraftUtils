@@ -14,10 +14,10 @@ public class LanguageGUI {
     public static void openLanguageGUI(Player player, JavaPlugin plugin, LanguageManager languageManager) {
         String currentLang = languageManager.getPlayerLanguage(player);
         
-        CustomGUI gui = GUIBuilder.create(plugin, languageManager.getMessage(player, "gui.language-title").toString(), 1)
+        CustomGUI gui = GUIBuilder.create(plugin, languageManager.getLegacy(player, "gui.language-title"), 1)
             // English flag (US flag pattern using player head)
             .setButton(2, Material.PLAYER_HEAD, 
-                languageManager.getMessage(player, "gui.english").toString(),
+                languageManager.getLegacy(player, "gui.english"),
                 event -> {
                     languageManager.setPlayerLanguage(player, "en");
                     GUIFeedbackManager.playClickSound(player);
@@ -26,7 +26,7 @@ public class LanguageGUI {
                 })
             // German flag (German flag pattern using player head)
             .setButton(6, Material.PLAYER_HEAD,
-                languageManager.getMessage(player, "gui.german").toString(),
+                languageManager.getLegacy(player, "gui.german"),
                 event -> {
                     languageManager.setPlayerLanguage(player, "de");
                     GUIFeedbackManager.playClickSound(player);
@@ -35,7 +35,7 @@ public class LanguageGUI {
                 })
             // Back button
             .setButton(8, Material.ARROW,
-                languageManager.getMessage(player, "gui.back").toString(),
+                languageManager.getLegacy(player, "gui.back"),
                 event -> {
                     GUIFeedbackManager.playClickSound(player);
                     CraftUtilsMainGUI.openMainGUI(player, plugin, languageManager);

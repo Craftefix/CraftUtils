@@ -32,11 +32,30 @@ public final class Main extends JavaPlugin {
         }
 
         // Register the commands
-        EnableLamp enableLamp = new EnableLamp(this, databaseManager);
-        enableLamp.enable();
-        
-        // Get language manager from EnableLamp
-        this.languageManager = enableLamp.getLanguageManager();
+        try {
+            EnableLamp enableLamp = new EnableLamp(this, databaseManager);
+            enableLamp.enable();
+            
+            // Get language manager from EnableLamp
+            this.languageManager = enableLamp.getLanguageManager();
+            getLogger().info("Commands and language system initialized successfully.");
+        } catch (Exception e) {
+            getLogger().severe("Failed to initialize lamp/command system: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Attempt to close database connection to avoid masking the original error
+            try {
+                if (databaseManager != null) {
+                    databaseManager.close();
+                }
+            } catch (Exception dbCloseException) {
+                getLogger().warning("Failed to close database connection during cleanup: " + dbCloseException.getMessage());
+            }
+            
+            // Disable plugin and stop further initialization
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // Initialize bStats
         try {
