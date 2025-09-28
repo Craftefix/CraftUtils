@@ -6,7 +6,7 @@ on:
     branches:
       - main
       - master
-      - gh-pages
+      - alpha-releases
 
 jobs:
   release:
