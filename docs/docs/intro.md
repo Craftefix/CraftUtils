@@ -2,46 +2,48 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Welcome to CraftUtils
 
-Let's discover **Docusaurus in less than 5 minutes**.
+**CraftUtils** is a lightweight utilities plugin for Paper servers (Minecraft 1.21+) designed to enhance your server experience with essential commands and features.
 
-## Getting Started
+## ✨ Key Features
 
-Get started by **creating a new site**.
+- **🏠 Home & Warp System** - Players can set homes and administrators can create warps
+- **📞 Teleport Requests** - Safe player-to-player teleportation with accept/deny system
+- **🛠️ Utility Commands** - Quick access to workbench, anvil, enderchest, and more
+- **💬 Messaging System** - Private messaging between players
+- **🎮 GUI Interfaces** - User-friendly graphical menus for all features
+- **🔨 Moderation Tools** - Mute system with Discord integration
+- **📊 Database Support** - SQLite for small servers, MariaDB for large servers
+- **🌍 Multi-language** - English and German support with custom messages
+- **🤖 Discord Integration** - Real-time server event logging to Discord
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## 🚀 Quick Start
 
-### What you'll need
+1. **Download** the latest release from [GitHub Releases](https://github.com/Craftefix/CraftUtils/releases)
+2. **Install** by placing the JAR file in your `plugins/` folder
+3. **Restart** your server
+4. **Configure** via `plugins/CraftUtils/config.yml`
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## 📋 Requirements
 
-## Generate a new site
+- **Minecraft:** 1.21 or higher
+- **Server Software:** Paper or Spigot
+- **Java:** 21 or higher
 
-Generate a new Docusaurus site using the **classic template**.
+## 🎯 Perfect For
 
-The classic template will automatically be added to your project after you run the command:
+- **Small to Medium Servers** - Essential utilities without bloat
+- **Community Servers** - Player-friendly features and social commands
+- **Moderated Environments** - Built-in moderation tools with Discord logging
+- **Multi-language Communities** - Support for English and German players
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+## 📖 Next Steps
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+- [Getting Started Guide](./getting-started) - Complete installation and setup
+- [Commands Overview](./commands/overview) - All available commands and usage
+- [Configuration Guide](./configuration/basic-setup) - Customize your server setup
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+---
 
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+*Need help? Check our [FAQ](./support/faq) or create an issue on [GitHub](https://github.com/Craftefix/CraftUtils/issues).*
