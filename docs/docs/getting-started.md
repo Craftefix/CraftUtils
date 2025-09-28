@@ -104,6 +104,39 @@ Give staff moderation access:
 /lp group staff permission set CraftUtils.admingui true
 ```
 
+## Updates and Migrations
+
+### Automatic Migration System
+
+Starting with version 1.0.3, CraftUtils includes an automatic migration system that handles database schema changes and configuration updates when you upgrade to newer versions.
+
+**How it works:**
+- When you update CraftUtils, the plugin automatically detects version changes
+- Database schema and config changes are applied automatically on startup
+- Backups are created before applying migrations (if enabled)
+- Migration progress is logged to console
+
+**Migration Settings:**
+```yaml title="config.yml"
+migrations:
+  enabled: true           # Enable migration system
+  create-backups: true    # Create backups before migrations
+  fail-on-error: true     # Stop startup if migrations fail
+  verbose-logging: true   # Log detailed migration info
+```
+
+**Version Tracking:**
+```yaml title="config.yml"
+version:
+  config: "1.0.3"    # Configuration file version
+  database: "1.0.3"  # Database schema version  
+  plugin: "1.0.3"    # Plugin version
+```
+
+:::tip
+The migration system ensures smooth updates - no manual database changes needed when upgrading CraftUtils!
+:::
+
 ## Next Steps
 
 - **[Commands Reference](./commands)** - Complete list of all available commands and permissions

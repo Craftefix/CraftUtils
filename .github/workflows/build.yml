@@ -33,10 +33,10 @@ jobs:
       run: chmod +x ./gradlew
       
     - name: Build shadow JAR
-      run: ./gradlew shadowJar
+      run: ./gradlew clean shadowJar
       
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
-        name: CraftUtils
-        path: build/libs/CraftUtils-1.0.0-all.jar
+        name: CraftUtils-${{ github.sha }}
+        path: build/libs/*.jar
