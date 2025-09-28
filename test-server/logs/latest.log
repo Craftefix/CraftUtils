@@ -1,0 +1,103 @@
+[01:00:52] [ServerMain/INFO]: [bootstrap] Running Java 21 (OpenJDK 64-Bit Server VM 21.0.8+9-Ubuntu-0ubuntu125.04.1; Ubuntu null) on Linux 6.14.0-32-generic (amd64)
+[01:00:52] [ServerMain/INFO]: [bootstrap] Loading Paper 1.21.1-133-ver/1.21.1@3cb8529 (2025-03-28T16:14:36Z) for Minecraft 1.21.1
+[01:00:53] [ServerMain/INFO]: [PluginInitializerManager] Initializing plugins...
+[01:00:55] [ServerMain/INFO]: [PluginInitializerManager] Initialized 1 plugin
+[01:00:55] [ServerMain/INFO]: [PluginInitializerManager] Paper plugins (1):
+ - CraftUtils (1.0.1)
+[01:01:00] [ServerMain/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[01:01:02] [ServerMain/INFO]: Loaded 1290 recipes
+[01:01:03] [ServerMain/INFO]: Loaded 1399 advancements
+[01:01:03] [Server thread/INFO]: Starting minecraft server version 1.21.1
+[01:01:03] [Server thread/INFO]: Loading properties
+[01:01:03] [Server thread/INFO]: This server is running Paper version 1.21.1-133-ver/1.21.1@3cb8529 (2025-03-28T16:14:36Z) (Implementing API version 1.21.1-R0.1-SNAPSHOT)
+[01:01:04] [Server thread/INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
+[01:01:04] [Server thread/INFO]: Server Ping Player Sample Count: 12
+[01:01:04] [Server thread/INFO]: Using 4 threads for Netty based IO
+[01:01:05] [Server thread/INFO]: [ChunkTaskScheduler] Chunk system is using 1 I/O threads, 2 worker threads, and population gen parallelism of 2 threads
+[01:01:05] [Server thread/INFO]: Default game type: SURVIVAL
+[01:01:05] [Server thread/INFO]: Generating keypair
+[01:01:05] [Server thread/INFO]: Starting Minecraft server on *:25565
+[01:01:05] [Server thread/INFO]: Using epoll channel type
+[01:01:06] [Server thread/INFO]: Paper: Using libdeflate (Linux x86_64) compression from Velocity.
+[01:01:06] [Server thread/INFO]: Paper: Using OpenSSL 3.x.x (Linux x86_64) cipher from Velocity.
+[01:01:06] [Server thread/INFO]: [CraftUtils] Loading server plugin CraftUtils v1.0.1
+[01:01:06] [Server thread/INFO]: Server permissions file permissions.yml is empty, ignoring it
+[01:01:06] [Server thread/INFO]: Preparing level "world"
+[01:01:06] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld
+[01:01:07] [Server thread/INFO]: Time elapsed: 1241 ms
+[01:01:07] [Server thread/INFO]: Preparing start region for dimension minecraft:the_nether
+[01:01:08] [Server thread/INFO]: Time elapsed: 166 ms
+[01:01:08] [Server thread/INFO]: Preparing start region for dimension minecraft:the_end
+[01:01:08] [Server thread/INFO]: Time elapsed: 140 ms
+[01:01:08] [Server thread/INFO]: [CraftUtils] Enabling CraftUtils v1.0.1
+[01:01:08] [Server thread/INFO]: [com.zaxxer.hikari.HikariDataSource] HikariPool-1 - Starting...
+[01:01:08] [Server thread/INFO]: [com.zaxxer.hikari.pool.HikariPool] HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@d381c22
+[01:01:08] [Server thread/INFO]: [com.zaxxer.hikari.HikariDataSource] HikariPool-1 - Start completed.
+[01:01:08] [Server thread/INFO]: [CraftUtils] Database initialized successfully (SQLITE)
+[01:01:08] [Server thread/INFO]: [CraftUtils] Loaded language: de
+[01:01:08] [Server thread/INFO]: [CraftUtils] Loaded language: en
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: cu (CraftUtilsCommand)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: cu
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: tp (TpCommand)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: tp
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: message (MessageCommands)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: message
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: tpAsk (TpAskCommands)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: tpAsk
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: enderChest (EnderChestCommands)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: enderChest
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: adminGUI (AdminGUICommand)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: adminGUI
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: alias (AliasCommands)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: alias
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: ability (AbilityCommands)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: ability
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: homes (HomeCommand)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: homes
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: warps (WarpCommand)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: warps
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: utility (UtilityCommands)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: utility
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: mute (MuteCommand)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: mute
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: pardon (MuteCommand)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: pardon
+[01:01:09] [Server thread/INFO]: [CraftUtils] About to register command: cug (CraftUtilsGUICommand)
+[01:01:09] [Server thread/INFO]: [CraftUtils] Registered command: cug
+[01:01:09] [Server thread/INFO]: [CraftUtils] CraftUtils commands initialized successfully.
+[01:01:09] [Server thread/INFO]: [CraftUtils] Metrics initialized.
+[01:01:09] [Server thread/INFO]: [CraftUtils] Plugin enabled successfully.
+[01:01:09] [Server thread/INFO]: [spark] Starting background profiler...
+[01:01:09] [Server thread/INFO]: Done preparing level "world" (3.562s)
+[01:01:09] [Server thread/INFO]: Starting remote control listener
+[01:01:09] [Server thread/INFO]: Thread RCON Listener started
+[01:01:09] [Server thread/INFO]: RCON running on 0.0.0.0:25575
+[01:01:09] [Server thread/INFO]: Running delayed init tasks
+[01:01:09] [Server thread/INFO]: Done (18.681s)! For help, type "help"
+[01:01:09] [Server thread/INFO]: Timings Reset
+[01:01:49] [Server thread/INFO]: Stopping server
+[01:01:49] [Server thread/INFO]: [CraftUtils] Disabling CraftUtils v1.0.1
+[01:01:49] [Server thread/INFO]: [com.zaxxer.hikari.HikariDataSource] HikariPool-1 - Shutdown initiated...
+[01:01:49] [Server thread/INFO]: [com.zaxxer.hikari.HikariDataSource] HikariPool-1 - Shutdown completed.
+[01:01:49] [Server thread/INFO]: [CraftUtils] Plugin disabled successfully.
+[01:01:49] [Server thread/INFO]: Saving players
+[01:01:50] [Server thread/INFO]: Saving worlds
+[01:01:50] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'world'
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'world'
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'world'
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Saved 49 block chunks, 49 entity chunks, 0 poi chunks in world 'world' in 0.31s
+[01:01:50] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world_nether]'/minecraft:the_nether
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'world_nether'
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'world_nether'
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'world_nether'
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Saved 49 block chunks, 49 entity chunks, 0 poi chunks in world 'world_nether' in 0.10s
+[01:01:50] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world_the_end]'/minecraft:the_end
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'world_the_end'
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'world_the_end'
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'world_the_end'
+[01:01:50] [Server thread/INFO]: [ChunkHolderManager] Saved 49 block chunks, 49 entity chunks, 0 poi chunks in world 'world_the_end' in 0.07s
+[01:01:50] [Server thread/INFO]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[01:01:50] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[01:01:50] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[01:01:50] [Server thread/INFO]: ThreadedAnvilChunkStorage: All dimensions are saved

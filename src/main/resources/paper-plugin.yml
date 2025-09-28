@@ -2,6 +2,7 @@ name: CraftUtils
 version: 1.0.1
 main: dev.craftefix.craftUtils.Main
 api-version: 1.21.8
+data-folder: CraftUtils
 description: A simple Utils plugin for Paper
 website: craftefix.dev
 authors:

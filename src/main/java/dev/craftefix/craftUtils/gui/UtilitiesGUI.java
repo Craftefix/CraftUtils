@@ -12,7 +12,7 @@ public class UtilitiesGUI {
     
     public static void openUtilitiesGUI(Player player, JavaPlugin plugin, LanguageManager languageManager) {
         String title = languageManager != null ? 
-            languageManager.getMessage(player, "gui.utilities").toString() : 
+            languageManager.getLegacy(player, "gui.utilities") : 
             "§b§lUtilities";
             
         CustomGUI gui = GUIBuilder.create(plugin, title, 1).build();
@@ -75,7 +75,7 @@ public class UtilitiesGUI {
         
         // Back to main menu
         String backText = languageManager != null ? 
-            languageManager.getMessage(player, "gui.back").toString() : 
+            languageManager.getLegacy(player, "gui.back") : 
             "§7Back to Main Menu";
             
         GUIItem backItem = GUIItem.createButton(Material.ARROW, backText, event -> {

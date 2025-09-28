@@ -17,7 +17,7 @@ public class HomesWarpsGUI {
     public static void openHomesWarpsGUI(Player player, JavaPlugin plugin, LanguageManager languageManager,
                                         HomeManager homeManager, WarpManager warpManager) {
         String title = languageManager != null ? 
-            languageManager.getMessage(player, "gui.homes-warps").toString() : 
+            languageManager.getLegacy(player, "gui.homes-warps") : 
             "§d§lHomes & Warps";
             
         CustomGUI gui = GUIBuilder.create(plugin, title, 3).build();
@@ -34,7 +34,7 @@ public class HomesWarpsGUI {
         
         // Back to main menu
         String backText = languageManager != null ? 
-            languageManager.getMessage(player, "gui.back").toString() : 
+            languageManager.getLegacy(player, "gui.back") : 
             "§7Back to Main Menu";
             
         GUIItem backItem = GUIItem.createButton(Material.ARROW, backText, event -> {

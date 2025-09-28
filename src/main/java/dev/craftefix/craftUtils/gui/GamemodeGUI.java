@@ -13,7 +13,7 @@ public class GamemodeGUI {
     
     public static void openGamemodeGUI(Player player, JavaPlugin plugin, LanguageManager languageManager) {
         String title = languageManager != null ? 
-            languageManager.getMessage(player, "gui.gamemode").toString() : 
+            languageManager.getLegacy(player, "gui.gamemode") : 
             "§e§lGamemode";
             
         CustomGUI gui = GUIBuilder.create(plugin, title, 1).build();
@@ -68,7 +68,7 @@ public class GamemodeGUI {
         
         // Back to main menu
         String backText = languageManager != null ? 
-            languageManager.getMessage(player, "gui.back").toString() : 
+            languageManager.getLegacy(player, "gui.back") : 
             "§7Back to Main Menu";
             
         GUIItem backItem = GUIItem.createButton(Material.ARROW, backText, event -> {

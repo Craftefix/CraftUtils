@@ -20,6 +20,11 @@ public class BackLocationManager {
     }
 
     public void storeLocation(UUID playerUUID, Location location) {
+        if (location == null || location.getWorld() == null) {
+            dev.craftefix.craftUtils.Main.getInstance().getLogger().warning("Attempted to store back location with null location or world for player " + playerUUID);
+            return;
+        }
+        
         String query = "INSERT INTO back_locations (player_uuid, world_name, x, y, z, yaw, pitch, created_at, last_online) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                       "ON DUPLICATE KEY UPDATE world_name = VALUES(world_name), x = VALUES(x), y = VALUES(y), z = VALUES(z), " +
                       "yaw = VALUES(yaw), pitch = VALUES(pitch), created_at = VALUES(created_at), last_online = VALUES(last_online)";
