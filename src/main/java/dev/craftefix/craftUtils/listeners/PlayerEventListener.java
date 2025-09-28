@@ -1,6 +1,7 @@
 package dev.craftefix.craftUtils.listeners;
 
 import dev.craftefix.craftUtils.Main;
+import dev.craftefix.craftUtils.database.BackLocationManager;
 import dev.craftefix.craftUtils.database.MuteManager;
 import dev.craftefix.craftUtils.discord.DiscordWebhookManager;
 import org.bukkit.ChatColor;
@@ -13,15 +14,22 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerEventListener implements Listener {
     private final Main plugin;
+    private final MuteManager muteManager;
+    private final BackLocationManager backLocationManager;
     private final DiscordWebhookManager discordManager;
 
-    public PlayerEventListener(Main plugin) {
+    public PlayerEventListener(Main plugin, MuteManager muteManager, BackLocationManager backLocationManager) {
         this.plugin = plugin;
+        this.muteManager = muteManager;
+        this.backLocationManager = backLocationManager;
         this.discordManager = new DiscordWebhookManager(plugin);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
+        // Update last online timestamp for back locations
+        backLocationManager.updatePlayerOnlineStatus(event.getPlayer().getUniqueId());
+        
         // Send to Discord
         discordManager.sendPlayerJoin(event.getPlayer());
         
@@ -50,8 +58,8 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (MuteManager.isPlayerMuted(event.getPlayer().getUniqueId())) {
-            MuteManager.MuteData muteData = MuteManager.getMuteData(event.getPlayer().getUniqueId());
+        if (muteManager.isPlayerMuted(event.getPlayer().getUniqueId())) {
+            MuteManager.MuteData muteData = muteManager.getMuteData(event.getPlayer().getUniqueId());
             if (muteData != null) {
                 event.setCancelled(true);
                 

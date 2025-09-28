@@ -32,6 +32,7 @@ public class AdminGUI {
     private final CustomGUI broadcastGui;
     private final PaginatedGUI playerListGui;
     private final CustomGUI moderatePlayerGui;
+    private final JavaPlugin plugin;
 
     public void openAdminGUI(Player player) {
         adminGui.open(player);
@@ -40,6 +41,7 @@ public class AdminGUI {
     // Creates the Admin GUI with sub-GUIs for managing players, gamemodes, and broadcasting messages
     // Opening is handled by the open*Gui methods below
     public AdminGUI(JavaPlugin plugin){
+        this.plugin = plugin;
 
         // Admin GUI - Main menu
         adminGui = GUIBuilder.create(plugin, "Admin GUI", 1)
@@ -163,13 +165,13 @@ public class AdminGUI {
 
     private void openPlayerGUI(Player executor, Player target) {
         // Recreate the moderate player GUI with target-specific actions
-        CustomGUI targetModerateGUI = GUIBuilder.create((JavaPlugin) Bukkit.getPluginManager().getPlugin("CraftUtils"), "Moderate " + target.getName(), 1)
+        CustomGUI targetModerateGUI = GUIBuilder.create(plugin, "Moderate " + target.getName(), 1)
             .setButton(0, Material.BARRIER, "§cBan", event -> {
-                Bukkit.getBanList(BanListType.PROFILE).addBan(target.getName(), "You have been banned", null, null);
+                Bukkit.getBanList(BanListType.PROFILE).addBan(target.getPlayerProfile(), "You have been banned", (java.time.Instant) null, null);
                 target.kick(Component.text("You have been banned"));
                 executor.sendMessage(Component.text("Banned " + target.getName(), NamedTextColor.RED));
             })
-            .setButton(1, Material.MACE, "§cKick", event -> {
+            .setButton(1, Material.LEATHER_BOOTS, "§cKick", event -> {
                 target.kick(Component.text("You have been kicked"));
                 executor.sendMessage(Component.text("Kicked " + target.getName(), NamedTextColor.RED));
             })

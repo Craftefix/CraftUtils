@@ -12,15 +12,15 @@ import java.sql.Statement;
 
 public class DatabaseManager {
 
-    private static HikariDataSource dataSource;
-    private static DatabaseType databaseType;
+    private HikariDataSource dataSource;
+    private DatabaseType databaseType;
 
     public enum DatabaseType {
         SQLITE, MARIADB
     }
 
     // Initialize the HikariCP DataSource
-    public static void initialize() {
+    public void initialize() {
         Main plugin = Main.getInstance();
         FileConfiguration config = plugin.getConfig();
         String type = config.getString("database.type", "sqlite").toLowerCase();
@@ -54,7 +54,7 @@ public class DatabaseManager {
     }
 
     // Get a connection from the pool
-    public static Connection getConnection() throws SQLException {
+    public synchronized Connection getConnection() throws SQLException {
         if (dataSource == null) {
             initialize();
         }
@@ -62,20 +62,21 @@ public class DatabaseManager {
     }
 
     // Close the data source
-    public static void close() {
+    public synchronized void close() {
         if (dataSource != null) {
             dataSource.close();
+            dataSource = null;
         }
     }
 
     // Get the database type
-    public static DatabaseType getDatabaseType() {
+    public DatabaseType getDatabaseType() {
         return databaseType;
     }
 
     // Create tables if they do not exist
-    private static void createTablesIfNotExist() {
-        String createHomes, createWarps, createVaults, createMutes;
+    private void createTablesIfNotExist() {
+        String createHomes, createWarps, createVaults, createMutes, createBackLocations;
         
         if (databaseType == DatabaseType.SQLITE) {
             createHomes = "CREATE TABLE IF NOT EXISTS homes (" +
@@ -98,7 +99,7 @@ public class DatabaseManager {
                     "z REAL NOT NULL," +
                     "yaw REAL NOT NULL DEFAULT 0," +
                     "pitch REAL NOT NULL DEFAULT 0," +
-                    "private INTEGER NOT NULL DEFAULT 0," +
+                    "`private` INTEGER NOT NULL DEFAULT 0," +
                     "world TEXT NOT NULL" +
                     ")";
             createMutes = "CREATE TABLE IF NOT EXISTS mutes (" +
@@ -117,6 +118,18 @@ public class DatabaseManager {
                     "vault_number INTEGER NOT NULL," +
                     "contents TEXT NOT NULL," +
                     "UNIQUE(owner_uuid, vault_number)" +
+                    ")";
+            createBackLocations = "CREATE TABLE IF NOT EXISTS back_locations (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "player_uuid TEXT NOT NULL UNIQUE," +
+                    "world_name TEXT NOT NULL," +
+                    "x REAL NOT NULL," +
+                    "y REAL NOT NULL," +
+                    "z REAL NOT NULL," +
+                    "yaw REAL NOT NULL," +
+                    "pitch REAL NOT NULL," +
+                    "created_at INTEGER NOT NULL," +
+                    "last_online INTEGER NOT NULL DEFAULT 0" +
                     ")";
         } else {
             createHomes = "CREATE TABLE IF NOT EXISTS homes (" +
@@ -139,7 +152,7 @@ public class DatabaseManager {
                     "z DOUBLE NOT NULL," +
                     "yaw FLOAT NOT NULL DEFAULT 0," +
                     "pitch FLOAT NOT NULL DEFAULT 0," +
-                    "private TINYINT(1) NOT NULL DEFAULT 0," +
+                     "`private` TINYINT(1) NOT NULL DEFAULT 0," +
                     "world VARCHAR(64) NOT NULL" +
                     ")";
             createMutes = "CREATE TABLE IF NOT EXISTS mutes (" +
@@ -159,6 +172,18 @@ public class DatabaseManager {
                     "contents TEXT NOT NULL," +
                     "UNIQUE KEY unique_vault (owner_uuid, vault_number)" +
                     ")";
+            createBackLocations = "CREATE TABLE IF NOT EXISTS back_locations (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY," +
+                    "player_uuid VARCHAR(36) NOT NULL UNIQUE," +
+                    "world_name VARCHAR(64) NOT NULL," +
+                    "x DOUBLE NOT NULL," +
+                    "y DOUBLE NOT NULL," +
+                    "z DOUBLE NOT NULL," +
+                    "yaw FLOAT NOT NULL," +
+                    "pitch FLOAT NOT NULL," +
+                    "created_at BIGINT NOT NULL," +
+                    "last_online BIGINT NOT NULL DEFAULT 0" +
+                    ")";
         }
         
         try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
@@ -166,12 +191,14 @@ public class DatabaseManager {
             stmt.executeUpdate(createWarps);
             stmt.executeUpdate(createVaults);
             stmt.executeUpdate(createMutes);
+            stmt.executeUpdate(createBackLocations);
             
             // Drop kits table if it exists (removing kit system)
             try {
                 stmt.executeUpdate("DROP TABLE IF EXISTS kits");
             } catch (SQLException ignored) {}
         } catch (SQLException e) {
+            Main.getInstance().getLogger().severe("Failed to create database tables: " + e.getMessage());
             e.printStackTrace();
         }
     }

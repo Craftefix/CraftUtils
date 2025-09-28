@@ -1,0 +1,50 @@
+# German Language File for CraftUtils
+general:
+  prefix: "&6[CraftUtils] &r"
+  no-permission: "&cDu hast keine Berechtigung für diesen Befehl!"
+  player-only: "&cDieser Befehl kann nur von Spielern verwendet werden!"
+  reload-success: "&aKonfiguration erfolgreich neu geladen!"
+  language-changed: "&aSprache zu Deutsch geändert!"
+  invalid-language: "&cUngültige Sprache! Verfügbar: en, de"
+
+# GUI translations
+gui:
+  main-title: "&6&lCraftUtils &8- &7Befehls GUI"
+  utilities: "&b&lHilfsmittel"
+  utilities-desc: "&7Zugriff auf Hilfsbefehle"
+  abilities: "&a&lFähigkeiten"
+  abilities-desc: "&7Spielerfähigkeiten verwalten"
+  gamemode: "&e&lSpielmodus"
+  gamemode-desc: "&7Ändere deinen Spielmodus"
+  homes-warps: "&d&lHeime & Warps"
+  homes-warps-desc: "&7Teleportiere zu Heimen und Warps"
+  admin: "&c&lAdmin"
+  admin-desc: "&7Zugriff auf Admin-Befehle"
+  language: "&f&lSprache"
+  language-desc: "&7Ändere deine Sprache"
+  sound-settings: "&e&lTon-Einstellungen"
+  sound-settings-desc: "&7GUI-Töne umschalten"
+  back: "&7Zurück zum Hauptmenü"
+  sounds-enabled: "&aGUI-Töne aktiviert!"
+  sounds-disabled: "&cGUI-Töne deaktiviert!"
+
+# Language selection GUI
+  language-title: "&f&lSprachauswahl"
+  english: "&f&lEnglish"
+  english-desc: "&7Zu Englisch wechseln"
+  german: "&f&lDeutsch"
+  german-desc: "&7Zu Deutsch wechseln"
+
+# Commands
+commands:
+  repair: "&aGegenstand repariert!"
+  heal: "&aDu wurdest geheilt!"
+  feed: "&aDu wurdest gesättigt!"
+  fly-enabled: "&aFlugmodus aktiviert!"
+  fly-disabled: "&cFlugmodus deaktiviert!"
+  gamemode-changed: "&aSpielmodus zu %s geändert!"
+  gamemode-same: "&7Du bist bereits im %s Modus!"
+  teleported-home: "&aZu Heim teleportiert: %s"
+  teleported-warp: "&aZu Warp teleportiert: %s"
+  no-homes: "&cDu hast keine Heime gesetzt!"
+  no-warps: "&cKeine Warps verfügbar!"

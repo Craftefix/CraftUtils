@@ -1,9 +1,26 @@
-name: craftUtils
-version: 0.0.b55
+name: CraftUtils
+version: 1.0.1
 main: dev.craftefix.craftUtils.Main
-api-version: 1.21.4
+api-version: 1.21.8
 description: A simple Utils plugin for Paper
 website: craftefix.dev
 authors:
   - Craftefix
 folia-supported: true
+
+permissions:
+  CraftUtils.mute:
+    description: Allows muting players
+    default: op
+  CraftUtils.mute.notify:
+    description: Receive notifications when players are muted
+    default: op
+  CraftUtils.unmute:
+    description: Allows unmuting players
+    default: op
+  CraftUtils.pardon:
+    description: Allows pardoning (unbanning) players
+    default: op
+  CraftUtils.pardon.notify:
+    description: Receive notifications when players are pardoned
+    default: op

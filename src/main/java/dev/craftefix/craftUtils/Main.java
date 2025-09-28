@@ -3,12 +3,15 @@ package dev.craftefix.craftUtils;
 
 import dev.craftefix.craftUtils.database.DatabaseManager;
 import dev.craftefix.craftUtils.database.HomeManager;
+import dev.craftefix.craftUtils.language.LanguageManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
     private static Main instance;
+    private DatabaseManager databaseManager;
+    private LanguageManager languageManager;
 
     @Override
     public void onEnable() {
@@ -19,8 +22,9 @@ public final class Main extends JavaPlugin {
         
         // Initialize database
         try {
-            DatabaseManager.initialize();
-            getLogger().info("Database initialized successfully (" + DatabaseManager.getDatabaseType() + ")");
+            databaseManager = new DatabaseManager();
+            databaseManager.initialize();
+            getLogger().info("Database initialized successfully (" + databaseManager.getDatabaseType() + ")");
         } catch (Exception e) {
             getLogger().severe("Failed to initialize database: " + e.getMessage());
             getServer().getPluginManager().disablePlugin(this);
@@ -28,8 +32,11 @@ public final class Main extends JavaPlugin {
         }
 
         // Register the commands
-        EnableLamp enableLamp = new EnableLamp(this);
+        EnableLamp enableLamp = new EnableLamp(this, databaseManager);
         enableLamp.enable();
+        
+        // Get language manager from EnableLamp
+        this.languageManager = enableLamp.getLanguageManager();
 
         // Initialize bStats
         try {
@@ -45,15 +52,25 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         try {
-            DatabaseManager.close();
+            if (databaseManager != null) {
+                databaseManager.close();
+            }
         } catch (Exception exception) {
             getLogger().warning("Failed to close the database connection.");
             getLogger().warning(exception.getMessage());
         }
         getLogger().info("Plugin disabled successfully.");
     }
-    public static Main getInstance() {
+    public static synchronized Main getInstance() {
         return instance;
+    }
+    
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+    
+    public LanguageManager getLanguageManager() {
+        return languageManager;
     }
 
 }

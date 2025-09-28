@@ -11,7 +11,7 @@ package dev.craftefix.craftUtils.commands;
     import revxrsal.commands.bukkit.annotation.CommandPermission;
     import revxrsal.commands.bukkit.parameters.EntitySelector;
 
-    @Command("cu tp")
+    @Command("tp")
     public class TpCommand {
 
         private boolean isWithinWorldBorder(Location location) {
